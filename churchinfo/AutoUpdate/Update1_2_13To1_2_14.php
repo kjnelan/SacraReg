@@ -93,6 +93,10 @@ for (; ; ) {    // This is not a loop but a section of code to be
     // Allow pledge to be weekly
     $sSQL = "ALTER IGNORE TABLE donateditem_di ADD `di_picture` text NULL";
     RunQuery($sSQL, FALSE); // False means do not stop on error
+
+    // Add electronic payment processor defaulting to Vanco, also supporting AuthorizeNet
+    $sSQL = "INSERT INTO `config_cfg` (`cfg_id`, `cfg_name`, `cfg_value`, `cfg_type`, `cfg_default`, `cfg_tooltip`, `cfg_section`, `cfg_category`) VALUES (73, 'sElectronicTransactionProcessor', 'Vanco', 'text', 'Vanco', 'Electronic Transaction Processor', 'General', NULL)";
+    RunQuery($sSQL, FALSE); // False means do not stop on error
 }
 
 $sError = mysql_error();
