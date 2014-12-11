@@ -7,6 +7,22 @@ include "Include/VancoConfig.php";
 $customerid = FilterInput ($_GET["autid"], "int");
 $iAutID = $customerid;
 
+$sSQL = "SELECT * FROM autopayment_aut WHERE aut_ID=" . $iAutID;
+$rsAutRec = mysql_query($sSQL, $cnInfoCentral);
+$aRow = mysql_fetch_array($rsAutRec);
+extract($aRow); // Get this autopayment record into local variables
+
+$accountType = "";
+$accountNumber = "";
+if ($aut_EnableBankDraft) {
+	$accountType = "C";
+	$accountNumber = $aut_Account;
+} elseif ($aut_EnableCreditCard) {
+	$accountType = "CC";
+	$accountNumber = $aut_CreditCard;
+}
+$FullName = $aut_FirstName . " " . $aut_LastName;
+
 class VancoToolsXML
 {
 	private $userid, $password, $clientid, $enckey, $test;
@@ -18,12 +34,26 @@ class VancoToolsXML
 		$this->enckey = $setEncKey;
 		$this->test = $setTest;
 
-		echo "Inside VancoToolsXML __construct $this->userid password $this->password clientid $this->clientid enckey $this->enckey test $this->test <br>";
+//		echo "Inside VancoToolsXML __construct $this->userid password $this->password clientid $this->clientid enckey $this->enckey test $this->test <br>";
 	}
 
+	function generateRequestID()
+	{
+		/*
+		Function:    generateRequestID()
+		Description: Used to generate a unique request ID to be used in a Web Services request
+		Parameters:  None
+		Returns:     String value to be used as a request ID. Value will be date/time with a random 4 digit number appended
+		*/
+//		date_default_timezone_set('America/Chicago');
+		$currenttime = date("YmdHis");
+		$randomnumber = rand(0, 9999);
+		return $currenttime.$randomnumber;
+	}
+	
 	function PostXML($xmlstr)
 	{
-		echo "Inside VancoToolsXML PostXML userid $this->userid password $this->password clientid $this->clientid enckey $this->enckey test $this->test <br>";
+//		echo "Inside VancoToolsXML PostXML userid $this->userid password $this->password clientid $this->clientid enckey $this->enckey test $this->test <br>";
 
 		$ReqHeaderBase = "";
 		if ($this->test)
@@ -38,7 +68,7 @@ class VancoToolsXML
 		$ReqHeader = $ReqHeaderBase . "Content-length: " . strlen($xmlstr) . "\nConnection: close\n\n"; 
 		$Req = $ReqHeader . $xmlstr . "\n\n";
 		
-		echo "Sending request: '" . $Req;
+//		echo "Sending request: '" . $Req;
 		
 		//--- Open Connection --- 
 		$vancoURL = "";
@@ -47,7 +77,7 @@ class VancoToolsXML
 		else
 			$vancoURL = "ssl://www.vancoservices.com";
 		
-		echo "Opening connection to '$vancoURL'<br>";
+//		echo "Opening connection to '$vancoURL'<br>";
 		
 		$socket = fsockopen($vancoURL, 443, $errno, $errstr, 15); 
 
@@ -73,10 +103,10 @@ class VancoToolsXML
     
 		    $rets = substr($rets, strpos($rets, '?'.'>') + 2); // Skip over the header and the xml tag
     
-		    printf ("Got string '%s'", $rets);
+//		    printf ("Got string '%s'", $rets);
     
 		    $xml=simplexml_load_string($rets);
-    		print_r($xml);
+//    		print_r($xml);
     		return ($xml);
 		}
 	}
@@ -90,7 +120,7 @@ $LoginXML=
 "<VancoWS>" .
 	"<Auth>" .
 		"<RequestType>Login</RequestType>".
-        "<RequestID>111111111</RequestID>" .
+        "<RequestID>".$VancoObj->generateRequestID()."</RequestID>" .
         "<RequestTime>$datestr</RequestTime>" .
         "<Version>2</Version>".
     "</Auth>".
@@ -105,13 +135,13 @@ $LoginXML=
 $LoginRespXML = $VancoObj->PostXML ($LoginXML);
 $sessionid = $LoginRespXML->Response->SessionID;
 
-printf ("Got session id %s", $sessionid);
+//printf ("Got session id %s", $sessionid);
 		
 $addCustomerXML = 
 	"<VancoWS>".
 		"<Auth>".
 			"<RequestType>EFTAddEditCustomer</RequestType>".
-			"<RequestID>22222222</RequestID>".
+			"<RequestID>".$VancoObj->generateRequestID()."</RequestID>".
 			"<RequestTime>$datestr</RequestTime>".
 			"<SessionID>$sessionid</SessionID>".
 			"<Version>2</Version>".
@@ -120,13 +150,13 @@ $addCustomerXML =
 			"<RequestVars>".
 				"<ClientID>$VancoClientid</ClientID>".
 				"<CustomerID>$customerid</CustomerID>".
-				"<CustomerName>Wilt, Michael</CustomerName>".
-	      		"<CustomerAddress1>136 Castle Hill Rd</CustomerAddress1>".
+				"<CustomerName>$FullName</CustomerName>".
+	      		"<CustomerAddress1>$aut_Address1</CustomerAddress1>".
 	     		"<CustomerAddress2></CustomerAddress2>".
-	      		"<CustomerCity>Windham</CustomerCity>".
-	      		"<CustomerState>NH</CustomerState>".
-	      		"<CustomerZip>03087</CustomerZip>".
-	      		"<CustomerPhone>6038868821</CustomerPhone>".
+	      		"<CustomerCity>$aut_City</CustomerCity>".
+	      		"<CustomerState>$aut_State</CustomerState>".
+	      		"<CustomerZip>$aut_Zip</CustomerZip>".
+	      		"<CustomerPhone>$aut_Phone</CustomerPhone>".
 			"</RequestVars>".
 		"</Request>".
 	"</VancoWS>";
@@ -137,7 +167,7 @@ $addCCXML =
 	"<VancoWS>".
 		"<Auth>".
 			"<RequestType>EFTAddEditPaymentMethod</RequestType>".
-			"<RequestID>33333333</RequestID>".
+			"<RequestID>".$VancoObj->generateRequestID()."</RequestID>".
 			"<RequestTime>$datestr</RequestTime>".
 			"<SessionID>$sessionid</SessionID>".
 			"<Version>2</Version>".
@@ -146,20 +176,45 @@ $addCCXML =
 			"<RequestVars>".
 				"<ClientID>$VancoClientid</ClientID>".
 				"<CustomerID>$customerid</CustomerID>".
-				"<AccountType>CC</AccountType>".
-				"<AccountNumber>5490339011458443</AccountNumber>".
-				"<CardBillingName>Wilt, Michael</CardBillingName>".
-				"<CardExpMonth>05</CardExpMonth>".
-				"<CardExpYear>2016</CardExpYear>".
+				"<AccountType>$accountType</AccountType>".
+				"<AccountNumber>$accountNumber</AccountNumber>".
+				"<RoutingNumber>$aut_Route</RoutingNumber>".
+				"<CardBillingName>$FullName</CardBillingName>".
+				"<CardExpMonth>$aut_ExpMonth</CardExpMonth>".
+				"<CardExpYear>$aut_ExpYear</CardExpYear>".
 				"<SameCCBillingAddrAsCust>NO</SameCCBillingAddrAsCust>".
-				"<CardBillingAddr1>136 Castle Hill Rd</CardBillingAddr1>".
-				"<CardBillingAddr2></CardBillingAddr2>".
-				"<CardBillingCity>Windham</CardBillingCity>".
-				"<CardBillingState>NH</CardBillingState>".
-				"<CardBillingZip>03087</CardBillingZip>".
+				"<CardBillingAddr1>$aut_Address1</CardBillingAddr1>".
+				"<CardBillingAddr2>$aut_Address2</CardBillingAddr2>".
+				"<CardBillingCity>$aut_City</CardBillingCity>".
+				"<CardBillingState>$aut_State</CardBillingState>".
+				"<CardBillingZip>$aut_Zip</CardBillingZip>".
 			"</RequestVars>".
 		"</Request>".
 	"</VancoWS>";
 
-$addCreditCardXmlResp = $VancoObj->PostXML ($addCCXML);
+$addPaymentMethodXmlResp = $VancoObj->PostXML ($addCCXML);
+
+//print_r($addPaymentMethodXmlResp);
+
+$resArr = array ();
+
+if (gettype($addPaymentMethodXmlResp->Response->Errors->Error) == "object") {
+	foreach ($addPaymentMethodXmlResp->Response->Errors->Error as $onerr) {
+		$resArr[] = array("$onerr->ErrorCode"=>"$onerr->ErrorDescription");
+//		print "Got an error code ".$onerr->ErrorCode." description " . $onerr->ErrorDescription . "<br>";
+	}
+	$resArr[] = array('Success'=>False);
+} else {
+	$gotPaymentMethod = $addPaymentMethodXmlResp->Response->PaymentMethodRef;
+	if ($aut_EnableBankDraft) {
+		$sSQL = "UPDATE autopayment_aut SET aut_Account=$gotPaymentMethod WHERE aut_ID=" . $iAutID;
+	} elseif ($aut_EnableCreditCard) {
+		$sSQL = "UPDATE autopayment_aut SET aut_CreditCard=$gotPaymentMethod WHERE aut_ID=" . $iAutID;
+	}
+	mysql_query($sSQL, $cnInfoCentral);
+	$resArr[] = array('Success'=>True);
+}
+
+header('Content-type: application/json');
+echo json_encode($resArr);
 ?>
