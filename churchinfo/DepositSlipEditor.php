@@ -234,11 +234,13 @@ if (isset($_POST["DepositSlipSubmit"])) {
 						 a.aut_Phone AS phone,
 						 a.aut_Email AS email,
 						 a.aut_CreditCard AS creditCard,
+						 a.aut_CreditCardVanco AS creditcardvanco,
 						 a.aut_ExpMonth AS expMonth,
 						 a.aut_ExpYear AS expYear,
 						 a.aut_BankName AS bankName,
 						 a.aut_Route AS route,
 						 a.aut_Account AS account,
+						 a.aut_AccountVanco AS accountvanco,
 						 a.aut_Serial AS serial,
 						 a.aut_NextPayDate AS authDate,
 						 a.aut_Interval AS aut_Interval,
@@ -423,9 +425,9 @@ if (isset($_POST["DepositSlipSubmit"])) {
 
 			$paymentmethodref = "";
 			if ($dep_Type == "CreditCard") {
-				$paymentmethodref = $creditCard;
+				$paymentmethodref = $creditcardvanco;
 			} else {
-				$paymentmethodref = $account;
+				$paymentmethodref = $accountvanco;
 			}
 
 			$addRet = $workingobj->vancoEFTAddCompleteTransactionRequest(

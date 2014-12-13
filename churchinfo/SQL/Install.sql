@@ -34,6 +34,8 @@ CREATE TABLE `autopayment_aut` (
   `aut_DateLastEdited` datetime default NULL,
   `aut_EditedBy` smallint(5) unsigned default '0',
   `aut_Serial` mediumint(9) NOT NULL default '1',
+  `aut_CreditCardVanco` varchar(50) default NULL,
+  `aut_AccountVanco` varchar(50) default NULL,
   PRIMARY KEY  (`aut_ID`),
   UNIQUE KEY `aut_ID` (`aut_ID`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
@@ -665,7 +667,8 @@ INSERT INTO `menuconfig_mcf` (`mid`, `name`, `parent`, `ismenu`, `content_englis
 (15, 'reportsetting', 'admin', 0, 'Edit Report Settings', NULL, 'SettingsReport.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 9),
 (16, 'userdefault', 'admin', 0, 'Edit User Default Settings', NULL, 'SettingsUser.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 10),
 (17, 'envelopmgr', 'admin', 0, 'Envelope Manager', NULL, 'ManageEnvelopes.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 11),
-(18, 'register', 'admin', 0, 'Please select this option to register ChurchInfo after configuring.', NULL, 'Register.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 12),
+(91, 'automaticpayments', 'admin', 0, 'Edit Automatic Payments', NULL, 'ElectronicPaymentList.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 12),
+(18, 'register', 'admin', 0, 'Please select this option to register ChurchInfo after configuring.', NULL, 'Register.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 13),
 (19, 'people', 'root', 1, 'People/Families', NULL, '', 'People/Families', 'bAll', NULL, 0, 0, NULL, 1, 3),
 (20, 'newperson', 'people', 0, 'Add New Person', NULL, 'PersonEditor.php', '', 'bAddRecords', NULL, 0, 0, NULL, 1, 1),
 (21, 'viewperson', 'people', 0, 'View All Persons', NULL, 'SelectList.php?mode=person', '', 'bAll', NULL, 0, 0, NULL, 1, 2),

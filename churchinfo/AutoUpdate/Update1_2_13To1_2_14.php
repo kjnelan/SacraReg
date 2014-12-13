@@ -72,7 +72,7 @@ for (; ; ) {    // This is not a loop but a section of code to be
 // Need to back up tables we will be modifying- 
 
     $needToBackUp = array (
-    "donateditem_di");
+    "donateditem_di", "config_cfg", "autopayment_aut", "menuconfig_mcf");
 
     $bErr = false;
     foreach ($needToBackUp as $backUpName) {
@@ -97,6 +97,24 @@ for (; ; ) {    // This is not a loop but a section of code to be
     // Add electronic payment processor defaulting to Vanco, also supporting AuthorizeNet
     $sSQL = "INSERT INTO `config_cfg` (`cfg_id`, `cfg_name`, `cfg_value`, `cfg_type`, `cfg_default`, `cfg_tooltip`, `cfg_section`, `cfg_category`) VALUES (73, 'sElectronicTransactionProcessor', 'Vanco', 'text', 'Vanco', 'Electronic Transaction Processor', 'General', NULL)";
     RunQuery($sSQL, FALSE); // False means do not stop on error
+    
+    $sSQL = "ALTER IGNORE TABLE autopayment_aut ADD `aut_CreditCardVanco` text NULL";
+    RunQuery($sSQL, FALSE); // False means do not stop on error
+    
+    $sSQL = "ALTER IGNORE TABLE autopayment_aut ADD `aut_AccountVanco` text NULL";
+    RunQuery($sSQL, FALSE); // False means do not stop on error
+    
+   	$sSQL = "INSERT IGNORE INTO `menuconfig_mcf` VALUES (91, 'automaticpayments', 'admin', 0, 'Electronic Payments', NULL, 'ElectronicPaymentList.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 12);";
+	$rsIns = RunQuery($sSQL, FALSE); // False means do not stop on error
+	
+	$sSQL = "UPDATE menuconfig_mcf SET sortorder=13	WHERE mid=18 AND sortorder=12";
+	$rsUpd = RunQuery($sSQL, FALSE); // False means do not stop on error
+	
+	$sSQL = "UPDATE menuconfig_mcf SET content=content_english;";
+	if (!RunQuery($sSQL, FALSE))
+	    break;
+	
+    
 }
 
 $sError = mysql_error();

@@ -36,33 +36,146 @@ $sPageTitle = gettext("Electronic Payment Listing");
 require "Include/Header.php";
 ?>
 
-<?php if ($sElectronicTransactionProcessor == "Vanco") { ?>
 <script>
-function CreatePaymentMethodsForChecked()
+function ConfirmDeleteAutoPayment (AutID)
 {
-	checkboxes = document.getElementsByName("SelectForAction");
+	var famName = document.getElementById("FamName"+AutID).innerHTML;
+	var r = confirm("Delete automatic payment for "+famName);
+	if (r == true) {
+		DeleteAutoPayment (AutID);
+	} 
+}
+
+function ConfirmClearAccounts (AutID)
+{
+	var famName = document.getElementById("FamName"+AutID).innerHTML;
+	var r = confirm("Clear account numbers for "+famName);
+	if (r == true) {
+		ClearAccounts (AutID);
+	} 
+}
+
+function ClearAccounts (AutID)
+{
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.uniqueid = AutID;
+
+    xmlhttp.open("GET","<?php echo RedirectURL("AutoPaymentClearAccounts.php");?>?",true);
+    xmlhttp.PaymentID = AutID; // So we can see it when the request finishes
+    
+    xmlhttp.onreadystatechange=function() {
+		if (this.readyState==4 && this.status==200) { // Hide them as the requests come back, deleting would mess up the outside loop
+             document.getElementById("Select"+this.PaymentID).checked = false;
+             document.getElementById("CreditCard"+this.PaymentID).innerHTML = "";
+             document.getElementById("Account"+this.PaymentID).innerHTML = "";
+        }
+    };
+    xmlhttp.send();
+}
+
+function DeleteAutoPayment (AutID)
+{
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.uniqueid = AutID;
+
+    var params="Delete=1"; // post with Delete already set so the page goes straight into the delete
+    	    
+    xmlhttp.open("POST","<?php echo RedirectURL("AutoPaymentDelete.php");?>?linkBack=<?php echo RedirectURL("ElectronicPaymentList.php");?>&AutID="+AutID,true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
+    xmlhttp.setRequestHeader("Connection", "close");
+    xmlhttp.PaymentID = AutID; // So we can see it when the request finishes
+    
+    xmlhttp.onreadystatechange=function() {
+		if (this.readyState==4 && this.status==200) { // Hide them as the requests come back, deleting would mess up the outside loop
+             document.getElementById("Select"+this.PaymentID).checked = false;
+			 document.getElementById("PaymentMethodRow"+this.PaymentID).style.display = 'none';
+        }
+    };
+    xmlhttp.send(params);
+}
+
+function DeleteChecked()
+{
+	var checkboxes = document.getElementsByName("SelectForAction");
 	for(var i=0, n=checkboxes.length;i<n;i++) {
 	    if (checkboxes[i].checked) {
 		    var id = checkboxes[i].id.split("Select")[1];
+		    ConfirmDeleteAutoPayment (id);
+	    }
+	}
+}
 
-		    var xmlhttp;
-			xmlhttp=new XMLHttpRequest();
+function ClearAccountsChecked()
+{
+	var checkboxes = document.getElementsByName("SelectForAction");
+	for(var i=0, n=checkboxes.length;i<n;i++) {
+	    if (checkboxes[i].checked) {
+		    var id = checkboxes[i].id.split("Select")[1];
+		    ConfirmClearAccounts (id);
+	    }
+	}
+}
+
+<?php if ($sElectronicTransactionProcessor == "Vanco") { ?>
+function CreatePaymentMethodsForChecked()
+{
+	var checkboxes = document.getElementsByName("SelectForAction");
+	for(var i=0, n=checkboxes.length;i<n;i++) {
+	    if (checkboxes[i].checked) {
+		    var id = checkboxes[i].id.split("Select")[1];
+		    var xmlhttp = new XMLHttpRequest();
+		    xmlhttp.uniqueid = id;
+		    xmlhttp.open("GET","<?php echo RedirectURL("ConvertOnePaymentXML.php");?>?autid="+id,true);
 		    xmlhttp.onreadystatechange=function() {
-				if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-		            document.getElementById('p1').innerHTML=xmlhttp.getAllResponseHeaders();
+				if (this.readyState==4 && this.status==200) {
+		            var jsonresp=JSON.parse(this.response);
+		            var index;
+		            
+		            var Success = false;
+		            var ErrStr = "";
+		            var AutID = 0;
+		            var PaymentMethod = 0;
+		            var PaymentType = "";
+		            
+		            for (index = 0; index < jsonresp.length; ++index) {
+		                var oneResp = jsonresp[index];
+		                if (oneResp.hasOwnProperty("Error"))
+			                ErrStr += oneResp.Error;
+		                if (oneResp.hasOwnProperty("AutID"))
+		                	AutID = oneResp.AutID;
+		                if (oneResp.hasOwnProperty("PaymentMethod"))
+		                	PaymentMethod = oneResp.PaymentMethod[0];
+		                if (oneResp.hasOwnProperty("Success"))
+			                Success = oneResp.Success;
+		                if (oneResp.hasOwnProperty("PaymentType"))
+			                PaymentType = oneResp.PaymentType;
+		            }
+
+		            // Update fields on the page to show status of this action
+		            if (Success && PaymentType=="CC")
+			            document.getElementById("CreditCardVanco"+AutID).innerHTML = PaymentMethod;
+		            if (Success && PaymentType=="C")
+			            document.getElementById("AccountVanco"+AutID).innerHTML = PaymentMethod;
+		            
+		            if (!Success && PaymentType=="CC")
+			            document.getElementById("CreditCardVanco"+AutID).innerHTML = ErrStr;
+		            if (!Success && PaymentType=="C")
+			            document.getElementById("AccountVanco"+AutID).innerHTML = ErrStr;
+
+		            document.getElementById("Select"+AutID).checked = false;
 	            }
 		    };
-		    xmlhttp.open("GET","https://svr.uunashua.org/churchinfo/ConvertOnePaymentXML.php?autid="+id,true);
 		    xmlhttp.send();
 	    }
 	}
 }
-</script>
 <?php } ?>
+</script>
 
 <script>
 function toggle(source, groupName) {
-	  checkboxes = document.getElementsByName(groupName);
+	  var checkboxes = document.getElementsByName(groupName);
 	  for(var i=0, n=checkboxes.length;i<n;i++) {
 	    checkboxes[i].checked = source.checked;
   }
@@ -71,7 +184,7 @@ function toggle(source, groupName) {
 
 <p align="center"><a href="AutoPaymentEditor.php?linkBack=ElectronicPaymentList.php"><?php echo gettext("Add a New Electronic Payment Method"); ?></a></p>
 
-<table cellpadding="4" align="center" cellspacing="0" width="100%">
+<table id="PaymentMethodTable" cellpadding="4" align="center" cellspacing="0" width="100%">
 	<tr class="TableHeader">
 		<td>
 		<input type=checkbox onclick="toggle(this, 'SelectForAction')" />
@@ -86,9 +199,15 @@ function toggle(source, groupName) {
 		<td align="center"><b><?php echo gettext("Bank"); ?></b></td>
 		<td align="center"><b><?php echo gettext("Routing"); ?></b></td>
 		<td align="center"><b><?php echo gettext("Account"); ?></b></td>
+		<?php if ($sElectronicTransactionProcessor == "Vanco") {?> 
+		<td align="center"><b><?php echo gettext("Vanco ACH"); ?></b></td>
+		<?php }?>
 		<td align="center"><b><?php echo gettext("Credit Card"); ?></b></td>
 		<td align="center"><b><?php echo gettext("Month"); ?></b></td>
 		<td align="center"><b><?php echo gettext("Year"); ?></b></td>
+		<?php if ($sElectronicTransactionProcessor == "Vanco") {?> 
+		<td align="center"><b><?php echo gettext("Vanco CC"); ?></b></td>
+		<?php }?>
 		<td><b><?php echo gettext("Edit"); ?></b></td>
 		<td><b><?php echo gettext("Delete"); ?></b></td>
 	</tr>
@@ -107,7 +226,7 @@ while ($aRow = mysql_fetch_array($rsAutopayments)) {
 
 	//Display the row
 ?>
-	<tr class="<?php echo $sRowClass; ?>">
+	<tr id="PaymentMethodRow<?php echo $aut_ID; ?>" class="<?php echo $sRowClass; ?>">
 		<td>
 		<?php
 			echo "<input type=checkbox id=Select$aut_ID name=SelectForAction />"; 
@@ -116,7 +235,7 @@ while ($aRow = mysql_fetch_array($rsAutopayments)) {
 		
 		<td>
 		<?php
-			echo "<a href=\"FamilyView.php?FamilyID=" . $fam_ID . "\">" . $fam_Name . "</a>";
+			echo "<a id=\"FamName$aut_ID\" href=\"FamilyView.php?FamilyID=" . $fam_ID . "\">" . $fam_Name . " " . $fam_Address1 . ", " . $fam_City . ", " . $fam_State . "</a>";
 		?>
 		</td>
 
@@ -138,21 +257,29 @@ while ($aRow = mysql_fetch_array($rsAutopayments)) {
 		<td><?php echo $fun_Name;?></td>
 		<td><?php echo $aut_BankName;?></td>
 		<td><?php if (strlen($aut_Route)==9) echo "*****".substr($aut_Route,5,4);?></td>
-		<td><?php if (strlen($aut_Account)>4) echo "*****".substr($aut_Account,strlen($aut_Account)-4,4);?></td>
-		<td><?php if (strlen($aut_CreditCard)==16) echo "*************".substr($aut_CreditCard,12,4);?></td>
+		<td id="Account<?php echo $aut_ID; ?>"><?php if (strlen($aut_Account)>4) echo "*****".substr($aut_Account,strlen($aut_Account)-4,4);?></td>
+		<?php if ($sElectronicTransactionProcessor == "Vanco") {?> 
+		<td align="center" id="AccountVanco<?php echo $aut_ID; ?>"><?php echo $aut_AccountVanco; ?></td>
+		<?php }?>
+		<td id="CreditCard<?php echo $aut_ID; ?>"><?php if (strlen($aut_CreditCard)==16) echo "*************".substr($aut_CreditCard,12,4);?></td>
 		<td><?php echo $aut_ExpMonth;?></td>
 		<td><?php echo $aut_ExpYear;?></td>
+		<?php if ($sElectronicTransactionProcessor == "Vanco") {?> 
+		<td align="center" id="CreditCardVanco<?php echo $aut_ID; ?>"><?php echo $aut_CreditCardVanco; ?></td>
+		<?php }?>
 		<td><a href="AutoPaymentEditor.php?AutID=<?php echo $aut_ID; ?>&amp;FamilyID=<?php echo $fam_ID?>&amp;linkBack=ElectronicPaymentList.php"><?php echo gettext("Edit"); ?></a></td>
-		<td><a href="AutoPaymentDelete.php?AutID=<?php echo $aut_ID; ?>&amp;FamilyID=<?php echo $fam_ID?>&amp;linkBack=ElectronicPaymentList.php"><?php echo gettext("Delete"); ?></a></td>
-
+		<td><button onclick="ConfirmDeleteAutoPayment(<?php echo $aut_ID; ?>)"><?php echo gettext("Delete"); ?></button></td>
 	</tr>
 	<?php
 }
 ?>
 </table>
+<b>With checked:</b>
 <?php if ($sElectronicTransactionProcessor == "Vanco") { ?>
 <input type="button" id="CreatePaymentMethodsForChecked" value="Store Private Data at Vanco" onclick="CreatePaymentMethodsForChecked();" />
 <?php }?>
+<input type="button" id="DeleteChecked" value="Delete" onclick="DeleteChecked();" />
+<input type="button" id="DeleteChecked" value="Clear Account Numbers" onclick="ClearAccountsChecked();" />
 
 <?php
 require "Include/Footer.php";

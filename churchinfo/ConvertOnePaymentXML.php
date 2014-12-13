@@ -198,22 +198,28 @@ $addPaymentMethodXmlResp = $VancoObj->PostXML ($addCCXML);
 
 $resArr = array ();
 
+$resArr[] = array('AutID'=>$iAutID);
+$resArr[] = array('PaymentType'=>"$accountType");
+
 if (gettype($addPaymentMethodXmlResp->Response->Errors->Error) == "object") {
 	foreach ($addPaymentMethodXmlResp->Response->Errors->Error as $onerr) {
-		$resArr[] = array("$onerr->ErrorCode"=>"$onerr->ErrorDescription");
+		$resArr[] = array("Error"=>$onerr->ErrorCode.": ".$onerr->ErrorDescription);
 //		print "Got an error code ".$onerr->ErrorCode." description " . $onerr->ErrorDescription . "<br>";
 	}
 	$resArr[] = array('Success'=>False);
 } else {
 	$gotPaymentMethod = $addPaymentMethodXmlResp->Response->PaymentMethodRef;
+	
+	$resArr[] = array('PaymentMethod'=>$gotPaymentMethod);
 	if ($aut_EnableBankDraft) {
-		$sSQL = "UPDATE autopayment_aut SET aut_Account=$gotPaymentMethod WHERE aut_ID=" . $iAutID;
+		$sSQL = "UPDATE autopayment_aut SET aut_AccountVanco=$gotPaymentMethod WHERE aut_ID=" . $iAutID;
 	} elseif ($aut_EnableCreditCard) {
-		$sSQL = "UPDATE autopayment_aut SET aut_CreditCard=$gotPaymentMethod WHERE aut_ID=" . $iAutID;
+		$sSQL = "UPDATE autopayment_aut SET aut_CreditCardVanco=$gotPaymentMethod WHERE aut_ID=" . $iAutID;
 	}
 	mysql_query($sSQL, $cnInfoCentral);
 	$resArr[] = array('Success'=>True);
 }
+
 
 header('Content-type: application/json');
 echo json_encode($resArr);

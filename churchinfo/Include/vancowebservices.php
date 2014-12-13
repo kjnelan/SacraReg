@@ -192,7 +192,7 @@ class VancoTools
 		Parameters:  $postdata: String to use in CGI variables in HTTPS post
 		Returns:     Response to Web Services post
 		*/
-		if ($test == True)
+		if ($this->test == True)
 		{
 			$ip = "https://www.vancodev.com";
 			$filepath = "/cgi-bin/wsnvptest.vps";
