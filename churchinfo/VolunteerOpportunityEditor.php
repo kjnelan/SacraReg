@@ -29,10 +29,6 @@ require "Include/Functions.php";
 // For now ... require $bAdmin
 // Future ... $bManageVol
 
-if (!$_SESSION['bAdmin']) {
-    Redirect("Menu.php");
-    exit;
-}
 
 // top down design....
 // title line
