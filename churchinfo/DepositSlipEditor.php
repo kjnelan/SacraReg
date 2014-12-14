@@ -539,9 +539,6 @@ if ($iDepositSlipID) {
 }
 
 require "Include/Header.php";
-
-print ($sVancoMessage);
-
 ?>
 
 
