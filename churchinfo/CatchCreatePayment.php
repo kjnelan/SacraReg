@@ -4,40 +4,40 @@ require "Include/Functions.php";
 require "Include/VancoConfig.php";
 
 // set into the Vanco interface by AutoPaymentEditor.php
-$iVancoAutID = FilterInput($_POST["customerid"],'int'); 
+$iVancoAutID = FilterInputArr($_POST,"customerid",'int'); 
 
 // this is what we are really after- this handle can be used to initiate authorized transactions
-$iVancoPaymentMethodRef = FilterInput($_POST["paymentmethodref"], 'int');
+$iVancoPaymentMethodRef = FilterInputArr($_POST, "paymentmethodref", 'int');
 
 $sVancoPaymentCreditCard = "";
 $iEnableCreditCard = 0;
-if (FilterInput ($_POST['accounttype']) == "CC") {
-	$iVancoPaymentCreditCard = "$iVancoPaymentMethodRef";
+if (FilterInputArr ($_POST, 'accounttype') == "CC") {
+	$sVancoPaymentCreditCard = "$iVancoPaymentMethodRef";
 	$iEnableCreditCard = 1;
 }
 
 $sVancoPaymentBankDraft = "";
 $iEnableBankDraft = 0;
-if (FilterInput ($_POST['accounttype']) == "C") {
-	$iVancoPaymentBankDraft = "$iVancoPaymentMethodRef";
+if (FilterInputArr ($_POST, 'accounttype') == "C") {
+	$sVancoPaymentBankDraft = "$iVancoPaymentMethodRef";
 	$iEnableBankDraft = 1;
 }
 
 // Other information that was just entered into the payment page that we will store for reference
-$sVancoName = FilterInput ($_POST["name"]);
+$sVancoName = FilterInputArr ($_POST, "name");
 $aVancoNames = explode (" ", $sVancoName, 2);
 $sVancoFirstName = $aVancoNames[0];
 $sVancoLastName = $aVancoNames[1];
-$sVancoAddr1 = FilterInput ($_POST["billingaddr1"]);
-$sVancoBillingCity = FilterInput ($_POST["billingcity"]);
-$sVancoBillingState = FilterInput ($_POST["billingstate"]);
-$sVancoBillingZip = FilterInput ($_POST["billingzip"]);
-$sVancoEmail = FilterInput ($_POST["email"]);
-$sVancoExpMonth = FilterInput ($_POST["expmonth"]);
-$sVancoExpYear = FilterInput ($_POST["expyear"]);
+$sVancoAddr1 = FilterInputArr ($_POST, "billingaddr1");
+$sVancoBillingCity = FilterInputArr ($_POST, "billingcity");
+$sVancoBillingState = FilterInputArr ($_POST, "billingstate");
+$sVancoBillingZip = FilterInputArr ($_POST, "billingzip");
+$sVancoEmail = FilterInputArr ($_POST, "email");
+$sVancoExpMonth = FilterInputArr ($_POST, "expmonth");
+$sVancoExpYear = FilterInputArr ($_POST, "expyear");
 
 // information reflected back (use for verification)
-$sVancoClientID = FilterInput($_POST["clientid"]);
+$sVancoClientID = FilterInputArr($_POST,"clientid");
 
 $sSQL = "UPDATE autopayment_aut SET ";
 $sSQL .= "aut_FirstName=\"$sVancoFirstName\"";
@@ -48,14 +48,16 @@ $sSQL .= ", aut_State=\"$sVancoBillingState\"";
 $sSQL .= ", aut_Zip=\"$sVancoBillingZip\"";
 $sSQL .= ", aut_Email=\"$sVancoEmail\"";
 $sSQL .= ", aut_EnableCreditCard=\"$iEnableCreditCard\"";
-$sSQL .= ", aut_CreditCardVanco=\"$iVancoPaymentCreditCard\"";
+$sSQL .= ", aut_CreditCardVanco=\"$sVancoPaymentCreditCard\"";
 $sSQL .= ", aut_EnableBankDraft=\"$iEnableBankDraft\"";
-$sSQL .= ", aut_AccountVanco=\"$iVancoPaymentBankDraft\"";
+$sSQL .= ", aut_AccountVanco=\"$sVancoPaymentBankDraft\"";
 $sSQL .= ", aut_ExpMonth=\"$sVancoExpMonth\"";
 $sSQL .= ", aut_ExpYear=\"$sVancoExpYear\"";
 $sSQL .= ", aut_DateLastEdited=\"" . date ("YmdHis"). "\"";
 $sSQL .= ", aut_EditedBy=" . $_SESSION['iUserID'];
 $sSQL .= " WHERE aut_ID=$iVancoAutID";
+
+$resultArr = array ();
 
 $bSuccess = false;
 if ($result = mysql_query($sSQL, $cnInfoCentral))
@@ -63,12 +65,14 @@ if ($result = mysql_query($sSQL, $cnInfoCentral))
 
 if (! $bSuccess) {
 	$errStr = gettext("Cannot execute query.") . "<p>$sSQL<p>" . mysql_error();
+	array_push ($resultArr, array('Query'=>$sSQL));
+	array_push ($resultArr, array ('Error'=>$errStr));
 	$var_str = var_export($_POST, true);
-	$logf = fopen ("CatchCreatePayment.log", "a");
-	fprintf ($logf, "%s\n%s\n", $var_str, $errStr);
-	fclose ($logf);
+	array_push ($resultArr, array ('POST'=>$var_str));
 }
 
+array_push ($resultArr, array ('Success'=>$bSuccess));
+
 header('Content-type: application/json');
-echo json_encode(array('Success'=>$bSuccess));
+echo json_encode($resultArr);
 ?>
