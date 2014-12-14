@@ -421,7 +421,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 			// Call Login API to receive a session ID to be used in future API calls
 			$sessionid = $workingobj->vancoLoginRequest();
 			// Create content to be passed in the nvpvar variable for a TransparentRedirect API call
-			$nvpvarcontent = $workingobj->vancoEFTTransparentRedirectNVPGenerator($urltoredirect,$customerid,"","NO");
+			$nvpvarcontent = $workingobj->vancoEFTTransparentRedirectNVPGenerator($VancoUrltoredirect,$customerid,"","NO");
 
 			$paymentmethodref = "";
 			if ($dep_Type == "CreditCard") {
@@ -439,7 +439,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 			    "",// $customerref
 			    $firstName . " " . $lastName,// $name
 			    $address1,// $address1
-			    address2,// $address2
+			    $address2,// $address2
 			    $city,// $city
 				$state,// $state
 				$zip,// $czip
@@ -453,15 +453,19 @@ if (isset($_POST["DepositSlipSubmit"])) {
 			$retArr = array();
 			parse_str($addRet, $retArr);
 			
+			$errListStr = "";
+			if (array_key_exists ("errorlist", $retArr))
+				$errListStr = $retArr["errorlist"];
+			
 			$bApproved = false;
 			
 			// transactionref=None&paymentmethodref=16610755&customerref=None&requestid=201411222041237455&errorlist=167
-			if ($retArr["transactionref"]!="None" && $retArr["errorlist"] == "")
+			if ($retArr["transactionref"]!="None" && $errListStr == "")
 				$bApproved = true;
 				
 			$errStr = "";
-			if ($retArr["errorlist"] != "") {
-				$errList = explode (",", $retArr["errorlist"]);
+			if ($errListStr != "") {
+				$errList = explode (",", $errListStr);
 				foreach ($errList as $oneErr) {
 					$errStr .= $workingobj->errorString ($oneErr . "<br>\n");
 				}
