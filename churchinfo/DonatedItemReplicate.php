@@ -20,12 +20,19 @@ require "Include/Functions.php";
 $iFundRaiserID = $_SESSION['iCurrentFundraiser'];
 $iDonatedItemID = FilterInputArr($_GET,"DonatedItemID", "int");
 $iCount = FilterInputArr($_GET,"Count", "int");
+
 $sLetter = 'a';
 
 $sSQL = "SELECT di_item FROM donateditem_di WHERE di_ID=$iDonatedItemID";
 $rsItem = RunQuery ($sSQL);
 $row = mysql_fetch_array($rsItem);
 $startItem = $row[0];
+
+if (strlen($startItem) == 2) { // replicated items will sort better if they have a two-digit number
+	$letter = substr ($startItem, 0, 1);
+	$number = substr ($startItem, 1, 1);
+	$startItem = $letter . '0' . $number;
+}
 
 $letterNum = ord ("a");
 
