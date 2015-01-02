@@ -69,12 +69,12 @@ if (isset($_POST["DonatedItemSubmit"]) || isset($_POST["DonatedItemSubmitAndAdd"
 	if (strlen($iDonatedItemID) < 1)
 	{
 		$sSQL = "INSERT INTO donateditem_di (di_FR_ID, di_Item, di_multibuy, di_donor_ID, di_buyer_ID, di_title, di_description, di_sellprice, di_estprice, di_materialvalue, di_minimum, di_picture, di_EnteredBy, di_EnteredDate)
-		VALUES (" . $iCurrentFundraiser . ",'" . $sItem . "','" . $bMultibuy . "','" . $iDonor . "','" . $iBuyer . "','" . mysql_real_escape_string($sTitle) . "','" . mysql_real_escape_string($sDescription) . "','" . $nSellPrice . "','" . $nEstPrice . "','" . $nMaterialValue . "','".$nMinimumPrice . "','" . mysql_real_escape_string($sPictureURL)."'";
+		VALUES (" . $iCurrentFundraiser . ",'" . $sItem . "','" . $bMultibuy . "','" . $iDonor . "','" . $iBuyer . "','" .  html_entity_decode($sTitle) . "','" . html_entity_decode($sDescription) . "','" . $nSellPrice . "','" . $nEstPrice . "','" . $nMaterialValue . "','".$nMinimumPrice . "','" . mysql_real_escape_string($sPictureURL)."'";
 		$sSQL .= "," . $_SESSION['iUserID'] . ",'" . date("YmdHis") . "')";
 		$bGetKeyBack = True;		
 	// Existing record (update)
 	} else {
-		$sSQL = "UPDATE donateditem_di SET di_FR_ID = " . $iCurrentFundraiser . ", di_Item = '". $sItem . "', di_multibuy = '" . $bMultibuy . "', di_donor_ID = " . $iDonor . ", di_buyer_ID = " . $iBuyer . ", di_title = '" . mysql_real_escape_string($sTitle) . "', di_description = '" . mysql_real_escape_string($sDescription) . "', di_sellprice = '" . $nSellPrice . "', di_estprice = '" . $nEstPrice . "', di_materialvalue = '" . $nMaterialValue . "', di_minimum = '" . $nMinimumPrice . "', di_picture = '" . mysql_real_escape_string($sPictureURL) . "', di_EnteredBy=" . $_SESSION['iUserID'] . ", di_EnteredDate = '" . date("YmdHis") . "'";
+		$sSQL = "UPDATE donateditem_di SET di_FR_ID = " . $iCurrentFundraiser . ", di_Item = '". $sItem . "', di_multibuy = '" . $bMultibuy . "', di_donor_ID = " . $iDonor . ", di_buyer_ID = " . $iBuyer . ", di_title = '" . html_entity_decode($sTitle) . "', di_description = '" . html_entity_decode($sDescription) . "', di_sellprice = '" . $nSellPrice . "', di_estprice = '" . $nEstPrice . "', di_materialvalue = '" . $nMaterialValue . "', di_minimum = '" . $nMinimumPrice . "', di_picture = '" . mysql_real_escape_string($sPictureURL) . "', di_EnteredBy=" . $_SESSION['iUserID'] . ", di_EnteredDate = '" . date("YmdHis") . "'";
 		$sSQL .= " WHERE di_ID = " . $iDonatedItemID;
 		echo "<br><br><br><br><br><br>".$sSQL;
 		$bGetKeyBack = false;
@@ -230,7 +230,7 @@ require "Include/Header.php";
 	
 				<tr>
 					<td class="LabelColumn"><?php echo gettext("Title:"); ?></td>
-					<td class="TextColumn"><input type="text" name="Title" id="Title" value="<?php echo stripslashes($sTitle); ?>"></td>
+					<td class="TextColumn"><input type="text" name="Title" id="Title" value="<?php echo htmlentities ($sTitle); ?>"/></td>
 				</tr>
 				
 				<tr>
@@ -298,17 +298,17 @@ require "Include/Header.php";
 	
 			<tr>
 				<td class="LabelColumn"><?php echo gettext("Description");?></td>
-				<td><textarea name="Description" rows="8" cols="90"><?php echo stripslashes($sDescription);?></textarea></td>
+				<td><textarea name="Description" rows="8" cols="90"><?php echo htmlentities ($sDescription);?></textarea></td>
 			</tr>
 
 			<tr>
 				<td class="LabelColumn"><?php echo gettext("Picture URL");?></td>
-				<td><textarea name="PictureURL" rows="1" cols="90"><?php echo stripslashes($sPictureURL);?></textarea></td>
+				<td><textarea name="PictureURL" rows="1" cols="90"><?php echo htmlentities ($sPictureURL);?></textarea></td>
 			</tr>
 			
 			<?php if ($sPictureURL != "") {?>
 			<tr>
-				<td colspan="2" width="100%"><img src="<?php echo stripslashes($sPictureURL);?>"/></td>
+				<td colspan="2" width="100%"><img src="<?php echo htmlentities ($sPictureURL);?>"/></td>
 			</tr>				
 			<?php }?>
 
