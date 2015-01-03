@@ -60,14 +60,16 @@ function ClearAccounts (AutID)
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.uniqueid = AutID;
 
-    xmlhttp.open("GET","<?php echo RedirectURL("AutoPaymentClearAccounts.php");?>?",true);
+    xmlhttp.open("GET","<?php echo RedirectURL("AutoPaymentClearAccounts.php");?>?customerid="+AutID,true);
     xmlhttp.PaymentID = AutID; // So we can see it when the request finishes
     
     xmlhttp.onreadystatechange=function() {
 		if (this.readyState==4 && this.status==200) { // Hide them as the requests come back, deleting would mess up the outside loop
-             document.getElementById("Select"+this.PaymentID).checked = false;
-             document.getElementById("CreditCard"+this.PaymentID).innerHTML = "";
-             document.getElementById("Account"+this.PaymentID).innerHTML = "";
+            document.getElementById("Select"+this.PaymentID).checked = false;
+        	ccVal = document.getElementById("CreditCard"+this.PaymentID).innerHTML;
+        	document.getElementById("CreditCard"+this.PaymentID).innerHTML = "************" + ccVal.substr (ccVal.length-4,4);
+        	aVal = document.getElementById("Account"+this.PaymentID).innerHTML;
+        	document.getElementById("Account"+this.PaymentID).innerHTML = "*****" + aVal.substr (aVal.length-4,4);
         }
     };
     xmlhttp.send();

@@ -536,10 +536,12 @@ function CreatePaymentMethod()
                 success: function (postbackdata) {
                 	if (gotPaymentRef > 0) {
         	        	if (document.getElementById("EnableBankDraft").checked) {
-        	            	document.getElementById("Account").value = "";
+            	        	accountVal = document.getElementById("Account").value;
+        	            	document.getElementById("Account").value = "*****" + accountVal.substr (accountVal.length-4,4);
      		           		document.getElementById ("AccountVanco").value = gotPaymentRef;
         	        	} else if (document.getElementById("EnableCreditCard").checked) {
-        	            	document.getElementById("CreditCard").value = "";
+            	        	ccVal = document.getElementById("CreditCard").value;
+        	            	document.getElementById("CreditCard").value = "************" + ccVal.substr(ccVal.length-4,4) ;
                     		document.getElementById ("CreditCardVanco").value = gotPaymentRef;
         	        	}
                 	} else {
