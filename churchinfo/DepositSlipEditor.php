@@ -40,6 +40,16 @@ if ($iDepositSlipID) {
 	// Set current deposit slip
 	$_SESSION['iCurrentDeposit'] = $iDepositSlipID;
 
+	// Set the session variable for default payment type so the new payment form will come up correctly
+	if ($dep_Type == "Bank") 
+		$_SESSION['idefaultPaymentMethod'] = "CHECK";
+	else if ($dep_Type == "CreditCard")
+		$_SESSION['idefaultPaymentMethod'] = "CREDITCARD";
+	else if ($dep_Type == "BankDraft")
+		$_SESSION['idefaultPaymentMethod'] = "BANKDRAFT";
+	else if ($dep_Type == "eGive")
+		$_SESSION['idefaultPaymentMethod'] = "EGIVE";
+	
 	// Security: User must have finance permission or be the one who created this deposit
 	if (! ($_SESSION['bFinance'] || $_SESSION['iUserID']==$dep_EnteredBy)) {
 		Redirect("Menu.php");
@@ -52,7 +62,7 @@ if (! $iDepositSlipID)
 	$sPageTitle = $dep_Type . " " . gettext("Deposit Slip Number: TBD");
 else
 	$sPageTitle = $dep_Type . " " . gettext("Deposit Slip Number: ") . $iDepositSlipID;
-
+	
 //Is this the second pass?
 if (isset($_POST["DepositSlipSubmit"])) {
 	//Get all the variables from the request object and assign them locally
