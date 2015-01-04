@@ -106,11 +106,7 @@ for (; ; ) {    // This is not a loop but a section of code to be
     $sSQL = "ALTER IGNORE TABLE autopayment_aut ADD `aut_AccountVanco` text NULL";
 	if (!RunQuery($sSQL, FALSE))
 	    break;
-        
-    $sSQL = "ALTER IGNORE TABLE `menuconfig_mcf` ADD PRIMARY KEY(`mid`);";
-	if (!RunQuery($sSQL, FALSE))
-	    break;
-    
+
    	$sSQL = "INSERT IGNORE INTO `menuconfig_mcf` VALUES (91, 'automaticpayments', 'admin', 0, 'Electronic Payments', NULL, 'ElectronicPaymentList.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 12);";
 	if (!RunQuery($sSQL, FALSE))
 	    break;
@@ -123,7 +119,7 @@ for (; ; ) {    // This is not a loop but a section of code to be
 	if (!RunQuery($sSQL, FALSE))
 	    break;
 	
-   	$sSQL = "INSERT IGNORE INTO `version_ver` (`ver_version`, `ver_date`) VALUES ('".$sVersion."',NOW())";
+	$sSQL = "INSERT IGNORE INTO `version_ver` (`ver_version`, `ver_date`) VALUES ('".$sVersion."',NOW())";
     RunQuery($sSQL, FALSE); // False means do not stop on error
 	    break;
 }
