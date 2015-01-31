@@ -686,7 +686,7 @@ while ($aRow = mysql_fetch_array($rsRecords))
         $isFamily = true;
 
         $pdf->sRecordName = "";
-        $pdf->sLastName = $fam_Name;
+        $pdf->sLastName = $per_LastName;
         $OutStr .= $pdf->sGetFamilyString($aRow);
         $bNoRecordName = true;
 
@@ -734,10 +734,10 @@ while ($aRow = mysql_fetch_array($rsRecords))
     }
     else
     {
-        if (strlen($fam_Name))
-            $pdf->sLastName = $fam_Name;
-        else
+        if (strlen($per_LastName))
             $pdf->sLastName = $per_LastName;
+        else
+            $pdf->sLastName = $fam_Name;
         $pdf->sRecordName = $pdf->sLastName . ", " . $per_FirstName;
         if (strlen ($per_Suffix))
 			$pdf->sRecordName .= " " . $per_Suffix;
