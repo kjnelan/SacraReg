@@ -483,10 +483,14 @@ if (isset($_POST["PersonSubmit"]) || isset($_POST["PersonSubmitAndAdd"]))
 		$iGender = "";
 		$sAddress1 = "";
 		$sAddress2 = "";
-		$sCity = $sDefaultCity;
-		$sState = $sDefaultState;
+		//only load defaults for city, state, & country if we're not hiding addresses to avoid creating an address entry for this person
+		//This keeps the family address in place, if that's the way the option is set.		
+		if (!$bHidePersonAddress) {		
+			$sCity = $sDefaultCity;
+			$sState = $sDefaultState;
+			$sCountry = $sDefaultCountry;
+		}
 		$sZip	= "";
-		$sCountry = $sDefaultCountry;
 		$sHomePhone = "";
 		$sWorkPhone = "";
 		$sCellPhone = "";
