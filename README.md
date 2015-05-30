@@ -1,13 +1,24 @@
-# ChurchInfoWeb -> ChurchWebCRM
-ChurchInfo is a free church database program to help churches track members, families, groups, pledges and payments. I have fully Forked the proejct into a new Code base that will start to differ from the one managed at Sourceforge.net/projects/churchinfo/
+# Current Project
 
-**if you want the new project checkout [ChurchWebCRM/ChurchWebCRM](https://github.com/ChurchWebCRM/ChurchWebCRM)** and visit 
+ChurchInfo (http://www.churchdb.org/) is a free church database program to help churches track members, families, groups, pledges and payments. 
 
-[ChurchWebCRM.com] (http://ChurchWebCRM.com)
+The ChurchInfo project is managed at Sourceforge http://sourceforge.net/projects/churchinfo/ but I try to sync this repo with every release.. 
 
-Here is what the new UI looks like
+# New Project
 
-![Home Page] (http://churchwebcrm.com/wp-content/uploads/2015/02/menu.png)
+A new project has been forked from the stable church info project is now called Church Web CRM with the goal of brining new featuers and creating a responsive application.
+
+##Links 
+
+- GitHub Repo [ChurchCRM/CRM](https://github.com/ChurchCRM/CRM)** and visit 
+- Website [ChurchCRM.io] (http://ChurchCRM.io)
+- Demo Site [demo.churchcrm.io] (http://demo.churchcrm.io) 
+
+## Here is what the new UI looks like
+
+![Menu](http://www.churchcrm.io/screenshots/menu.PNG)
+![Family](http://www.churchcrm.io/screenshots/family.PNG)
+![Person](http://www.churchcrm.io/screenshots/person.PNG)
 
 
 
