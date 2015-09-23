@@ -18,7 +18,7 @@ require "Include/Config.php";
 require "Include/Functions.php";
 
 $linkBack = FilterInputArr($_GET,"linkBack");
-$iFundRaiserID = FilterInputArr($_GET,"FundRaiserID");
+$iFundRaiserID = FilterInputArr($_GET,"FundRaiserID", 'int');
 
 if ($iFundRaiserID>0) {
 	// Get the current fund raiser record
