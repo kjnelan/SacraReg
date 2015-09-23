@@ -81,7 +81,7 @@ if (isset($_POST["doBackup"]))
 		if ($bEncryptBackup)
 		{
 			putenv("GNUPGHOME=/tmp");
-			$encryptCommand = "echo $sPassword1 | $sPGPname -q -c --batch --no-tty --passphrase-fd 0 $saveTo";
+			$encryptCommand = "echo ". escapeshellarg($sPassword1). "| $sPGPname -q -c --batch --no-tty --passphrase-fd 0 $saveTo";
 			$saveTo .= ".gpg";
 			system($encryptCommand);
 			$archiveType = 3;
