@@ -17,12 +17,13 @@
 require "Include/Config.php";
 require "Include/Functions.php";
 
-$sSQL = "SELECT * FROM events_event WHERE event_id = ".$_GET['EID'];
+$EID = FilterInput($_GET['EID'], 'int');
+$sSQL = "SELECT * FROM events_event WHERE event_id = ". $EID;
 $rsOpps = RunQuery($sSQL);
 $aRow = mysql_fetch_array($rsOpps, MYSQL_BOTH) or die(mysql_error());
 extract($aRow);
 $aEventID = $event_id;
-$aEventTitle = $event_title;
+$aEventTitle = htmlentities(stripslashes($event_title));
 $aEventText = nl2br(htmlentities(stripslashes($event_text),ENT_NOQUOTES, "UTF-8"));
 ?>
 <html>
