@@ -67,7 +67,7 @@ if (isset($_GET['PersonID'])) {
 if (isset($_GET['ErrorText'])){
     $sErrorText = FilterInput($_GET['ErrorText'],'string');
 }else{
-    $sErrorText = '';   
+    $sErrorText = '';
 }
 
 //Value to help determine correct return state on error
@@ -78,6 +78,11 @@ if (isset($_POST['NewUser'])){
 // Has the form been submitted?
 if (isset($_POST['save']) && $iPersonID > 0) {
 
+    //Check User CSRF Token When Add User Form Is Submitted to Prevent CSRF Attacks
+    if(strcmp($_POST['csrfToken'], $_SESSION['csrfToken']) != 0) {
+         Redirect('UserEditor.php');
+         exit;
+    }
     // Assign all variables locally
     $sAction = $_POST['Action'];
 
@@ -326,6 +331,7 @@ require 'Include/Header.php';
 <form method="post" action="UserEditor.php">
 <input type="hidden" name="Action" value="<?php echo $sAction; ?>">
 <input type="hidden" name="NewUser" value="<?php echo $vNewUser; ?>">
+<input type="hidden" name="csrfToken" value="<?php echo $_SESSION['csrfToken'] ?>" >
 <?php
 
 // Are we adding?
