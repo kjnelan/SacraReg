@@ -273,6 +273,8 @@ if ($iUserID > 0)
         // Set the URL Path
         $_SESSION['sURLPath'] = $_POST['sURLPath'];
 
+	$_SESSION['csrfToken'] = genCSRFToken();
+
         // If PHP's magic quotes setting is turned off, we want to use a workaround to ensure security.
         if (function_exists('get_magic_quotes_gpc'))
             $_SESSION['bHasMagicQuotes'] = get_magic_quotes_gpc();
