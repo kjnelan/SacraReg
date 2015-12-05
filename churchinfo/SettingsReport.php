@@ -91,7 +91,8 @@ while (list($cfg_id, $cfg_name, $cfg_value, $cfg_type, $cfg_default, $cfg_toolti
 			value='".htmlspecialchars($cfg_value, ENT_QUOTES)."'></td>";
 	} elseif ($cfg_type == 'textarea') {
 		echo "<td class=TextColumnWithBottomBorder>
-			<textarea rows=4 cols=30 name='new_value[$cfg_id]'>";
+			<textarea rows=4 cols=30 name='new_value[$cfg_id]'>"
+			.htmlspecialchars($cfg_value, ENT_QUOTES)."</textarea></td>";
 	} elseif ($cfg_type == 'number' || $cfg_type == 'date')	{
 		echo "<td class=TextColumnWithBottomBorder><input type=text size=15 maxlength=15 name="
 			."'new_value[$cfg_id]' value='$cfg_value'></td>";
