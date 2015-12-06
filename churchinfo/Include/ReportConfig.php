@@ -66,7 +66,7 @@ class ChurchInfoReport extends FPDF {
 	}
 
 	function WriteAt ($x, $y, $str) {
-		$strconv=iconv("UTF-8","ISO-8859-1",$str);
+		$strconv=iconv("UTF-8","ISO-8859-1//IGNORE",$str);
 		$this->SetXY ($x, $y);
 		$this->Write ($this->incrementY, $strconv);
 	}
