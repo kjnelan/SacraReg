@@ -308,6 +308,7 @@ class PDF_Directory extends ChurchInfoReport {
         global $bDirFamilyEmail;
         global $bDirWedding;
         global $bDirAddress;
+        global $sDefaultCountry;
 
         extract($aRow);
 
@@ -321,6 +322,7 @@ class PDF_Directory extends ChurchInfoReport {
 	      if (strlen($fam_Address2)) { $sFamilyStr .= "  ".$fam_Address2;}
 	      $sFamilyStr .= "\n";
             if (strlen($fam_City)) { $sFamilyStr .= $fam_City . ", " . $fam_State . " " . $fam_Zip . "\n";  }
+            if (strlen($fam_Country) && ($fam_Country != $sDefaultCountry )) { $sFamilyStr .= $fam_Country . "\n";  }
         }
 
         if ($bDirFamilyPhone && strlen($fam_HomePhone))
@@ -751,6 +753,7 @@ while ($aRow = mysql_fetch_array($rsRecords))
         SelectWhichAddress($sAddress1, $sAddress2, $per_Address1, $per_Address2, $fam_Address1, $fam_Address2, false);
         $sAddress2 = SelectWhichInfo($per_Address2, $fam_Address2, false);
         $sCity = SelectWhichInfo($per_City, $fam_City, false);
+        $sCountry = SelectWhichInfo($per_Country, $fam_Country, false);
         $sState = SelectWhichInfo($per_State, $fam_State, false);
         $sZip = SelectWhichInfo($per_Zip, $fam_Zip, false);
         $sHomePhone = SelectWhichInfo($per_HomePhone, $fam_HomePhone, false);
@@ -766,6 +769,7 @@ while ($aRow = mysql_fetch_array($rsRecords))
             if (strlen($sAddress2)) { $OutStr .= "   ".$sAddress2;  }
             $OutStr .= "\n";
             if (strlen($sCity)) { $OutStr .= $sCity . ", " . $sState . " " . $sZip . "\n";  }
+            if (strlen($sCountry) && ($sCountry != $sDefaultCountry)) { $OutStr .= $sCountry . "\n";  }
         }
         if (($bDirFamilyPhone || $bDirPersonalPhone) && strlen($sHomePhone)) {
             $TempStr = ExpandPhoneNumber($sHomePhone, $sDefaultCountry, $bWierd);
