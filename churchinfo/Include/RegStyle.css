@@ -1,0 +1,40 @@
+/* YUI 3 CSS reset */
+
+td.WithBorder
+{
+	border-width:3px;
+	border-color:#00ff00; 
+	padding: 10px;
+	background-color: #88ff88;
+}
+
+td.RegLabelColumn
+{
+	text-align: right;
+	font-weight: bold;
+	background: #F2EEDB;
+	border: solid 1px black;
+	padding: 4px;
+	vertical-align: top;
+	width: 20%;
+}
+
+td.RegTextColumn
+{
+	border-top: solid 1px #eaeaea;
+	padding: 4px;
+	vertical-align: top;
+	width: 80%;
+	text-align: left;
+}
+
+input.RegEnterText
+{
+	width: 100%;
+	text-align: left;
+}
+
+td.RegError
+{
+	color: #ff0000;
+}

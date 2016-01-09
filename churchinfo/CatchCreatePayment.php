@@ -1,6 +1,7 @@
 <?php 
 require "Include/Config.php";
-require "Include/Functions.php";
+require "Include/UtilityFunctions.php";
+//require "Include/Functions.php";
 require "Include/VancoConfig.php";
 
 // set into the Vanco interface by AutoPaymentEditor.php

@@ -1422,3 +1422,47 @@ CREATE TABLE `egive_egv` (
   `egv_EnteredBy` smallint(6) NOT NULL default '0',
   `egv_EditedBy` smallint(6) NOT NULL default '0'
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+CREATE TABLE `register_reg` (
+	`reg_id` mediumint(9) unsigned NOT NULL auto_increment,
+	`reg_perid` mediumint(9) unsigned,
+	`reg_famid` mediumint(9) unsigned,
+	`reg_firstname` text,
+	`reg_middlename` text,
+	`reg_lastname` text,
+	`reg_famname` text,
+	`reg_address1` text,
+	`reg_address2` text,
+	`reg_city` text,
+	`reg_state` text,
+	`reg_zip` text,
+	`reg_country` text,
+	`reg_phone` text,
+	`reg_email` text,
+	`reg_username` text,
+	`reg_password` text,
+	`reg_reenterpassword` text,
+	
+	`reg_randomtag` text,
+	`reg_confirmed` tinyint,
+	`reg_changedate` datetime,
+	PRIMARY KEY  (`reg_id`),
+	UNIQUE KEY `reg_id` (`reg_id`)
+) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+CREATE TABLE `register_pledge_rpg` (
+	`rpg_id` mediumint(9) unsigned NOT NULL auto_increment,
+	`rpg_pledgeorpayment` enum ('Pledge', 'Payment'),
+	`rpg_fund` mediumint (9),
+	`rpg_date` date,
+	`rpg_reguser` mediumint(9) unsigned NOT NULL,
+	`rpg_annual_amount` decimal (6,2),
+	`rpg_fyid` mediumint(9) unsigned NOT NULL,
+	`rpg_schedule` enum ('Monthly','Quarterly','Once'),
+	`rpg_method` enum ('BankDraft','CreditCard','Check','Cash'),
+	`rpg_comment` text,
+	`rpg_changedate` datetime,
+	`rpg_enteredby` mediumint (9),
+	PRIMARY KEY  (`rpg_id`),
+	UNIQUE KEY `rpg_id` (`rpg_id`)
+) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci;

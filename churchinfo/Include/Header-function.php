@@ -65,10 +65,8 @@ global $sPageTitle, $sURLPath;
     <title>ChurchInfo: <?php echo $sPageTitle; ?></title>
     <link rel="stylesheet" type="text/css" href="<?php echo $sURLPath."/"; ?>Include/Style.css">
     <link rel="stylesheet" type="text/css" href="<?php echo $sURLPath."/"; ?>Include/<?php echo $_SESSION['sStyle']; ?>">
-    <link rel="stylesheet" type="text/css" media="all" href="<?php echo $sURLPath."/"; ?>Include/jscalendar/calendar-blue.css" title="cal-style">
 <?php
 }
-
 
 function Header_body_scripts() {
 global $sLanguage, $bDefectiveBrowser, $bExportCSV, $sMetaRefresh, $bToolTipsOn, $iNavMethod, $bRegistered, $sHeader, $sGlobalMessage, 
@@ -207,46 +205,9 @@ $sURLPath = $_SESSION['sURLPath'];
         }
     </script> 
 
-    <script type="text/javascript" src="<?php echo $sURLPath."/"; ?>Include/jscalendar/calendar.js"></script>
-    <script type="text/javascript" src="<?php echo $sURLPath."/"; ?>Include/jscalendar/lang/calendar-<?php echo substr($sLanguage,0,2); ?>.js"></script>
+<?php require "Include/CalendarJava.php";?>
 
-    <script language="javascript" type="text/javascript">
-
-        // Popup Calendar stuff
-        function selected(cal, date)
-        {
-            cal.sel.value = date; // update the date in the input field.
-            if (cal.dateClicked)
-                cal.callCloseHandler();
-        }
-
-        function closeHandler(cal)
-        {
-            cal.hide(); // hide the calendar
-        }
-
-        function showCalendar(id, format)
-        {
-            var el = document.getElementById(id);
-            if (calendar != null)
-            {
-                calendar.hide();
-            }
-            else
-            {
-                var cal = new Calendar(false, null, selected, closeHandler);
-                cal.weekNumbers = false;
-                calendar = cal;                  // remember it in the global var
-                cal.setRange(1900, 2070);        // min/max year allowed.
-                cal.create();
-            }
-            calendar.setDateFormat(format);    // set the specified date format
-            calendar.parseDate(el.value);      // try to parse the text in field
-            calendar.sel = el;                 // inform it what input field we use
-            calendar.showAtElement(el);        // show the calendar below it
-            return false;
-        }
-
+	<script>
         var MINUTE = 60 * 1000;
         var HOUR = 60 * MINUTE;
         var DAY = 24 * HOUR;
