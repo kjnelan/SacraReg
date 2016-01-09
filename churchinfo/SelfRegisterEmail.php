@@ -75,30 +75,40 @@ function SendForgotMessage ($reg_id)
 }
 	
 function SendAMessage ($reg_id, $bodyContents, $to_email, $to_name, $email_subject)
-{	
-	$SMTP_HOST = "";
-	$SMTP_PORT = 25;
-	$SMTP_USER = "";
-	$SMTP_PASS = "";
-	$SMTP_FROM = "";
-	$SMTP_FROM_NAME = "";
-	$SMTP_REPLYTO = "";
-	$SMTP_REPLYTO_NAME = "";
-	
+{
+    global $sToEmailAddress; //Default account for receiving a copy of all emails
+    global $sChurchName;
+    $sFromName = $sChurchName.": ChurchInfo Administrator";
+    global $sSMTPAuth;
+    global $sSMTPUser;
+    global $sSMTPPass;
+    global $sSMTPHost;
+
 	$mail = new PHPMailer;
 	$mail->isSMTP();
 
+	$delimeter = strpos($sSMTPHost, ':');
+    if ($delimeter === FALSE) {
+        $sSMTPPort = 25;                // Default port number
+    } else {
+        $sSMTPPort = substr($sSMTPHost, $delimeter+1);
+        $sSMTPHost = substr($sSMTPHost, 0, $delimeter);   
+    }
+    if (is_int($sSMTPPort))
+        $mail->Port = $sSMTPPort;
+    else
+        $mail->Port = 25;
+	
 	//Enable SMTP debugging	// 0 = off (for production use)	// 1 = client messages	// 2 = client and server messages
 	$mail->SMTPDebug = 0; // 2
 	$mail->Debugoutput = 'html';
-	$mail->Host = $SMTP_HOST;
-	$mail->Port = $SMTP_PORT;
-	$mail->SMTPAuth = true;
+	$mail->Host = $sSMTPHost;
+	$mail->SMTPAuth = $sSMTPAuth;
 	$mail->SMTPAutoTLS = false;
-	$mail->Username = $SMTP_USER;
-	$mail->Password = $SMTP_PASS;
-	$mail->setFrom($SMTP_FROM, $SMTP_FROM_NAME);
-	$mail->addReplyTo($SMTP_REPLYTO, $SMTP_REPLYTO_NAME);
+	$mail->Username = $sSMTPUser;
+	$mail->Password = $sSMTPPass;
+	$mail->setFrom($sToEmailAddress, $sFromName);
+	$mail->addReplyTo($sToEmailAddress, $sFromName);
 	
 	$mail->addAddress($to_email, $to_name);
 	$mail->Subject = $email_subject; 
@@ -116,9 +126,9 @@ function SendAMessage ($reg_id, $bodyContents, $to_email, $to_name, $email_subje
 	
 	//send the message, check for errors
 	if (!$mail->send()) {
-//	    echo "Mailer Error: " . $mail->ErrorInfo;
+	    echo "Mailer Error: " . $mail->ErrorInfo;
 	} else {
-//	    echo "Message sent!";
+	    echo "Message sent!";
 	}
 }
 
