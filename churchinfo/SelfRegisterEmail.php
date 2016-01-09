@@ -76,14 +76,14 @@ function SendForgotMessage ($reg_id)
 	
 function SendAMessage ($reg_id, $bodyContents, $to_email, $to_name, $email_subject)
 {	
-	$SMTP_HOST = "mail.myfairpoint.net";
+	$SMTP_HOST = "";
 	$SMTP_PORT = 25;
-	$SMTP_USER = "mwilt1@myfairpoint.net";
-	$SMTP_PASS = "fuck69";
-	$SMTP_FROM = "treasurer@uunashua.org";
-	$SMTP_FROM_NAME = "Michael Wilt";
-	$SMTP_REPLYTO = "treasurer@uunashua.org";
-	$SMTP_REPLYTO_NAME = "Michael Wilt";
+	$SMTP_USER = "";
+	$SMTP_PASS = "";
+	$SMTP_FROM = "";
+	$SMTP_FROM_NAME = "";
+	$SMTP_REPLYTO = "";
+	$SMTP_REPLYTO_NAME = "";
 	
 	$mail = new PHPMailer;
 	$mail->isSMTP();
