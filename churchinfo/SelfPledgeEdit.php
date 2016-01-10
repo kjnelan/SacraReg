@@ -13,6 +13,16 @@
 
 session_start();
 
+if ($_GET["PledgeOrPayment"]=="Pledge") {
+	$plg_PledgeOrPayment = "Pledge";
+} else if ($_GET["PledgeOrPayment"]=="Payment") {
+	$plg_PledgeOrPayment = "Payment";
+} else {
+	session_destroy ();
+	header('Location: SelfRegisterHome.php');
+	exit();
+}
+
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
@@ -58,7 +68,7 @@ if (isset($_POST["Cancel"])) {
 	// bail out without saving
 	header('Location: SelfRegisterHome.php');
 	exit();
-} else if (isset($_POST["Save"])) { // trying to save, use data from the form
+} else if (isset($_POST["Save"]) || isset($_POST["Process"])) { // trying to save, use data from the form
 	$plg_FYID = $link->real_escape_string($_POST["FYID"]);
 	$plg_date = $link->real_escape_string($_POST["Date"]);
 	$plg_amount = $link->real_escape_string($_POST["Amount"]);
@@ -66,7 +76,8 @@ if (isset($_POST["Cancel"])) {
 	$plg_method = $link->real_escape_string($_POST["Method"]);
 	$plg_comment = $link->real_escape_string($_POST["Comment"]);
 	$plg_fundID = $link->real_escape_string($_POST["FundID"]);
-
+	$plg_aut_ID = $link->real_escape_string($_POST["AutoPay"]);
+	
 	$errStr = "";
 	if ($plg_amount <= 0.0) {
 		$errStr .= "Please check amount.<br>\n";
@@ -75,16 +86,34 @@ if (isset($_POST["Cancel"])) {
 	if ($errStr == "") {
 		// Ok to create or update
 		
+		//Get the selected autopayment record
+		if ($plg_aut_ID > 0) {
+			$sSQL = "SELECT * FROM autopayment_aut WHERE aut_ID=$plg_aut_ID";
+			$rsAutoPayments = $link->query($sSQL);
+			if ($rsAutoPayments->num_rows == 1) {
+				$aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC);
+				extract($aRow);
+				if ($aut_CreditCardVanco > 0) // if processing a payment the method is based on the autopayment record
+					$plg_method = "CreditCard";
+				else if ($aut_AccountVanco > 0)
+					$plg_method = "BankDraft";
+			} else {
+				header('Location: SelfRegisterHome.php');
+				exit();
+			}
+		}
+		
 		$setValueSQL = "SET " .
 			"plg_FamID=$fam_ID,". 
-			"plg_PledgeOrPayment=\"Pledge\",". 
-			"plg_FYID=$plg_FYID,". 
+			"plg_PledgeOrPayment=\"$plg_PledgeOrPayment\",". 
+			"plg_FYID=$plg_FYID,".
 			"plg_date=\"$plg_date\",".
 			"plg_amount=$plg_amount,".
 			"plg_schedule=\"$plg_schedule\",".
 			"plg_method=\"$plg_method\",".
 			"plg_comment=\"$plg_comment\",".
 			"plg_fundID=$plg_fundID,".
+			"plg_aut_ID=$plg_aut_ID,".
 			"plg_EditedBy=$reg_perid,".
 			"plg_DateLastEdited=NOW()";
 		
@@ -101,6 +130,97 @@ if (isset($_POST["Cancel"])) {
 			$sSQL = "UPDATE pledge_plg " . $setValueSQL . " WHERE plg_plgID=".$plg_plgID;
 			$result = $link->query($sSQL);
 		}
+		
+		// If processing run the transaction now and remember whether it cleared
+		if (isset($_POST["Process"])) {
+			include "Include/vancowebservices.php";
+			include "Include/VancoConfig.php";
+			
+			$customerid = "$plg_aut_ID";  // This is an optional value that can be used to indicate a unique customer ID that is used in your system
+			// put aut_ID into the $customerid field
+			// Create object to preform API calls
+			
+			$workingobj = new VancoTools($VancoUserid, $VancoPassword, $VancoClientid, $VancoEnc_key, $VancoTest);
+			// Call Login API to receive a session ID to be used in future API calls
+			$sessionid = $workingobj->vancoLoginRequest();
+			// Create content to be passed in the nvpvar variable for a TransparentRedirect API call
+			$nvpvarcontent = $workingobj->vancoEFTTransparentRedirectNVPGenerator($VancoUrltoredirect,$customerid,"","NO");
+
+			$paymentmethodref = "";
+			if ($plg_method == "CreditCard") {
+				$paymentmethodref = $aut_CreditCardVanco;
+			} else {
+				$paymentmethodref = $aut_AccountVanco;
+			}
+
+			$addRet = $workingobj->vancoEFTAddCompleteTransactionRequest(
+			    $sessionid, // $sessionid
+			    $paymentmethodref,// $paymentmethodref
+			    '0000-00-00',// $startdate
+			    'O',// $frequencycode
+			    $customerid,// $customerid
+			    "",// $customerref
+			    $aut_FirstName . " " . $aut_LastName,// $name
+			    $aut_Address1,// $address1
+			    $aut_Address2,// $address2
+			    $aut_City,// $city
+				$aut_State,// $state
+				$aut_Zip,// $czip
+				$aut_Phone,// $phone
+				"No",// $isdebitcardonly
+				"",// $enddate
+				"",// $transactiontypecode
+				"",// $funddict
+				$plg_amount);// $amount
+
+			$retArr = array();
+			parse_str($addRet, $retArr);
+			
+			$errListStr = "";
+			if (array_key_exists ("errorlist", $retArr))
+				$errListStr = $retArr["errorlist"];
+			
+			$bApproved = false;
+			
+			// transactionref=None&paymentmethodref=16610755&customerref=None&requestid=201411222041237455&errorlist=167
+			if ($retArr["transactionref"]!="None" && $errListStr == "")
+				$bApproved = true;
+				
+			$errStr = "";
+			if ($errListStr != "") {
+				$errList = explode (",", $errListStr);
+				foreach ($errList as $oneErr) {
+					$errStr .= $workingobj->errorString ($oneErr . "<br>\n");
+				}
+			}
+			if ($errStr == "")
+				$errStr = "Success: Transaction reference number " . $retArr["transactionref"] . "<br>";
+				
+			$sSQL = "UPDATE pledge_plg SET plg_aut_Cleared='" . $bApproved . "' WHERE plg_plgID=" . $plg_plgID;
+			RunQuery($sSQL);
+			
+			if ($plg_aut_ResultID) {
+				// Already have a result record, update it.
+				
+				$sSQL = "UPDATE result_res SET res_echotype2='" . mysql_real_escape_string($errStr)	. "' WHERE res_ID=" . $plg_aut_ResultID;
+				RunQuery($sSQL);
+			} else {
+				// Need to make a new result record
+				$sSQL = "INSERT INTO result_res (res_echotype2) VALUES ('" . mysql_real_escape_string($errStr) . "')";
+				RunQuery($sSQL);
+	
+				// Now get the ID for the newly created record
+				$sSQL = "SELECT MAX(res_ID) AS iResID FROM result_res";
+				$rsLastEntry = RunQuery($sSQL);
+				extract(mysql_fetch_array($rsLastEntry));
+				$plg_aut_ResultID = $iResID;
+	
+				// Poke the ID of the new result record back into this pledge (payment) record
+				$sSQL = "UPDATE pledge_plg SET plg_aut_ResultID=" . $plg_aut_ResultID . " WHERE plg_plgID=" . $plg_plgID;
+				RunQuery($sSQL);
+			}
+		}
+		
 		header('Location: SelfRegisterHome.php');
 		exit();
 	}
@@ -141,18 +261,18 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 </h1>
 
 <h2>
-<?php echo "Pledge"; ?>
+<?php echo gettext ($plg_PledgeOrPayment); ?>
 </h2>
 
-<form method="post" action="SelfPledgeEdit.php?PlgID=<?php echo $plg_plgID; ?>" name="SelfPledgeEdit">
+<form method="post" action="SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment;?>&PlgID=<?php echo $plg_plgID; ?>" name="SelfPledgeEdit">
 
 <table cellpadding="1" align="center">
-
 	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("Annual Amount");?></td>
-		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="Amount" name="Amount" value="<?php echo $plg_amount; ?>"></td>
+		<td class="RegLabelColumn"><?php if ($plg_PledgeOrPayment == "Payment") echo gettext ("Payment amount"); else echo gettext("Annual Amount");?></td>
+		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="Amount" name="Amount" <?php if ($plg_aut_Cleared) echo "readonly=1";?> value="<?php echo $plg_amount; ?>"></td>
 	</tr>
 
+<?php if ($plg_PledgeOrPayment == "Pledge") { ?>
 	<tr>
 		<td class="RegLabelColumn"><?php echo gettext("Payment Schedule");?></td>
 		<td class="RegTextColumn">
@@ -175,6 +295,35 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 			</select>
 		</td>
 	</tr>
+<?php  } else if ($plg_PledgeOrPayment == "Payment") {?>
+	<tr>
+		<td <?php  echo "class=\"RegLabelColumn\">" . gettext("Choose online payment method");?></td>
+		<td class="RegEnterText">
+			<select name="AutoPay">
+<?php
+			echo "<option value=0";
+			if ($iAutID == 0)
+				echo " selected";
+			echo ">" . gettext ("Select online payment record") . "</option>\n";
+			$sSQLTmp = "SELECT aut_ID, aut_CreditCard, aut_BankName, aut_Route, aut_Account FROM autopayment_aut WHERE aut_FamID=" . $reg_famid;
+			$rsFindAut = RunQuery($sSQLTmp);
+			while ($aRow = mysql_fetch_array($rsFindAut)) {
+				extract($aRow);
+				if ($aut_CreditCard <> "") {
+					$showStr = gettext ("Credit card ...") . substr ($aut_CreditCard, strlen ($aut_CreditCard) - 4, 4);
+				} else {
+					$showStr = gettext ("Bank account ") . $aut_BankName . " " . $aut_Route . " " . $aut_Account;
+				}
+				echo "<option value=" . $aut_ID;
+				if ($iAutID == $aut_ID)
+					echo " selected";
+				echo ">" . $showStr . "</option>\n";
+			}
+?>
+			</select>
+		</td>
+	</tr>
+<?php  }?>
 
 	<tr>
 		<td class="RegLabelColumn"><?php echo gettext("Fiscal year");?></td>
@@ -228,7 +377,11 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 
 	<tr>
 		<td></td><td align="center">
+<?php if ($plg_PledgeOrPayment == "Payment" && (! $plg_aut_Cleared)) {?>
+			<input type="submit" class="icButton" value="<?php echo gettext("Process Payment"); ?>" name="Process">
+<?php } else if ($plg_PledgeOrPayment == "Pledge") { ?>
 			<input type="submit" class="icButton" value="<?php echo gettext("Save"); ?>" name="Save">
+<?php }?>
 			<input type="submit" class="icButton" value="<?php echo gettext("Cancel"); ?>" name="Cancel">
 			
 			<input type="hidden" name="PledgeOrPayment" id="PledgeOrPayment" value="<?php echo $plg_PledgeOrPayment; ?>">

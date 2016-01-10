@@ -5,6 +5,14 @@ $CONFIRM_EMAIL_URL = "http://localhost/churchinfo-reminder/churchinfo/";
 $CONFIRM_EMAIL_SUBJECT = "Unitarian Universalist Church of Nashua Registration Confirmation";
 $RESET_EMAIL_SUBJECT = "Unitarian Universalist Church of Nashua Password Reset";
 
+// read the report settings to pick up sChurchName
+$rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+if ($rsConfig) {
+    while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+        $$cfg_name = $cfg_value;
+    }
+}
+
 function getGUID(){
     if (function_exists('com_create_guid')){
         return com_create_guid();
@@ -128,7 +136,7 @@ function SendAMessage ($reg_id, $bodyContents, $to_email, $to_name, $email_subje
 	if (!$mail->send()) {
 	    echo "Mailer Error: " . $mail->ErrorInfo;
 	} else {
-	    echo "Message sent!";
+//	    echo "Message sent!";
 	}
 }
 

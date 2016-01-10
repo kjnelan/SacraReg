@@ -219,13 +219,11 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 	}
 	?>
 	<tr class="<?php echo $sRowClass ?>" align="center">
-	
-	<?php if ($plg_PledgeOrPayment=='Pledge'){ ?>
-		<td><a href=SelfPledgeEdit.php?PlgID=<?php echo $plg_plgID ?>>Edit</a></td>
+	<?php if ($plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") { ?>
+		<td><a href=SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment?>&PlgID=<?php echo $plg_plgID ?>><?php echo gettext ("Edit");?></a></td>
 	<?php } else { ?>
 		<td></td>
-	<?php } ?>
-	
+	<?php } ?>		
 		<td><?php echo $plg_PledgeOrPayment ?>&nbsp;</td>
 		<td><?php echo $fundName ?>&nbsp;</td>
 		<td><?php echo MakeFYString ($plg_FYID) ?>&nbsp;</td>
@@ -390,9 +388,9 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 </table>
 <?php } // if (0) {?>
 
-<a href="SelfPledgeEdit.php">Enter New Pledge</a><br>
+<a href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">Enter New Pledge</a><br>
 <a href="SelfAutoPaymentEdit.php">Enter New Payment Method</a><br>
-<a href="SelfDonate.php">Donate Now</a><br>
+<a href="SelfPledgeEdit.php?PledgeOrPayment=Payment">Donate Now</a><br>
 <a href="SelfRegisterLogout.php">Log Out</a>
 <?php 
 }
