@@ -218,7 +218,12 @@ if ($output == "pdf") {
 			$this->WriteAt ($this->leftX, $curY, $blurb);
 			$curY += 3 * $this->incrementY;
 			$this->WriteAt ($this->leftX, $curY, "Sincerely,");
-			$curY += 4 * $this->incrementY;
+			$curY += 1 * $this->incrementY;
+			if (is_readable("../Images/tax_signer.jpg")) {
+				$this->Image("../Images/tax_signer.jpg",$this->leftX, $curY, 50);
+				}
+
+			$curY += 3 * $this->incrementY;
 			$this->WriteAt ($this->leftX, $curY, $this->sTaxSigner);
 			
 			if ($remittance == "yes"){
