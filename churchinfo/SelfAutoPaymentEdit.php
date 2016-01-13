@@ -105,10 +105,25 @@ if (isset($_POST["Cancel"])) {
 	$aut_AccountVanco=$link->real_escape_string($_POST["AccountVanco"]);
 	
 	$errStr = "";
-	if ($aut_Amount <= 0.0) {
-		$errStr .= "Please check amount.<br>\n";
+	if ($aut_FirstName == "") {
+		$errStr .= "Please check first name.<br>\n";
 	}
-
+	if ($aut_LastName == "") {
+		$errStr .= "Please check last name.<br>\n";
+	}
+	if ($aut_Address1 == "") {
+		$errStr .= "Please check address.<br>\n";
+	}
+	if ($aut_City == "") {
+		$errStr .= "Please check city.<br>\n";
+	}
+	if ($aut_State == "") {
+		$errStr .= "Please check state.<br>\n";
+	}
+	if ($aut_Zip == "") {
+		$errStr .= "Please check zip.<br>\n";
+	}
+	
 	if ($errStr == "") {
 		// Ok to create or update
 

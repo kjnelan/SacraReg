@@ -295,14 +295,15 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 			</select>
 		</td>
 	</tr>
-<?php  } else if ($plg_PledgeOrPayment == "Payment") {?>
+<?php  } // if pledge
+	if ($plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") {?>
 	<tr>
 		<td <?php  echo "class=\"RegLabelColumn\">" . gettext("Choose online payment method");?></td>
 		<td class="RegEnterText">
 			<select name="AutoPay">
 <?php
 			echo "<option value=0";
-			if ($iAutID == 0)
+			if ($plg_aut_ID == 0)
 				echo " selected";
 			echo ">" . gettext ("Select online payment record") . "</option>\n";
 			$sSQLTmp = "SELECT aut_ID, aut_CreditCard, aut_BankName, aut_Route, aut_Account FROM autopayment_aut WHERE aut_FamID=" . $reg_famid;
@@ -315,7 +316,7 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 					$showStr = gettext ("Bank account ") . $aut_BankName . " " . $aut_Route . " " . $aut_Account;
 				}
 				echo "<option value=" . $aut_ID;
-				if ($iAutID == $aut_ID)
+				if ($plg_aut_ID == $aut_ID)
 					echo " selected";
 				echo ">" . $showStr . "</option>\n";
 			}
