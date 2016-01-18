@@ -18,6 +18,8 @@ if ($result->num_rows > 0) {
 
 $sSQL = "UPDATE register_reg SET reg_confirmed=1 WHERE reg_randomtag=\"$reg_randomtag\"";
 
+echo $sHeader;
+
 if ($link->query ($sSQL) && $link->affected_rows==1) {
 	printf ("Registration Confirmed");
 } else {

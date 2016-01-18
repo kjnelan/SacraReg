@@ -11,8 +11,6 @@
  *
  ******************************************************************************/
 
-session_start();
-
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
@@ -54,10 +52,6 @@ if (array_key_exists ("AutID", $_GET)) { // See if we are editing an existing re
 	$aut_ID = $_GET["AutID"];
 	$iAutID = $aut_ID; // Include/VancoChurchInfo.php is looking for this. 
 }
-
-include "Include/vancowebservices.php";
-include "Include/VancoConfig.php";
-include "Include/VancoChurchInfo.php";
 
 if (isset($_POST["Cancel"])) {
 	// bail out without saving
@@ -214,7 +208,15 @@ if (  (! isset($_POST["Submit"])) && $aut_ID == 0) {
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css?<?php echo "Screw=".time();?>">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
+<?php 
+include "Include/vancowebservices.php";
+include "Include/VancoConfig.php";
+include "Include/VancoChurchInfo.php";
+?>
+
 <?php require "Include/CalendarJava.php";?>
+
+<?php echo $sHeader; ?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>

@@ -12,6 +12,7 @@
  ******************************************************************************/
 
 include "Include/Config.php";
+include "Include/UtilityFunctions.php";
 
 require "SelfRegisterEmail.php";
 
@@ -64,6 +65,10 @@ if (isset($_POST["Login"])) { // use data from the form to send a reset password
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
 
+<?php echo $sHeader; ?>
+
+<h1>Reset your password</h1>
+<p>Enter your email or user name to receive a link that will reset your password.</p>
 <form method="post" action="SelfRegisterForgot.php" name="SelfRegisterForgot">
 
 <table cellpadding="1" align="center">	

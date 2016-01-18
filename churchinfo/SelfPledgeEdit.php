@@ -11,8 +11,6 @@
  *
  ******************************************************************************/
 
-session_start();
-
 if ($_GET["PledgeOrPayment"]=="Pledge") {
 	$plg_PledgeOrPayment = "Pledge";
 } else if ($_GET["PledgeOrPayment"]=="Payment") {
@@ -76,7 +74,12 @@ if (isset($_POST["Cancel"])) {
 	$plg_method = $link->real_escape_string($_POST["Method"]);
 	$plg_comment = $link->real_escape_string($_POST["Comment"]);
 	$plg_fundID = $link->real_escape_string($_POST["FundID"]);
-	$plg_aut_ID = $link->real_escape_string($_POST["AutoPay"]);
+	
+	if ($plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") {
+		$plg_aut_ID = $link->real_escape_string($_POST["AutoPay"]);
+	}
+	if ((! isset($plg_aut_ID)) || $plg_aut_ID=="")
+		$plg_aut_ID = 0;
 	
 	$errStr = "";
 	if ($plg_amount <= 0.0) {
@@ -94,9 +97,9 @@ if (isset($_POST["Cancel"])) {
 				$aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC);
 				extract($aRow);
 				if ($aut_CreditCardVanco > 0) // if processing a payment the method is based on the autopayment record
-					$plg_method = "CreditCard";
+					$plg_method = "CREDITCARD";
 				else if ($aut_AccountVanco > 0)
-					$plg_method = "BankDraft";
+					$plg_method = "BANKDRAFT";
 			} else {
 				header('Location: SelfRegisterHome.php');
 				exit();
@@ -256,12 +259,14 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 
 <?php require "Include/CalendarJava.php";?>
 
+<?php echo $sHeader; ?>
+
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>
 </h1>
 
 <h2>
-<?php echo gettext ($plg_PledgeOrPayment); ?>
+<?php echo gettext ($plg_PledgeOrPayment) . " " . gettext ("Form"); ?>
 </h2>
 
 <form method="post" action="SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment;?>&PlgID=<?php echo $plg_plgID; ?>" name="SelfPledgeEdit">
@@ -288,8 +293,8 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 		<td class="RegLabelColumn"><?php echo gettext("Payment Method");?></td>
 		<td class="RegTextColumn">
 			<select class="RegEnterText" id="Method" name="Method">
-				<option value="BankDraft">Bank Account ACH (preferred) <?php if ($plg_method=='BankDraft') echo 'Selected'; ?></option>
-			    <option value="CreditCard" <?php if ($plg_method=='CreditCard') echo 'Selected'; ?>>Credit Card</option>
+				<option value="BANKDRAFT">Bank Account ACH (preferred) <?php if ($plg_method=='BANKDRAFT') echo 'Selected'; ?></option>
+			    <option value="CREDITCARD" <?php if ($plg_method=='CREDITCARD') echo 'Selected'; ?>>Credit Card</option>
 			    <option value="Check" <?php if ($plg_method=='CHECK') echo 'Selected'; ?>>Check</option>
 			    <option value="Cash" <?php if ($plg_method=='CASH') echo 'Selected'; ?>>Cash</option>
 			</select>

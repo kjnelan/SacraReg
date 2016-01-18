@@ -11,8 +11,6 @@
  *
  ******************************************************************************/
 
-session_start();
-
 include "Include/Config.php";
 include "Include/UtilityFunctions.php";
 
@@ -36,7 +34,8 @@ if (isset($_POST["Forgot"])) {
 	$reg_username = $link->real_escape_string($_POST["UserName"]);
 	$reg_password = $link->real_escape_string($_POST["Password"]);
 	
-	$query = "SELECT * FROM register_reg WHERE reg_password=SHA2('$reg_password', 0) AND reg_confirmed=1 AND reg_username='$reg_username'";
+	$sPasswordHashSha256 = hash ("sha256", $reg_password);
+	$query = "SELECT * FROM register_reg WHERE reg_password='$sPasswordHashSha256' AND reg_confirmed=1 AND reg_username='$reg_username'";
 	
 	$result = $link->query($query) or die('Query failed: ' . $link->error());
 	if ($result->num_rows == 1) {
@@ -91,6 +90,8 @@ if (  (! isset($_POST["Login"])) && $reg_id == 0) {
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
+
+<?php echo $sHeader; ?>
 
 <?php 
 if ($reg_id == 0) {
