@@ -105,6 +105,7 @@ if (isset($_POST["Cancel"])) {
 				exit();
 			}
 		}
+		$sGroupKey = genGroupKeyByMethod($plg_method, 0, $reg_famid, $plg_fundID, date("Y-m-d"), $plg_aut_ID);
 		
 		$setValueSQL = "SET " .
 			"plg_FamID=$fam_ID,". 
@@ -118,6 +119,7 @@ if (isset($_POST["Cancel"])) {
 			"plg_fundID=$plg_fundID,".
 			"plg_aut_ID=$plg_aut_ID,".
 			"plg_EditedBy=$reg_perid,".
+			"plg_GroupKey=\"$sGroupKey\",".
 			"plg_DateLastEdited=NOW()";
 		
 		if ($plg_plgID == 0) { // creating a new record

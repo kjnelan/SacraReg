@@ -1843,6 +1843,26 @@ function buildFamilySelect($iFamily, $sDirRoleHead, $sDirRoleSpouse) {
     return $html;
 }
 
+function genGroupKeyByMethod($iMethod, $iCheckNo, $iFamily, $fun_id, $dDate, $iAutID)
+{
+	if ($iMethod == "CHECK") {
+		$sGroupKey = genGroupKey($iCheckNo, $iFamily, $fun_id, $dDate);
+	} elseif ($iMethod == "BANKDRAFT") {
+		if (!$iAutID) {
+			$iAutID = "draft";
+		}
+		$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
+	} elseif ($iMethod == "CREDITCARD") {
+		if (!$iAutID) {
+			$iAutID = "credit";
+		}
+		$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
+	} else {
+		$sGroupKey = genGroupKey("cash", $iFamily, $fun_id, $dDate);
+	} 
+	return ($sGroupKey);
+}
+
 function genGroupKey($methodSpecificID, $famID, $fundIDs, $date) {
     $uniqueNum = 0;
     while (1) {

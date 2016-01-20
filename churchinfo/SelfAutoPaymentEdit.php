@@ -141,17 +141,17 @@ if (isset($_POST["Cancel"])) {
 			"aut_Phone=\"$aut_Phone\",".
 			"aut_Email=\"$aut_Email\",".
 			"aut_EditedBy=$reg_perid,".
-			"aut_CreditCard=\"$aut_CreditCard,".
-			"aut_ExpMonth=\"$aut_ExpMonth,".
-			"aut_ExpYear=\"$aut_ExpYear,".
-			"aut_BankName=\"$aut_BankName,".
-			"aut_Route=\"$aut_Route,".
-			"aut_Account=\"$aut_Account,".
-			"aut_CreditCardVanco=\"$aut_CreditCardVanco,".
-			"aut_AccountVanco=\"$aut_AccountVanco,".
+			"aut_CreditCard=\"$aut_CreditCard\",".
+			"aut_ExpMonth=\"$aut_ExpMonth\",".
+			"aut_ExpYear=\"$aut_ExpYear\",".
+			"aut_BankName=\"$aut_BankName\",".
+			"aut_Route=\"$aut_Route\",".
+			"aut_Account=\"$aut_Account\",".
+			"aut_CreditCardVanco=\"$aut_CreditCardVanco\",".
+			"aut_AccountVanco=\"$aut_AccountVanco\",".
 			"aut_DateLastEdited=NOW()";
 		
-		if ($plg_plgID == 0) { // creating a new record
+		if ($aut_id == 0) { // creating a new record
 			$sSQL = "INSERT INTO autopayment_aut " . $setValueSQL;
 			$result = $link->query($sSQL);
 			

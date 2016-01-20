@@ -355,21 +355,22 @@ if (isset($_POST["PledgeSubmit"]) or isset($_POST["PledgeSubmitAndAdd"])) {
 					$iCheckNo = "NULL";
 				}
 				if (!$sGroupKey) {
-					if ($iMethod == "CHECK") {
-						$sGroupKey = genGroupKey($iCheckNo, $iFamily, $fun_id, $dDate);
-					} elseif ($iMethod == "BANKDRAFT") {
-						if (!$iAutID) {
-							$iAutID = "draft";
-						}
-						$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
-					} elseif ($iMethod == "CREDITCARD") {
-						if (!$iAutID) {
-							$iAutID = "credit";
-						}
-						$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
-					} else {
-						$sGroupKey = genGroupKey("cash", $iFamily, $fun_id, $dDate);
-					} 
+					$sGroupKey = genGroupKeyByMethod($iMethod, $iCheckNo, $iFamily, $fun_id, $dDate, $iAutID);
+//					if ($iMethod == "CHECK") {
+//						$sGroupKey = genGroupKey($iCheckNo, $iFamily, $fun_id, $dDate);
+//					} elseif ($iMethod == "BANKDRAFT") {
+//						if (!$iAutID) {
+//							$iAutID = "draft";
+//						}
+//						$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
+//					} elseif ($iMethod == "CREDITCARD") {
+//						if (!$iAutID) {
+//							$iAutID = "credit";
+//						}
+//						$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
+//					} else {
+//						$sGroupKey = genGroupKey("cash", $iFamily, $fun_id, $dDate);
+//					} 
 				}
 				$sSQL = "INSERT INTO pledge_plg (plg_famID, plg_FYID, plg_date, plg_amount, plg_schedule, plg_method, plg_comment, plg_DateLastEdited, plg_EditedBy, plg_PledgeOrPayment, plg_fundID, plg_depID, plg_CheckNo, plg_scanString, plg_aut_ID, plg_NonDeductible, plg_GroupKey)
 			VALUES ('" . $iFamily . "','" . $iFYID . "','" . $dDate . "','" . $nAmount[$fun_id] . "','" . $iSchedule . "','" . $iMethod  . "','" . $sComment[$fun_id] . "'";

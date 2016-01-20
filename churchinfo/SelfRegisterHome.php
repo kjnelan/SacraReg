@@ -49,9 +49,16 @@ if (isset($_POST["Forgot"])) {
         $_SESSION['iUserID'] = $reg_perid;
         $_SESSION['LoginType'] = "SelfService";
 	} else {
+		$query = "SELECT * FROM register_reg WHERE reg_password='$sPasswordHashSha256' AND reg_username='$reg_username'";
+		$result = $link->query($query) or die('Query failed: ' . $link->error());
+		if ($result->num_rows == 1) {
+			// user is registered but email not confirmed yet
+			$loginMsg = "Please use the link in your confirmation email to confirm your registration.";
+		} else {
+			$loginMsg = "Invalid User Name or Password";
+		}
 		session_destroy ();
 		$reg_id = 0;
-		$loginMsg = "Invalid User Name or Password";
 	}
 	$result->free();
 }
@@ -259,9 +266,12 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 
 <?php
 $tog = 0;
+$numAutoPayments = 0;
 //Loop through all payment methods
 while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 {
+	$numAutoPayments += 1;
+	
 	$tog = (! $tog);
 
 	extract($aRow);
@@ -318,9 +328,15 @@ $rsPledges = $link->query($sSQL);
 }
 ?>
 
+
+
 <a href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">Enter New Pledge</a><br>
 <a href="SelfAutoPaymentEdit.php">Enter New Payment Method</a><br>
-<a href="SelfPledgeEdit.php?PledgeOrPayment=Payment">Donate Now</a><br>
+<?php if ($numAutoPayments == 0) 
+	echo "Please create at least one payment method to enable immediate donation option.<br>";
+else
+	echo "<a href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a><br>"
+?>
 <a href="SelfRegisterLogout.php">Log Out</a>
 <?php 
 }

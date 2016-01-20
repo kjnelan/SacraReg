@@ -165,8 +165,9 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 			$sSQL = "UPDATE register_reg " . $setValueSQL . " WHERE reg_id=".$reg_id;
 			$result = $link->query($sSQL);
 		}
-		header('Location: SelfRegisterHome.php');
-		exit();
+		$errStr = gettext ("Please check your email for a confirmation message.");
+//		header('Location: SelfRegisterHome.php');
+//		exit();
 	}
 	
 } else if (array_key_exists ("RegID", $_SESSION)) { // already logged in, use the record for this session

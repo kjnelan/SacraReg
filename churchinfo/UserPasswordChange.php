@@ -73,7 +73,7 @@ if (isset($_POST["Submit"]))
 
         else {
             // Update the user record with the password hash
-            $tmp = $sNewPassword1.$iPersonID;        
+            $tmp = $sNewPassword1.$iPersonID;
 		    $sPasswordHashSha256 = hash ("sha256", $tmp);
 		    
             $sSQL = "UPDATE user_usr SET".
