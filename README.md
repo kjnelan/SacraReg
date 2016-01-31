@@ -6,7 +6,7 @@ The ChurchInfo project is managed at Sourceforge http://sourceforge.net/projects
 
 # New Project
 
-A new project has been forked from the stable church info project is now called Church Web CRM with the goal of brining new featuers and creating a responsive application.
+A new project has been forked from the stable church info project is now called Church Web CRM with the goal of bringing new featuers and creating a responsive application.
 
 ##Links 
 
