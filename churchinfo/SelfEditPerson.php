@@ -10,8 +10,6 @@
  *  (at your option) any later version.
  *
  ******************************************************************************/
-session_start();
-
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
@@ -128,6 +126,8 @@ if (  (! isset($_POST["Submit"])) && $per_ID == 0) {
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
+
+<?php echo $sHeader; ?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>

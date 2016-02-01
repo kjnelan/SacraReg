@@ -10,8 +10,6 @@
  *  (at your option) any later version.
  *
  ******************************************************************************/
-session_start();
-
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
@@ -138,6 +136,8 @@ if (  (! isset($_POST["Submit"])) && $fam_ID == 0) {
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
 
 <?php require "Include/CalendarJava.php";?>
+
+<?php echo $sHeader; ?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>

@@ -16,9 +16,10 @@ include "Include/Captcha-1.1.1/PhraseBuilder.php";
 include "Include/Captcha-1.1.1/CaptchaBuilderInterface.php";
 include "Include/Captcha-1.1.1/CaptchaBuilder.php";
 
-require "SelfRegisterEmail.php";
+include "Include/UtilityFunctions.php";
+include "Include/Config.php";
 
-session_start();
+require "SelfRegisterEmail.php";
 
 $bCaptchaPassed = false;
 
@@ -31,8 +32,6 @@ if ((array_key_exists ('CaptchaPassed', $_SESSION) && $_SESSION['CaptchaPassed']
 	$builder->build();
 	$_SESSION['phrase'] = $builder->getPhrase();
 }
-
-include "Include/Config.php";
 
 error_reporting(-1);
 
@@ -149,7 +148,8 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 				"reg_changedate=NOW()";
 
 		if ($reg_id == 0) { // creating a new record
-			$setPassWordStr = ", reg_password = SHA2(\"$reg_password\", 0)";
+			$sPasswordHashSha256 = hash ("sha256", $reg_password);
+			$setPassWordStr = ", reg_password = \"$sPasswordHashSha256\"";
 			
 			$sSQL = "INSERT INTO register_reg " . $setValueSQL . $setPassWordStr;
 			$result = $link->query($sSQL);
@@ -159,16 +159,15 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 			
 			$line = $result->fetch_array(MYSQLI_ASSOC);
 			$reg_id = $line["LAST_INSERT_ID()"];
-			$_SESSION['RegID'] = $reg_id;
-			
 			SendConfirmMessage ($reg_id);
-			
+			session_destroy();			
 		} else {
 			$sSQL = "UPDATE register_reg " . $setValueSQL . " WHERE reg_id=".$reg_id;
 			$result = $link->query($sSQL);
 		}
-		header('Location: SelfRegisterHome.php');
-		exit();
+		$errStr = gettext ("Please check your email for a confirmation message.");
+//		header('Location: SelfRegisterHome.php');
+//		exit();
 	}
 	
 } else if (array_key_exists ("RegID", $_SESSION)) { // already logged in, use the record for this session
@@ -212,6 +211,8 @@ if (  (! isset($_POST["Submit"])) && $reg_id == 0) {
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
 
 <form method="post" action="SelfRegister.php" name="SelfRegister">
+
+<?php echo $sHeader; ?>
 
 <table cellpadding="1" align="center">
 		

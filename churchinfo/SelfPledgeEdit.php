@@ -11,8 +11,6 @@
  *
  ******************************************************************************/
 
-session_start();
-
 if ($_GET["PledgeOrPayment"]=="Pledge") {
 	$plg_PledgeOrPayment = "Pledge";
 } else if ($_GET["PledgeOrPayment"]=="Payment") {
@@ -76,7 +74,12 @@ if (isset($_POST["Cancel"])) {
 	$plg_method = $link->real_escape_string($_POST["Method"]);
 	$plg_comment = $link->real_escape_string($_POST["Comment"]);
 	$plg_fundID = $link->real_escape_string($_POST["FundID"]);
-	$plg_aut_ID = $link->real_escape_string($_POST["AutoPay"]);
+	
+	if ($plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") {
+		$plg_aut_ID = $link->real_escape_string($_POST["AutoPay"]);
+	}
+	if ((! isset($plg_aut_ID)) || $plg_aut_ID=="")
+		$plg_aut_ID = 0;
 	
 	$errStr = "";
 	if ($plg_amount <= 0.0) {
@@ -94,14 +97,15 @@ if (isset($_POST["Cancel"])) {
 				$aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC);
 				extract($aRow);
 				if ($aut_CreditCardVanco > 0) // if processing a payment the method is based on the autopayment record
-					$plg_method = "CreditCard";
+					$plg_method = "CREDITCARD";
 				else if ($aut_AccountVanco > 0)
-					$plg_method = "BankDraft";
+					$plg_method = "BANKDRAFT";
 			} else {
 				header('Location: SelfRegisterHome.php');
 				exit();
 			}
 		}
+		$sGroupKey = genGroupKeyByMethod($plg_method, 0, $reg_famid, $plg_fundID, date("Y-m-d"), $plg_aut_ID);
 		
 		$setValueSQL = "SET " .
 			"plg_FamID=$fam_ID,". 
@@ -115,6 +119,7 @@ if (isset($_POST["Cancel"])) {
 			"plg_fundID=$plg_fundID,".
 			"plg_aut_ID=$plg_aut_ID,".
 			"plg_EditedBy=$reg_perid,".
+			"plg_GroupKey=\"$sGroupKey\",".
 			"plg_DateLastEdited=NOW()";
 		
 		if ($plg_plgID == 0) { // creating a new record
@@ -256,12 +261,14 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 
 <?php require "Include/CalendarJava.php";?>
 
+<?php echo $sHeader; ?>
+
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>
 </h1>
 
 <h2>
-<?php echo gettext ($plg_PledgeOrPayment); ?>
+<?php echo gettext ($plg_PledgeOrPayment) . " " . gettext ("Form"); ?>
 </h2>
 
 <form method="post" action="SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment;?>&PlgID=<?php echo $plg_plgID; ?>" name="SelfPledgeEdit">
@@ -288,21 +295,22 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 		<td class="RegLabelColumn"><?php echo gettext("Payment Method");?></td>
 		<td class="RegTextColumn">
 			<select class="RegEnterText" id="Method" name="Method">
-				<option value="BankDraft">Bank Account ACH (preferred) <?php if ($plg_method=='BankDraft') echo 'Selected'; ?></option>
-			    <option value="CreditCard" <?php if ($plg_method=='CreditCard') echo 'Selected'; ?>>Credit Card</option>
+				<option value="BANKDRAFT">Bank Account ACH (preferred) <?php if ($plg_method=='BANKDRAFT') echo 'Selected'; ?></option>
+			    <option value="CREDITCARD" <?php if ($plg_method=='CREDITCARD') echo 'Selected'; ?>>Credit Card</option>
 			    <option value="Check" <?php if ($plg_method=='CHECK') echo 'Selected'; ?>>Check</option>
 			    <option value="Cash" <?php if ($plg_method=='CASH') echo 'Selected'; ?>>Cash</option>
 			</select>
 		</td>
 	</tr>
-<?php  } else if ($plg_PledgeOrPayment == "Payment") {?>
+<?php  } // if pledge
+	if ($plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") {?>
 	<tr>
 		<td <?php  echo "class=\"RegLabelColumn\">" . gettext("Choose online payment method");?></td>
 		<td class="RegEnterText">
 			<select name="AutoPay">
 <?php
 			echo "<option value=0";
-			if ($iAutID == 0)
+			if ($plg_aut_ID == 0)
 				echo " selected";
 			echo ">" . gettext ("Select online payment record") . "</option>\n";
 			$sSQLTmp = "SELECT aut_ID, aut_CreditCard, aut_BankName, aut_Route, aut_Account FROM autopayment_aut WHERE aut_FamID=" . $reg_famid;
@@ -315,7 +323,7 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 					$showStr = gettext ("Bank account ") . $aut_BankName . " " . $aut_Route . " " . $aut_Account;
 				}
 				echo "<option value=" . $aut_ID;
-				if ($iAutID == $aut_ID)
+				if ($plg_aut_ID == $aut_ID)
 					echo " selected";
 				echo ">" . $showStr . "</option>\n";
 			}

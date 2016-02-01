@@ -11,8 +11,6 @@
  *
  ******************************************************************************/
 
-session_start();
-
 include "Include/Config.php";
 include "Include/UtilityFunctions.php";
 
@@ -36,7 +34,8 @@ if (isset($_POST["Forgot"])) {
 	$reg_username = $link->real_escape_string($_POST["UserName"]);
 	$reg_password = $link->real_escape_string($_POST["Password"]);
 	
-	$query = "SELECT * FROM register_reg WHERE reg_password=SHA2('$reg_password', 0) AND reg_confirmed=1 AND reg_username='$reg_username'";
+	$sPasswordHashSha256 = hash ("sha256", $reg_password);
+	$query = "SELECT * FROM register_reg WHERE reg_password='$sPasswordHashSha256' AND reg_confirmed=1 AND reg_username='$reg_username'";
 	
 	$result = $link->query($query) or die('Query failed: ' . $link->error());
 	if ($result->num_rows == 1) {
@@ -50,9 +49,16 @@ if (isset($_POST["Forgot"])) {
         $_SESSION['iUserID'] = $reg_perid;
         $_SESSION['LoginType'] = "SelfService";
 	} else {
+		$query = "SELECT * FROM register_reg WHERE reg_password='$sPasswordHashSha256' AND reg_username='$reg_username'";
+		$result = $link->query($query) or die('Query failed: ' . $link->error());
+		if ($result->num_rows == 1) {
+			// user is registered but email not confirmed yet
+			$loginMsg = "Please use the link in your confirmation email to confirm your registration.";
+		} else {
+			$loginMsg = "Invalid User Name or Password";
+		}
 		session_destroy ();
 		$reg_id = 0;
-		$loginMsg = "Invalid User Name or Password";
 	}
 	$result->free();
 }
@@ -91,6 +97,8 @@ if (  (! isset($_POST["Login"])) && $reg_id == 0) {
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
+
+<?php echo $sHeader; ?>
 
 <?php 
 if ($reg_id == 0) {
@@ -219,7 +227,7 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 	}
 	?>
 	<tr class="<?php echo $sRowClass ?>" align="center">
-	<?php if ($plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") { ?>
+	<?php if ($plg_PledgeOrPayment=="Pledge"||$plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") { ?>
 		<td><a href=SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment?>&PlgID=<?php echo $plg_plgID ?>><?php echo gettext ("Edit");?></a></td>
 	<?php } else { ?>
 		<td></td>
@@ -250,10 +258,6 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 	<td><?php echo gettext("Fund"); ?></td>
 	<td><?php echo gettext("Amount"); ?></td>
 	<td><?php echo gettext("Schedule"); ?></td>
-	<td><?php echo gettext("Name"); ?></td>
-	<td><?php echo gettext("Address"); ?></td>
-	<td><?php echo gettext("Phone"); ?></td>
-	<td><?php echo gettext("Email"); ?></td>
 	<td><?php echo gettext("Fiscal Year"); ?></td>
 	<td><?php echo gettext("Next Payment Day"); ?></td>
 	<td><?php echo gettext("Date Updated"); ?></td>
@@ -262,9 +266,12 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 
 <?php
 $tog = 0;
+$numAutoPayments = 0;
 //Loop through all payment methods
 while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 {
+	$numAutoPayments += 1;
+	
 	$tog = (! $tog);
 
 	extract($aRow);
@@ -288,8 +295,6 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 		$AutoSchedule = "Quartely";
 	else
 		$AutoSchedule = "Other";
-	$AutoAddress = "$aut_Address1 $aut_Address2 $aut_City, $aut_State $aut_Zip $aut_Country"; 
-	$AutoName = "$aut_FirstName $aut_LastName";
 	?>
   
 	<tr class="<?php echo $sRowClass ?>" align="center">
@@ -298,10 +303,6 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 		<td><?php echo $AutoFundName ?>&nbsp;</td>
 		<td align=center><?php echo $aut_Amount ?>&nbsp;</td>
 		<td><?php echo $AutoSchedule ?>&nbsp;</td>
-		<td><?php echo $AutoName ?>&nbsp;</td>
-		<td><?php echo $AutoAddress ?>&nbsp;</td>
-		<td><?php echo $aut_Phone ?>&nbsp;</td>
-		<td><?php echo $aut_Email ?>&nbsp;</td>		
 		<td><?php echo MakeFYString ($aut_FYID) ?>&nbsp;</td>
 		<td><?php echo $aut_NextPayDate ?>&nbsp;</td>
 		<td><?php echo $aut_DateLastEdited; ?>&nbsp;</td>
@@ -327,70 +328,15 @@ $rsPledges = $link->query($sSQL);
 }
 ?>
 
-<?php if (0) {?>
 
-<h2><?php echo gettext("Pledges and Payments Entered Through This Interface"); ?></h2>
-
-<table cellpadding="4" cellspacing="0" width="100%">
-
-<tr class="TableHeader" align="center">
-	<td><?php echo gettext("Edit"); ?></td>
-	<td><?php echo gettext("Pledge or Payment"); ?></td>
-	<td><?php echo gettext("Fund"); ?></td>
-	<td><?php echo gettext("Fiscal Year"); ?></td>
-	<td><?php echo gettext("Date"); ?></td>
-	<td><?php echo gettext("Amount"); ?></td>
-	<td><?php echo gettext("Schedule"); ?></td>
-	<td><?php echo gettext("Method"); ?></td>
-	<td><?php echo gettext("Comment"); ?></td>
-	<td><?php echo gettext("Date Updated"); ?></td>
-	<td><?php echo gettext("Updated By"); ?></td>
-</tr>
-
-<?php
-$tog = 0;
-//Loop through all pledges
-while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
-{
-	$tog = (! $tog);
-
-	extract($aRow);
-
-	//Alternate the row style
-	if ($tog)
-		$sRowClass = "RowColorA";
-	else
-		$sRowClass = "RowColorB";
-
-	if ($rpg_pledgeorpayment == 'Payment') {
-		if ($tog)
-			$sRowClass = "PaymentRowColorA";
-		else
-			$sRowClass = "PaymentRowColorB";
-	}
-	?>
-	<tr class="<?php echo $sRowClass ?>" align="center">
-		<td><a href=SelfPledge.php?RpgID=<?php echo $rpg_id ?>>Edit</a></td>
-		<td><?php echo $rpg_pledgeorpayment ?>&nbsp;</td>
-		<td><?php echo $fundName ?>&nbsp;</td>
-		<td><?php echo MakeFYString ($rpg_fyid) ?>&nbsp;</td>
-		<td><?php echo $rpg_date ?>&nbsp;</td>
-		<td align=center><?php echo $rpg_annual_amount ?>&nbsp;</td>
-		<td><?php echo $rpg_schedule ?>&nbsp;</td>
-		<td><?php echo $rpg_method; ?>&nbsp;</td>
-		<td><?php echo $rpg_comment; ?>&nbsp;</td>
-		<td><?php echo $rpg_changedate; ?>&nbsp;</td>
-		<td><?php echo $EnteredFirstName . " " . $EnteredLastName; ?>&nbsp;</td>
-	</tr>
-<?php
-}
-?>
-</table>
-<?php } // if (0) {?>
 
 <a href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">Enter New Pledge</a><br>
 <a href="SelfAutoPaymentEdit.php">Enter New Payment Method</a><br>
-<a href="SelfPledgeEdit.php?PledgeOrPayment=Payment">Donate Now</a><br>
+<?php if ($numAutoPayments == 0) 
+	echo "Please create at least one payment method to enable immediate donation option.<br>";
+else
+	echo "<a href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a><br>"
+?>
 <a href="SelfRegisterLogout.php">Log Out</a>
 <?php 
 }

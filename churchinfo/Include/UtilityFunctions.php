@@ -85,6 +85,20 @@ function Redirect($sRelativeURL)
     exit;
 }
 
+function URL_Origin()
+{
+	global $_SERVER;
+	
+    $ssl      = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' );
+    $sp       = strtolower( $_SERVER['SERVER_PROTOCOL'] );
+    $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
+    $port     = $_SERVER['SERVER_PORT'];
+    $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
+    $host     = ( $use_forwarded_host && isset( $_SERVER['HTTP_X_FORWARDED_HOST'] ) ) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : ( isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : null );
+    $host     = isset( $host ) ? $host : $_SERVER['SERVER_NAME'] . $port;
+    return $protocol . '://' . $host;
+}
+
 // Returns the current fiscal year
 function CurrentFY()
 {
@@ -1827,6 +1841,26 @@ function buildFamilySelect($iFamily, $sDirRoleHead, $sDirRoleSpouse) {
         $html .= ">" . $fam_Data;
     }
     return $html;
+}
+
+function genGroupKeyByMethod($iMethod, $iCheckNo, $iFamily, $fun_id, $dDate, $iAutID)
+{
+	if ($iMethod == "CHECK") {
+		$sGroupKey = genGroupKey($iCheckNo, $iFamily, $fun_id, $dDate);
+	} elseif ($iMethod == "BANKDRAFT") {
+		if (!$iAutID) {
+			$iAutID = "draft";
+		}
+		$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
+	} elseif ($iMethod == "CREDITCARD") {
+		if (!$iAutID) {
+			$iAutID = "credit";
+		}
+		$sGroupKey = genGroupKey($iAutID, $iFamily, $fun_id, $dDate);
+	} else {
+		$sGroupKey = genGroupKey("cash", $iFamily, $fun_id, $dDate);
+	} 
+	return ($sGroupKey);
 }
 
 function genGroupKey($methodSpecificID, $famID, $fundIDs, $date) {

@@ -18,11 +18,16 @@ if ($result->num_rows > 0) {
 
 $sSQL = "UPDATE register_reg SET reg_confirmed=1 WHERE reg_randomtag=\"$reg_randomtag\"";
 
+echo $sHeader;
+echo "<br>";
+
 if ($link->query ($sSQL) && $link->affected_rows==1) {
-	printf ("Registration Confirmed");
+	echo gettext ("Registration Confirmed");
 } else {
-	printf ("Registration Failed");
+	echo gettext ("Registration Failed");
 }
 
 mysqli_close($link);
 ?>
+<br>
+<a href="SelfRegisterHome.php">Log in</a>

@@ -1,10 +1,6 @@
 <?php 
 require 'Include/PHPMailer-5.2.14/PHPMailerAutoload.php';
 
-$CONFIRM_EMAIL_URL = "http://localhost/churchinfo-reminder/churchinfo/";
-$CONFIRM_EMAIL_SUBJECT = "Unitarian Universalist Church of Nashua Registration Confirmation";
-$RESET_EMAIL_SUBJECT = "Unitarian Universalist Church of Nashua Password Reset";
-
 // read the report settings to pick up sChurchName
 $rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
@@ -13,12 +9,16 @@ if ($rsConfig) {
     }
 }
 
+$CONFIRM_EMAIL_URL = URL_Origin() . $sRootPath . '/';
+$CONFIRM_EMAIL_SUBJECT = $sChurchName . " " . gettext ("Registration Confirmation");
+$RESET_EMAIL_SUBJECT = $sChurchName . " " . gettext ("Nashua Password Reset");
+
 function getGUID(){
     if (function_exists('com_create_guid')){
         return com_create_guid();
     }else{
         mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $charid = strtoupper(secure_random_string(32));
         $hyphen = chr(45);// "-"
         $uuid = chr(123)// "{"
             .substr($charid, 0, 8).$hyphen

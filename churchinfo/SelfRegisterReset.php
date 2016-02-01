@@ -11,8 +11,6 @@
  *
  ******************************************************************************/
 
-session_start();
-
 include "Include/Config.php";
 
 error_reporting(-1);
@@ -32,7 +30,8 @@ if (isset($_POST["Submit"])) {
 	}
 
 	if ($errStr == "") {
-		$sSQL = "UPDATE register_reg SET reg_password = SHA2(\"$reg_password\", 0) WHERE reg_randomtag='".$reg_randomtag."'";
+		$sPasswordHashSha256 = hash ("sha256", $reg_password);
+		$sSQL = "UPDATE register_reg SET reg_password = '$sPasswordHashSha256' WHERE reg_randomtag='".$reg_randomtag."'";
 		$result = $link->query($sSQL);
 		header('Location: SelfRegisterHome.php');
 		exit();
@@ -48,6 +47,10 @@ if (  (! isset($_POST["Submit"]))) {
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
+
+<?php echo $sHeader; ?>
+
+<h1>Choose a new password</h1>
 
 <form method="post" action="SelfRegisterReset.php?reg_randomtag=<?php echo $reg_randomtag; ?>" name="SelfRegisterReset">
 

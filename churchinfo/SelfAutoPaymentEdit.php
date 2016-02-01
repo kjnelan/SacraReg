@@ -11,8 +11,6 @@
  *
  ******************************************************************************/
 
-session_start();
-
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
@@ -54,10 +52,6 @@ if (array_key_exists ("AutID", $_GET)) { // See if we are editing an existing re
 	$aut_ID = $_GET["AutID"];
 	$iAutID = $aut_ID; // Include/VancoChurchInfo.php is looking for this. 
 }
-
-include "Include/vancowebservices.php";
-include "Include/VancoConfig.php";
-include "Include/VancoChurchInfo.php";
 
 if (isset($_POST["Cancel"])) {
 	// bail out without saving
@@ -105,10 +99,25 @@ if (isset($_POST["Cancel"])) {
 	$aut_AccountVanco=$link->real_escape_string($_POST["AccountVanco"]);
 	
 	$errStr = "";
-	if ($aut_Amount <= 0.0) {
-		$errStr .= "Please check amount.<br>\n";
+	if ($aut_FirstName == "") {
+		$errStr .= "Please check first name.<br>\n";
 	}
-
+	if ($aut_LastName == "") {
+		$errStr .= "Please check last name.<br>\n";
+	}
+	if ($aut_Address1 == "") {
+		$errStr .= "Please check address.<br>\n";
+	}
+	if ($aut_City == "") {
+		$errStr .= "Please check city.<br>\n";
+	}
+	if ($aut_State == "") {
+		$errStr .= "Please check state.<br>\n";
+	}
+	if ($aut_Zip == "") {
+		$errStr .= "Please check zip.<br>\n";
+	}
+	
 	if ($errStr == "") {
 		// Ok to create or update
 
@@ -132,17 +141,17 @@ if (isset($_POST["Cancel"])) {
 			"aut_Phone=\"$aut_Phone\",".
 			"aut_Email=\"$aut_Email\",".
 			"aut_EditedBy=$reg_perid,".
-			"aut_CreditCard=\"$aut_CreditCard,".
-			"aut_ExpMonth=\"$aut_ExpMonth,".
-			"aut_ExpYear=\"$aut_ExpYear,".
-			"aut_BankName=\"$aut_BankName,".
-			"aut_Route=\"$aut_Route,".
-			"aut_Account=\"$aut_Account,".
-			"aut_CreditCardVanco=\"$aut_CreditCardVanco,".
-			"aut_AccountVanco=\"$aut_AccountVanco,".
+			"aut_CreditCard=\"$aut_CreditCard\",".
+			"aut_ExpMonth=\"$aut_ExpMonth\",".
+			"aut_ExpYear=\"$aut_ExpYear\",".
+			"aut_BankName=\"$aut_BankName\",".
+			"aut_Route=\"$aut_Route\",".
+			"aut_Account=\"$aut_Account\",".
+			"aut_CreditCardVanco=\"$aut_CreditCardVanco\",".
+			"aut_AccountVanco=\"$aut_AccountVanco\",".
 			"aut_DateLastEdited=NOW()";
 		
-		if ($plg_plgID == 0) { // creating a new record
+		if ($aut_id == 0) { // creating a new record
 			$sSQL = "INSERT INTO autopayment_aut " . $setValueSQL;
 			$result = $link->query($sSQL);
 			
@@ -199,7 +208,15 @@ if (  (! isset($_POST["Submit"])) && $aut_ID == 0) {
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css?<?php echo "Screw=".time();?>">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
+<?php 
+include "Include/vancowebservices.php";
+include "Include/VancoConfig.php";
+include "Include/VancoChurchInfo.php";
+?>
+
 <?php require "Include/CalendarJava.php";?>
+
+<?php echo $sHeader; ?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>
