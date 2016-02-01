@@ -114,12 +114,12 @@ if ($sReportType == "") {
 				echo "<td class=TextColumnWithBottomBorder><div class=SmallText>"
 					.gettext("Use Ctrl Key to select multiple")
 					."</div><select name=classList[] size=6 multiple>";
-					echo "<option value=0 selected>".gettext("All Classifications");
-					echo "<option value=0>----------";
+					echo "<option value=0 selected>".gettext("All Classifications")."</option>";
+					echo "<option value=0>----------"."</option>";
 					while ($aRow = mysql_fetch_array($rsClassifications)) {
 						extract($aRow);
 						echo "<option value=\"" . $lst_OptionID . "\"";
-						echo ">" . $lst_OptionName . "&nbsp;";
+						echo ">" . $lst_OptionName . "&nbsp;</option>";
 					}
 					?>
 					</select>
@@ -133,8 +133,8 @@ if ($sReportType == "") {
 		echo "<td class=TextColumnWithBottomBorder><div class=SmallText>"
 			.gettext("Use Ctrl Key to select multiple")
 			."</div><select name=family[] size=6 multiple>";
-		echo "<option value=0 selected>".gettext("All Families");
-		echo "<option value=0>----------";
+		echo "<option value=0 selected>".gettext("All Families")."</option>";
+		echo "<option value=0>----------"."</option>";
 		
 		// Build Criteria for Head of Household
 		if (!$sDirRoleHead)
@@ -162,8 +162,19 @@ if ($sReportType == "") {
 			if (array_key_exists ($fam_ID, $aHead))
 				echo ", " . $aHead[$fam_ID];
 			echo " " . FormatAddressLine($fam_Address1, $fam_City, $fam_State);
+			echo "</option>";
 		}
 
+		echo "</select></td></tr>";
+	}
+	// Filter by Email
+	if ($sReportType == "Giving Report" || $sReportType == "Advanced Deposit Report" || $sReportType == "Zero Givers") {
+		echo "<tr><td class=LabelColumn>".gettext("Filter by Email:")."<br></td>";
+		echo "<td class=TextColumnWithBottomBorder><div class=SmallText>";
+		echo "</div><select name=email size=3>";
+		echo "<option value='all' selected>".gettext("All Families")."</option>";
+		echo "<option value='with'>".gettext("Families with Email")."</option>";
+		echo "<option value='without'>".gettext("Families without Email")."</option>";
 		echo "</select></td></tr>";
 	}
 	
@@ -202,7 +213,7 @@ if ($sReportType == "") {
 			echo "<option value=0 selected>" . gettext("All deposits within date range") . "</option>";
 		while ($aRow = mysql_fetch_array($rsDeposits)) {
 			extract($aRow);
-			echo "<option value=$dep_ID>$dep_ID &nbsp;$dep_Date &nbsp;$dep_Type ";
+			echo "<option value=$dep_ID>$dep_ID &nbsp;$dep_Date &nbsp;$dep_Type "."</option>";
 		}
 		echo "</select></td></tr>";
 	}
@@ -215,13 +226,14 @@ if ($sReportType == "") {
 		echo "<td class=TextColumnWithBottomBorder><div class=SmallText>"
 			.gettext("Use Ctrl Key to select multiple");
 		echo "</div><select name=funds[] size=5 multiple>";
-		echo "<option value=0 selected>".gettext("All Funds");
-		echo "<option value=0>----------";
+		echo "<option value=0 selected>".gettext("All Funds")."</option>";
+		echo "<option value=0>----------"."</option>";
 		while ($aRow = mysql_fetch_array($rsFunds)) {
 			extract($aRow);
 			echo "<option value=$fun_ID>$fun_Name";
 			if ($fun_Active == "false")
 				echo " &nbsp; INACTIVE";
+			echo "</option>";
 		}
 		echo "</select></td></tr>";
 	}
@@ -232,12 +244,12 @@ if ($sReportType == "") {
 		echo "<td class=TextColumnWithBottomBorder><div class=SmallText>"
 			.gettext("Use Ctrl Key to select multiple");
 		echo "</div><select name=method[] size=5 multiple>";
-		echo "<option value=0 selected>".gettext("All Methods");
-		echo "<option value='CHECK'>".gettext("Check")
-			."<option value='CASH'>".gettext("Cash")
-			."<option value='CREDITCARD'>".gettext("Credit Card")
-			."<option value='BANKDRAFT'>".gettext("Bank Draft")
-			."<option value='EGIVE'>".gettext("eGive");
+		echo "<option value=0 selected>".gettext("All Methods")."</option>";
+		echo "<option value='CHECK'>".gettext("Check")."</option>"
+			."<option value='CASH'>".gettext("Cash")."</option>"
+			."<option value='CREDITCARD'>".gettext("Credit Card")."</option>"
+			."<option value='BANKDRAFT'>".gettext("Bank Draft")."</option>"
+			."<option value='EGIVE'>".gettext("eGive")."</option>";
 		echo "</select></td></tr>";
 	}
 	
@@ -298,11 +310,13 @@ if ($sReportType == "") {
 		&& ($sReportType == "Pledge Summary" || $sReportType == "Giving Report" || $sReportType == "Individual Deposit Report" || $sReportType == "Advanced Deposit Report" || $sReportType == "Zero Givers")){
 		echo "<tr><td class=LabelColumn>".gettext("Output Method:")."</td>";
 		echo "<td class=TextColumnWithBottomBorder><input name=output type=radio checked value='pdf'>".gettext("PDF");
-		echo " <input name=output type=radio value='csv'>".gettext("CSV")."</tr>";
+		echo " <input name=output type=radio value='csv'>".gettext("CSV");
+		echo " <input name=output type=radio value='email'>".gettext("EMAIL TO FAMILY");
+		echo "</td></tr>";
 	} else {
 		echo "<input name=output type=hidden value='pdf'>";
 	}
-	
+
 	// Back, Next Buttons
 	echo "<tr><td>&nbsp;</td>
 		<td><input type=button class=icButton name=Cancel value='" . gettext("Back") . "' 

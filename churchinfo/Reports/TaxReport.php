@@ -28,6 +28,7 @@ $letterhead = FilterInput($_POST["letterhead"]);
 $remittance = FilterInput($_POST["remittance"]);
 $output = FilterInput($_POST["output"]);
 $sReportType = FilterInput($_POST["ReportType"]);
+$sEmail = FilterInput($_POST["email"]);
 $sDateStart = FilterInput($_POST["DateStart"],"date");
 $sDateEnd = FilterInput($_POST["DateEnd"],"date");
 $iDepID = FilterInput($_POST["deposit"],"int");
@@ -72,7 +73,7 @@ if (!empty($_POST["classList"])) {
 
 // Build SQL Query
 // Build SELECT SQL Portion
-$sSQL = "SELECT fam_ID, fam_Name, fam_Address1, fam_Address2, fam_City, fam_State, fam_Zip, fam_Country, fam_envelope, plg_date, plg_amount, plg_method, plg_comment, plg_CheckNo, fun_Name, plg_PledgeOrPayment, plg_NonDeductible FROM family_fam
+$sSQL = "SELECT fam_ID, fam_Name, fam_Address1, fam_Address2, fam_City, fam_State, fam_Zip, fam_Country, fam_envelope, fam_Email, plg_date, plg_amount, plg_method, plg_comment, plg_CheckNo, fun_Name, plg_PledgeOrPayment, plg_NonDeductible FROM family_fam
 	INNER JOIN pledge_plg ON fam_ID=plg_FamID
 	LEFT JOIN donationfund_fun ON plg_fundID=fun_ID";
 
@@ -147,6 +148,14 @@ if ($classList[0]) {
 // Get Criteria string
 preg_match  ("/WHERE (plg_PledgeOrPayment.*)/i", $sSQL, $aSQLCriteria);
 
+// Filter by Email
+// NOTE This must be after setting aSQLCriteria from sSQL since aSQLCriteria is used in a query only on pledge_plg table
+if ($sEmail == "without") {
+	$sSQL .= " AND fam_Email='' ";
+} elseif ($sEmail == "with") {
+	$sSQL .= " AND fam_Email<>'' ";
+}
+
 // Add SQL ORDER
 $sSQL .= " ORDER BY plg_FamID, plg_date ";
 
@@ -159,10 +168,10 @@ if ($iCountRows < 1){
 	header("Location: ../FinancialReports.php?ReturnMessage=NoRows&ReportType=Giving%20Report"); 
 }
 
-// Create Giving Report -- PDF
-// ***************************
+// Create Giving Report -- PDF for either PDF or EMAIL
+// ***************************************************
 
-if ($output == "pdf") {
+if (($output == "pdf") or ($output == "email")) {
 
 	// Set up bottom border values
 	if ($remittance == "yes"){
@@ -281,7 +290,23 @@ if ($output == "pdf") {
 		while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
 			$pdf->$cfg_name = $cfg_value;
 		}
-   }
+	}
+	if ($output == "email") {
+		// init the gre table for this user 
+		$iUserID = $_SESSION['iUserID']; // Read into local variable for faster access
+		$sGreTable = 'giving_rpt_email_gre_'.$iUserID;
+		$sSQL = 'DROP TABLE IF EXISTS '.$sGreTable;
+		RunQuery($sSQL);
+		$sSQL = "CREATE TABLE `".$sGreTable."` ("
+			  ."`gre_FamID` mediumint(9) NOT NULL,"
+			  ."`gre_FamName` text NOT NULL,"
+			  ."`gre_Email` text NOT NULL,"
+			  ."`gre_Attach` text COLLATE utf8_unicode_ci,"
+			  ."`gre_num_attempt` smallint(5) unsigned NOT NULL DEFAULT '0',"
+			  ."`gre_failed_time` datetime DEFAULT NULL"
+			  .") ENGINE=MyISAM;";
+		RunQuery($sSQL);
+	}
 
 	// Loop through result array
 	$currentFamilyID = 0;
@@ -297,6 +322,10 @@ if ($output == "pdf") {
 			if ($iMinimum > $total_gifts)
 				continue;
 		}
+		// if sending email giving statements, and there isn't an email, skip it.
+		if (($output == "email") and ($fam_Email == ""))
+			continue;
+
 		// Check for new family
 		if ($fam_ID != $currentFamilyID && $currentFamilyID != 0) {
 			//New Family. Finish Previous Family
@@ -309,7 +338,7 @@ if ($output == "pdf") {
 			$pdf->Cell (25, $summaryIntervalY, $totalAmountStr, 0,1,"R");
 			$pdf->SetFont('Times','B', 10);
 			$pdf->Cell (95, $summaryIntervalY, " ");
-			$pdf->Cell (50, $summaryIntervalY, "Goods and Services Rendered:");
+			$pdf->Cell (50, $summaryIntervalY, "Non-Deductible Payments:");
 			$totalAmountStr = "$" . number_format($totalNonDeductible,2);
 			$pdf->SetFont('Courier','', 9);
 			$pdf->Cell (25, $summaryIntervalY, $totalAmountStr, 0,1,"R");
@@ -335,6 +364,30 @@ if ($output == "pdf") {
 			}
 			$pdf->SetFont('Times','', 10);
 			$pdf->FinishPage ($curY,$prev_fam_ID,$prev_fam_Name, $prev_fam_Address1, $prev_fam_Address2, $prev_fam_City, $prev_fam_State, $prev_fam_Zip, $prev_fam_Country);
+
+			// output file for this family, set up for next family
+			if ($output == "email") {
+                // output the file for attachment, poke data into sql 
+                $sEmailFile = "TaxReport_".$iUserID."_".$prev_fam_ID."_".date("Ymd").".pdf";
+                $sEmailAttach = "../tmp_attach/".$sEmailFile;
+				$pdf->Output($sEmailAttach, "F");
+                // Add this family's data into gre so we can send it
+                $sSQL = "INSERT INTO ".$sGreTable." ".
+                        "SET " .
+                        "gre_FamID='"   . $prev_fam_ID      . "',".
+                        "gre_FamName='" . $prev_fam_Name    . "',".
+                        "gre_Email='"   . $prev_fam_Email   . "',".
+                        "gre_Attach='" . mysql_real_escape_string($sEmailFile). "'";
+                RunQuery($sSQL);
+				$pdf = new PDF_TaxReport();
+				// ReRead in report settings from database to re init.. ALAN TODO this seems overkill.. new filename API?
+				$rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+				if ($rsConfig) {
+					while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+						$pdf->$cfg_name = $cfg_value;
+					}
+				}
+			}
 		}
 
 		// Start Page for New Family
@@ -404,6 +457,7 @@ if ($output == "pdf") {
 		$prev_fam_State = $fam_State;
 		$prev_fam_Zip = $fam_Zip;
 		$prev_fam_Country = $fam_Country;
+		$prev_fam_Email = $fam_Email;
 	}
 
 	// Finish Last Report
@@ -416,7 +470,7 @@ if ($output == "pdf") {
 	$pdf->Cell (25, $summaryIntervalY, $totalAmountStr, 0,1,"R");
 	$pdf->SetFont('Times','B', 10);
 	$pdf->Cell (95, $summaryIntervalY, " ");
-	$pdf->Cell (50, $summaryIntervalY, "Goods and Services Rendered:");
+	$pdf->Cell (50, $summaryIntervalY, "Non-Deductible Payments:");
 	$totalAmountStr = "$" . number_format($totalNonDeductible,2);
 	$pdf->SetFont('Courier','', 9);
 	$pdf->Cell (25, $summaryIntervalY, $totalAmountStr, 0,1,"R");
@@ -445,10 +499,29 @@ if ($output == "pdf") {
 	}
 
 	header('Pragma: public');  // Needed for IE when using a shared SSL certificate
-	if ($iPDFOutputType == 1)
-		$pdf->Output("TaxReport" . date("Ymd") . ".pdf", "D");
-	else
-		$pdf->Output();
+	if ($output == "email") {
+		// output file for this last family
+        // TODO ALAN can I get rid of this duplicate code junk?  FinishPage() perhaps?
+        $sEmailFile = "TaxReport_".$iUserID."_".$prev_fam_ID."_".date("Ymd").".pdf";
+        $sEmailAttach = "../tmp_attach/".$sEmailFile;
+        $pdf->Output($sEmailAttach, "F");
+        // Record the info into gre for later..
+        $sSQL = "INSERT INTO ".$sGreTable." ".
+                "SET " .
+                "gre_FamID='"   . $prev_fam_ID      . "',".
+                "gre_FamName='" . $prev_fam_Name    . "',".
+                "gre_Email='"   . $prev_fam_Email   . "',".
+                "gre_Attach='" . mysql_real_escape_string($sEmailFile). "'";
+        RunQuery($sSQL);
+		// send user to page to enter subject and message to go with the giving report.
+        Redirect('EmailSendGiving.php');
+    } else {
+		// display or download as configured
+		if ($iPDFOutputType == 1)
+			$pdf->Output("TaxReport" . date("Ymd") . ".pdf", "D");
+		else
+			$pdf->Output();
+	}
 
 
 // Output a text file
