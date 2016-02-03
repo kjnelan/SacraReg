@@ -51,6 +51,12 @@ $aut_ID = 0; // id for current pledge record
 if (array_key_exists ("AutID", $_GET)) { // See if we are editing an existing record
 	$aut_ID = $_GET["AutID"];
 	$iAutID = $aut_ID; // Include/VancoChurchInfo.php is looking for this. 
+	$_SESSION["AutID"] = $aut_ID;
+}
+
+if (array_key_exists ("AutID", $_SESSION)) { // See if we are editing an existing record
+	$aut_ID = $_SESSION["AutID"];
+	$iAutID = $aut_ID; // Include/VancoChurchInfo.php is looking for this. 
 }
 
 if (isset($_POST["Cancel"])) {
@@ -151,7 +157,7 @@ if (isset($_POST["Cancel"])) {
 			"aut_AccountVanco=\"$aut_AccountVanco\",".
 			"aut_DateLastEdited=NOW()";
 		
-		if ($aut_id == 0) { // creating a new record
+		if ($aut_ID == 0) { // creating a new record
 			$sSQL = "INSERT INTO autopayment_aut " . $setValueSQL;
 			$result = $link->query($sSQL);
 			
@@ -159,12 +165,14 @@ if (isset($_POST["Cancel"])) {
 			$result = $link->query($sSQL);
 			
 			$line = $result->fetch_array(MYSQLI_ASSOC);
-			$aut_id = $line["LAST_INSERT_ID()"];
+			$aut_ID = $line["LAST_INSERT_ID()"];
+			$_SESSION["AutID"] = $aut_ID;
+			header("Location: SelfAutoPaymentEdit.php");
 		} else {
-			$sSQL = "UPDATE autopayment_aut " . $setValueSQL . " WHERE aud_ID=".$aut_id;
+			$sSQL = "UPDATE autopayment_aut " . $setValueSQL . " WHERE aut_ID=".$aut_ID;
 			$result = $link->query($sSQL);
+			header('Location: SelfRegisterHome.php');
 		}
-		header('Location: SelfRegisterHome.php');
 		exit();
 	}
 } else if ($aut_ID > 0) { // working on an exiting autopayment record
@@ -207,7 +215,42 @@ if (  (! isset($_POST["Submit"])) && $aut_ID == 0) {
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css?<?php echo "Screw=".time();?>">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
+<script>
+function ShowHidePaymentStuff() {
+	if (document.getElementById("EnableBankDraft").checked) {
+		document.getElementById("CreditCard").style.visibility = "hidden";
+		document.getElementById("ExpMonth").style.visibility = "hidden";
+		document.getElementById("ExpYear").style.visibility = "hidden";
+		document.getElementById("CreditCardVanco").style.visibility = "hidden";
+		
+		document.getElementById("BankName").style.visibility = "visible";
+		document.getElementById("Route").style.visibility = "visible";
+		document.getElementById("Account").style.visibility = "visible";
+		document.getElementById("AccountVanco").style.visibility = "visible";
+	} else if (document.getElementById("EnableCreditCard").checked) {
+		document.getElementById("CreditCard").style.visibility = "visible";
+		document.getElementById("ExpMonth").style.visibility = "visible";
+		document.getElementById("ExpYear").style.visibility = "visible";
+		document.getElementById("CreditCardVanco").style.visibility = "visible";
+		
+		document.getElementById("BankName").style.visibility = "hidden";
+		document.getElementById("Route").style.visibility = "hidden";
+		document.getElementById("Account").style.visibility = "hidden";
+		document.getElementById("AccountVanco").style.visibility = "hidden";
+	} else {
+		document.getElementById("CreditCard").style.visibility = "hidden";
+		document.getElementById("ExpMonth").style.visibility = "hidden";
+		document.getElementById("ExpYear").style.visibility = "hidden";
+		document.getElementById("CreditCardVanco").style.visibility = "hidden";
+		
+		document.getElementById("BankName").style.visibility = "hidden";
+		document.getElementById("Route").style.visibility = "hidden";
+		document.getElementById("Account").style.visibility = "hidden";
+		document.getElementById("AccountVanco").style.visibility = "hidden";
+	}
+}
+</script>
+<body onload="ShowHidePaymentStuff()">
 <?php 
 include "Include/vancowebservices.php";
 include "Include/VancoConfig.php";
@@ -226,15 +269,19 @@ include "Include/VancoChurchInfo.php";
 <?php echo "Electronic Payment"; ?>
 </h2>
 
-<form method="post" action="SelfAutoPaymentEdit.php?AutID=<?php echo $aut_ID; ?>" name="SelfAutoPaymentEdit">
+<p>
+<?php echo gettext ("This electronic payment method may be used for repeating donation payments or one-time donation payments.")?>
+</p>
+
+<form method="post" action="SelfAutoPaymentEdit.php?" name="SelfAutoPaymentEdit">
 
 <table cellpadding="1" align="center">
 
 	<tr>
 		<td class="RegLabelColumn"><?php echo gettext("Automatic payment type"); ?></td>
-		<td class="RegTextColumn"><input type="radio" Name="EnableButton" value="1" id="EnableBankDraft"<?php if ($aut_EnableBankDraft) echo " checked"; ?>>Bank Draft
-		                       <input type="radio" Name="EnableButton" value="2" id="EnableCreditCard" <?php if ($aut_EnableCreditCard) echo " checked"; ?>>Credit Card
-									  <input type="radio" Name="EnableButton" value="3"  id="Disable" <?php if ((!$aut_EnableBankDraft)&&(!$aut_EnableCreditCard)) echo " checked"; ?>>Disable</td>
+		<td class="RegTextColumn"><input type="radio" onchange="ShowHidePaymentStuff()" Name="EnableButton" value="1" id="EnableBankDraft"<?php if ($aut_EnableBankDraft) echo " checked"; ?>>Bank Draft
+		                       <input type="radio" onchange="ShowHidePaymentStuff()" Name="EnableButton" value="2" id="EnableCreditCard" <?php if ($aut_EnableCreditCard) echo " checked"; ?>>Credit Card
+									  <input type="radio" onchange="ShowHidePaymentStuff()" Name="EnableButton" value="3"  id="Disable" <?php if ((!$aut_EnableBankDraft)&&(!$aut_EnableCreditCard)) echo " checked"; ?>>Disable</td>
 	</tr>
 
 	<tr>
@@ -253,12 +300,12 @@ include "Include/VancoChurchInfo.php";
 	</tr>
 	
 	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("Payment Amount");?></td>
+		<td class="RegLabelColumn"><?php echo gettext("Repeating Amount");?></td>
 		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="Amount" name="Amount" value="<?php echo $aut_Amount; ?>"></td>
 	</tr>
 
 	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("Payment Schedule");?></td>
+		<td class="RegLabelColumn"><?php echo gettext("Repeating Schedule");?></td>
 		<td class="RegTextColumn">
 			<select class="RegEnterText" id="Schedule" name="Schedule">
 				<option value="Monthly" <?php if ($schedName=='Monthly') echo 'Selected'; ?>>Monthly</option>
@@ -349,7 +396,20 @@ include "Include/VancoChurchInfo.php";
 	
 		<tr>
 			<td class="RegLabelColumn"><?php echo gettext("Expiration Month");?></td>
-			<td class="RegTextColumn"><input type="text" id="ExpMonth" name="ExpMonth" value="<?php echo $aut_ExpMonth?>"></td>
+			<td class="RegTextColumn"> <select id="ExpMonth" name="ExpMonth">
+  				<option value="01" <?php if (intval($aut_ExpMonth) == 1) echo " selected";?>>01</option>
+  				<option value="02" <?php if (intval($aut_ExpMonth) == 2) echo " selected";?>>02</option>
+  				<option value="03" <?php if (intval($aut_ExpMonth) == 3) echo " selected";?>>03</option>
+  				<option value="04" <?php if (intval($aut_ExpMonth) == 4) echo " selected";?>>04</option>
+  				<option value="05" <?php if (intval($aut_ExpMonth) == 5) echo " selected";?>>05</option>
+  				<option value="06" <?php if (intval($aut_ExpMonth) == 6) echo " selected";?>>06</option>
+  				<option value="07" <?php if (intval($aut_ExpMonth) == 7) echo " selected";?>>07</option>
+  				<option value="08" <?php if (intval($aut_ExpMonth) == 8) echo " selected";?>>08</option>
+  				<option value="09" <?php if (intval($aut_ExpMonth) == 9) echo " selected";?>>09</option>
+  				<option value="10" <?php if (intval($aut_ExpMonth) == 10) echo " selected";?>>10</option>
+  				<option value="11" <?php if (intval($aut_ExpMonth) == 11) echo " selected";?>>11</option>
+  				<option value="12" <?php if (intval($aut_ExpMonth) == 12) echo " selected";?>>12</option>
+				</select></td>
 		</tr>
 	
 		<tr>
@@ -414,6 +474,7 @@ include "Include/VancoChurchInfo.php";
 
 </table>
 </form>
+</body>
 
 <?php
 mysqli_close($link);

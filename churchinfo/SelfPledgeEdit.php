@@ -74,10 +74,8 @@ if (isset($_POST["Cancel"])) {
 	$plg_method = $link->real_escape_string($_POST["Method"]);
 	$plg_comment = $link->real_escape_string($_POST["Comment"]);
 	$plg_fundID = $link->real_escape_string($_POST["FundID"]);
+	$plg_aut_ID = $link->real_escape_string($_POST["AutoPay"]);
 	
-	if ($plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") {
-		$plg_aut_ID = $link->real_escape_string($_POST["AutoPay"]);
-	}
 	if ((! isset($plg_aut_ID)) || $plg_aut_ID=="")
 		$plg_aut_ID = 0;
 	
@@ -152,7 +150,7 @@ if (isset($_POST["Cancel"])) {
 			$nvpvarcontent = $workingobj->vancoEFTTransparentRedirectNVPGenerator($VancoUrltoredirect,$customerid,"","NO");
 
 			$paymentmethodref = "";
-			if ($plg_method == "CreditCard") {
+			if ($plg_method == "CREDITCARD") {
 				$paymentmethodref = $aut_CreditCardVanco;
 			} else {
 				$paymentmethodref = $aut_AccountVanco;
@@ -248,7 +246,7 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 	$plg_date = date ("Y-m-d");
 	$plg_amount = 0.0;
 	$plg_schedule = "Monthly";
-	$plg_method = "BankDraft";
+	$plg_method = "BANKDRAFT";
 	$plg_comment = "";
 	$plg_fundID = 0;
 }
