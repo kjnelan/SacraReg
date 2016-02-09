@@ -222,6 +222,14 @@ if (isset($_POST["Cancel"])) {
 				$sSQL = "UPDATE pledge_plg SET plg_aut_ResultID=" . $plg_aut_ResultID . " WHERE plg_plgID=" . $plg_plgID;
 				RunQuery($sSQL);
 			}
+			// show the result and provide a link back to the self-service home page
+			echo $sHeader;
+			echo "<h1>$reg_firstname $reg_lastname</h1>";
+			echo gettext ("Process payment result:<br>");
+			
+			echo mysql_real_escape_string($errStr);
+			echo "<br><a href=\"SelfRegisterHome.php\">Done</a>";
+			exit();
 		}
 		
 		header('Location: SelfRegisterHome.php');

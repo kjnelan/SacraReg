@@ -278,13 +278,19 @@ function CreatePaymentMethod()
         	            	document.getElementById("CreditCard").value = "************" + ccVal.substr(ccVal.length-4,4) ;
                     		document.getElementById ("CreditCardVanco").value = gotPaymentRef;
         	        	}
+        	        	if (typeof NotifyVancoSuccess == 'function') {
+        	        		NotifyVancoSuccess(); 
+        	        	}
                 	} else {
                     	errorArr = errorList.split(',');
                     	errorStr = "";
                     	for (var i = 0; i < errorArr.length; i++)
                         	errorStr += "Error " + errorArr[i] + ": " + VancoErrorString(Number(errorArr[i])) + "\n"; 
                 		alert (errorStr);
-                		window.location = "<?php echo RedirectURL ("AutoPaymentEditor.php")."?AutID=$iAutID&FamilyID=$aut_FamID$&linkBack=$linkBack";?>";
+        	        	if (typeof NotifyVancoFailure == 'function') {
+        	        		NotifyVancoFailure(); 
+        	        	}
+//                		window.location = "<?php echo RedirectURL ("AutoPaymentEditor.php")."?AutID=$iAutID&FamilyID=$aut_FamID$&linkBack=$linkBack";?>";
                 	}
                 },
                 error: function (jqXHR, textStatus, errorThrown, nashuadata) {

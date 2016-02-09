@@ -298,7 +298,7 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 	?>
   
 	<tr class="<?php echo $sRowClass ?>" align="center">
-		<td><a href=SelfAutoPaymentEdit.php?AutID=<?php echo $aut_ID ?>>Edit</a></td>
+		<td><a href=SelfPaymentMethodEdit.php?AutID=0<?php echo $aut_ID ?>>Edit</a></td>
 		<td><?php echo $AutoPaymentMethod ?>&nbsp;</td>
 		<td><?php echo $AutoFundName ?>&nbsp;</td>
 		<td align=center><?php echo $aut_Amount ?>&nbsp;</td>
@@ -331,7 +331,8 @@ $rsPledges = $link->query($sSQL);
 
 
 <a href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">Enter New Pledge</a><br>
-<a href="SelfAutoPaymentEdit.php">Enter New Payment Method</a><br>
+<a href="SelfPaymentMethodEdit.php?AutID=0">Enter New Payment Method</a><br>
+<a href="SelfRepeatingPaymentEdit.php?">Set up a repeating Payment</a><br>
 <?php if ($numAutoPayments == 0) 
 	echo "Please create at least one payment method to enable immediate donation option.<br>";
 else

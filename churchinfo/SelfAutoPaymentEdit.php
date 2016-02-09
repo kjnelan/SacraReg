@@ -442,21 +442,6 @@ include "Include/VancoChurchInfo.php";
 			<td class="RegTextColumn"><input type="text" id="AccountVanco" name="AccountVanco" value="<?php echo $aut_AccountVanco?>" readonly></td>
 		</tr>
 				
-		<tr>
-			<td>
-	<?php 
-		if ($aut_ID > 0) {
-	?>
-			<input type="button" id="PressToCreatePaymentMethod" value="Store Private Data at Vanco" onclick="CreatePaymentMethod();" />
-	<?php 
-		} else {
-	?>
-			<b>Save this record to enable storing private data at Vanco</b>
-	<?php 
-		}
-	?>
-					</td>
-				</tr>
 		</table></td></tr>
 			
 <?php if ($errStr != "") { ?>
