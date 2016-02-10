@@ -132,7 +132,7 @@ function CreatePaymentAndSave ()
         traditional: false,
         success: function (saveformdata) {
         	if (saveformdata.result=="Success") {
-		    	CreatePaymentMethod ();
+        		UpdateNvpvar ();
         	} else {
 	        	document.getElementById("ShowErrorStr").innerHTML = saveformdata.errStr;
         	}
@@ -140,6 +140,29 @@ function CreatePaymentAndSave ()
         error: function (jqXHR, textStatus, errorThrown, vancodata) {
             alert("Error saving: " + errorThrown);
         	document.getElementById("SaveButton").hidden = true;
+        }
+    });
+}
+
+function UpdateNvpvar ()
+{
+    $.ajax({
+        type: "POST",
+        url: "GetNewVancoNvpvar.php",
+        dataType: "json",
+        async: true,
+        traditional: false,
+        success: function (updatenvpdata) {
+        	if (updatenvpdata.result=="Success") {
+        		localStorage.setItem("sessionid", updatenvpdata.sessionid);
+        		localStorage.setItem("nvpvarcontent", updatenvpdata.nvpvarcontent);
+		    	CreatePaymentMethod ();
+        	} else {
+	        	document.getElementById("ShowErrorStr").innerHTML = updatenvpdata.errStr;
+        	}
+        },
+        error: function (jqXHR, textStatus, errorThrown, vancodata) {
+            alert("Error updating nvpvar: " + errorThrown);
         }
     });
 }

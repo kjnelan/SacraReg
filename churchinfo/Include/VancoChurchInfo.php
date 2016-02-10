@@ -11,6 +11,12 @@
 ?>
 
 <script>
+	// Store sessionid and nvpvarcontent for later access.  This way they can be updated from a different page
+	localStorage.setItem("sessionid", "<?php echo $sessionid; ?>");
+	localStorage.setItem("nvpvarcontent", "<?php echo $nvpvarcontent; ?>");
+</script>
+
+<script>
 
 function VancoErrorString (errNo)
 {
@@ -234,12 +240,16 @@ function CreatePaymentMethod()
 		accountNum = Account.value;
 	if (document.getElementById("EnableCreditCard").checked)
 		accountNum = CreditCard.value;
-    
+
+	
+	var sessionid = localStorage.getItem("sessionid");
+	var nvpvarcontent = localStorage.getItem("nvpvarcontent");
+	
     $.ajax({
         type: "POST",
         url: "<?php if ($VancoTest) echo "https://www.vancodev.com/cgi-bin/wsnvptest.vps"; else echo "https://www.vancoservices.com/cgi-bin/wsnvp.vps";?>",
-        data: { "sessionid":"<?php echo $sessionid; ?>", 
-    	        "nvpvar":"<?php echo $nvpvarcontent; ?>",
+        data: { "sessionid":sessionid, 
+    	        "nvpvar":nvpvarcontent,
     	        "newcustomer":"true", 
     	        "accounttype":accountType, 
     	        "accountnumber":accountNum, 
