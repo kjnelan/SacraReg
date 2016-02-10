@@ -137,26 +137,6 @@ if ($reg_id == 0) {
 } else {
 ?>
 
-<h1><?php echo "$reg_firstname $reg_lastname"; ?></h1>
-
-<h2><?php echo gettext("Personal"); ?></h2>
-<?php echo gettext("Name: $per_FirstName $per_LastName<br>"); ?>
-<?php echo gettext("Birth date: Year $per_BirthYear, Month $per_BirthMonth, Day $per_BirthDay<br>"); ?>
-<?php echo gettext("Email: $per_Email<br>"); ?>
-<?php echo gettext("Cell Phone: $per_CellPhone<br>"); ?>
-<a href="SelfEditPerson.php"><?php echo gettext("Edit personal information"); ?></a>
-
-<h2><?php echo gettext("Family"); ?></h2>
-<?php echo gettext("Address: $fam_Address1 $fam_Address2 $fam_City, $fam_State $fam_Zip<br>"); ?>
-<?php echo gettext("Home Phone: $fam_HomePhone<br>"); ?>
-<?php echo gettext("Family Email: $fam_Email<br>"); ?>
-<a href="SelfEditFamily.php"><?php echo gettext("Edit family information"); ?></a>
-
-<h2><?php echo gettext("Online Registration"); ?></h2>
-<?php echo gettext("Address: $reg_address1 $reg_address2 $reg_city, $reg_state $reg_zip<br>"); ?>
-<?php echo gettext("Email: $reg_email<br>"); ?>
-<a href="SelfRegister.php">Edit Registration</a><br>
-
 <?php 
 $currentFYID = CurrentFY(); // self-service just focuses on this fiscal year and next fiscal year
 $nextFYID = $currentFYID + 1;
@@ -185,6 +165,144 @@ $rsAutoPayments = $link->query($sSQL);
 
 }
 ?>
+
+<h1><?php echo "$reg_firstname $reg_lastname"; ?></h1>
+
+<h2><?php echo gettext("Self-Service Actions"); ?></h2>
+<a href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">Enter New Pledge</a><br>
+<a href="SelfPaymentMethodEdit.php?AutID=0">Enter New Payment Method</a><br>
+<a href="SelfRepeatingPaymentEdit.php?">Set up a repeating Payment</a><br>
+<?php if ($rsAutoPayments->num_rows == 0) 
+	echo "Please create at least one payment method to enable immediate donation option.<br>";
+else
+	echo "<a href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a><br>"
+?>
+<a href="SelfRegisterLogout.php">Log Out</a>
+
+<h2><?php echo gettext("Personal"); ?></h2>
+<?php echo gettext("Name: $per_FirstName $per_LastName<br>"); ?>
+<?php echo gettext("Birth date: Year $per_BirthYear, Month $per_BirthMonth, Day $per_BirthDay<br>"); ?>
+<?php echo gettext("Email: $per_Email<br>"); ?>
+<?php echo gettext("Cell Phone: $per_CellPhone<br>"); ?>
+<a href="SelfEditPerson.php"><?php echo gettext("Edit personal information"); ?></a>
+
+<h2><?php echo gettext("Family"); ?></h2>
+<?php echo gettext("Address: $fam_Address1 $fam_Address2 $fam_City, $fam_State $fam_Zip<br>"); ?>
+<?php echo gettext("Home Phone: $fam_HomePhone<br>"); ?>
+<?php echo gettext("Family Email: $fam_Email<br>"); ?>
+<a href="SelfEditFamily.php"><?php echo gettext("Edit family information"); ?></a>
+
+<h2><?php echo gettext("Online Registration"); ?></h2>
+<?php echo gettext("Address: $reg_address1 $reg_address2 $reg_city, $reg_state $reg_zip<br>"); ?>
+<?php echo gettext("Email: $reg_email<br>"); ?>
+<a href="SelfRegister.php">Edit Registration</a><br>
+
+<h2><?php echo gettext("Electronic Payment Methods"); ?></h2>
+
+<table cellpadding="4" cellspacing="0" width="100%">
+
+<tr class="TableHeader" align="center">
+	<td><?php echo gettext("Edit"); ?></td>
+	<td><?php echo gettext("Method"); ?></td>
+	<td><?php echo gettext("Date Updated"); ?></td>
+	<td><?php echo gettext("Updated By"); ?></td>
+</tr>
+
+<?php
+$numAutoPayments = 0;
+$numAutoPaymentsWithAmount = 0;
+//Loop through all payment methods
+while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
+{
+	$numAutoPayments += 1;
+	
+	$tog = (! $tog);
+
+	extract($aRow);
+	
+	if ($aut_Amount > 0)
+		$numAutoPaymentsWithAmount += 1;
+
+	$AutoPaymentMethod = "";
+	if ($aut_EnableBankDraft)
+		$AutoPaymentMethod = "Bank ACH";
+	else if (aut_EnableCreditCard)
+		$AutoPaymentMethod = "Credit Card";
+?>
+	<tr class="<?php echo $sRowClass ?>" align="center">
+		<td><a href=SelfPaymentMethodEdit.php?AutID=<?php echo $aut_ID ?>>Edit</a></td>
+		<td><?php echo $AutoPaymentMethod ?>&nbsp;</td>
+		<td><?php echo $aut_DateLastEdited; ?>&nbsp;</td>
+		<td><?php echo $AutoEnteredFirstName . " " . $AutoEnteredLastName; ?>&nbsp;</td>
+	</tr>
+<?php
+}
+?>
+</table>
+
+<?php if ($numAutoPaymentsWithAmount > 0) { ?>
+
+
+<h2><?php echo gettext("Automatic Electronic Payments"); ?></h2>
+
+<table cellpadding="4" cellspacing="0" width="100%">
+
+<tr class="TableHeader" align="center">
+	<td><?php echo gettext("Edit"); ?></td>
+	<td><?php echo gettext("Method"); ?></td>
+	<td><?php echo gettext("Fund"); ?></td>
+	<td><?php echo gettext("Amount"); ?></td>
+	<td><?php echo gettext("Schedule"); ?></td>
+	<td><?php echo gettext("Fiscal Year"); ?></td>
+	<td><?php echo gettext("Next Payment Day"); ?></td>
+	<td><?php echo gettext("Date Updated"); ?></td>
+	<td><?php echo gettext("Updated By"); ?></td>
+</tr>
+
+<?php
+$numAutoPayments = 0;
+//Loop through all payment methods
+$rsAutoPayments->data_seek(0);
+while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
+{
+	$numAutoPayments += 1;
+	
+	extract($aRow);
+	
+	if ($aut_Amount > 0) {
+			
+		$AutoPaymentMethod = "";
+		if ($aut_EnableBankDraft)
+			$AutoPaymentMethod = "Bank ACH";
+		else if (aut_EnableCreditCard)
+			$AutoPaymentMethod = "Credit Card";
+			
+		$AutoSchedule = "";
+		if ($aut_Interval == 1)
+			$AutoSchedule = "Monthly";
+		else if ($aut_Interval == 3)
+			$AutoSchedule = "Quartely";
+		else
+			$AutoSchedule = "Other";
+		?>
+	  
+		<tr class="<?php echo $sRowClass ?>" align="center">
+			<td><a href=SelfRepeatingPaymentEdit.php?AutID=0<?php echo $aut_ID ?>>Edit</a></td>
+			<td><?php echo $AutoPaymentMethod ?>&nbsp;</td>
+			<td><?php echo $AutoFundName ?>&nbsp;</td>
+			<td align=center><?php echo $aut_Amount ?>&nbsp;</td>
+			<td><?php echo $AutoSchedule ?>&nbsp;</td>
+			<td><?php echo MakeFYString ($aut_FYID) ?>&nbsp;</td>
+			<td><?php echo $aut_NextPayDate ?>&nbsp;</td>
+			<td><?php echo $aut_DateLastEdited; ?>&nbsp;</td>
+			<td><?php echo $AutoEnteredFirstName . " " . $AutoEnteredLastName; ?>&nbsp;</td>
+		</tr>
+	<?php
+	}
+}
+?>
+</table>
+<?php } //if ($numAutoPaymentsWithAmount > 0) { ?>
 
 <h2><?php echo gettext("Pledges and Payments for This Fiscal Year and Next Fiscal Year"); ?></h2>
 
@@ -248,99 +366,8 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 ?>
 </table>
 
-<h2><?php echo gettext("Electronic Payment Methods"); ?></h2>
-
-<table cellpadding="4" cellspacing="0" width="100%">
-
-<tr class="TableHeader" align="center">
-	<td><?php echo gettext("Edit"); ?></td>
-	<td><?php echo gettext("Method"); ?></td>
-	<td><?php echo gettext("Fund"); ?></td>
-	<td><?php echo gettext("Amount"); ?></td>
-	<td><?php echo gettext("Schedule"); ?></td>
-	<td><?php echo gettext("Fiscal Year"); ?></td>
-	<td><?php echo gettext("Next Payment Day"); ?></td>
-	<td><?php echo gettext("Date Updated"); ?></td>
-	<td><?php echo gettext("Updated By"); ?></td>
-</tr>
-
-<?php
-$tog = 0;
-$numAutoPayments = 0;
-//Loop through all payment methods
-while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
-{
-	$numAutoPayments += 1;
-	
-	$tog = (! $tog);
-
-	extract($aRow);
-
-	//Alternate the row style
-	if ($tog)
-		$sRowClass = "RowColorA";
-	else
-		$sRowClass = "RowColorB";
-		
-	$AutoPaymentMethod = "";
-	if ($aut_EnableBankDraft)
-		$AutoPaymentMethod = "Bank ACH";
-	else if (aut_EnableCreditCard)
-		$AutoPaymentMethod = "Credit Card";
-		
-	$AutoSchedule = "";
-	if ($aut_Interval == 1)
-		$AutoSchedule = "Monthly";
-	else if ($aut_Interval == 3)
-		$AutoSchedule = "Quartely";
-	else
-		$AutoSchedule = "Other";
-	?>
-  
-	<tr class="<?php echo $sRowClass ?>" align="center">
-		<td><a href=SelfPaymentMethodEdit.php?AutID=0<?php echo $aut_ID ?>>Edit</a></td>
-		<td><?php echo $AutoPaymentMethod ?>&nbsp;</td>
-		<td><?php echo $AutoFundName ?>&nbsp;</td>
-		<td align=center><?php echo $aut_Amount ?>&nbsp;</td>
-		<td><?php echo $AutoSchedule ?>&nbsp;</td>
-		<td><?php echo MakeFYString ($aut_FYID) ?>&nbsp;</td>
-		<td><?php echo $aut_NextPayDate ?>&nbsp;</td>
-		<td><?php echo $aut_DateLastEdited; ?>&nbsp;</td>
-		<td><?php echo $AutoEnteredFirstName . " " . $AutoEnteredLastName; ?>&nbsp;</td>
-	</tr>
-<?php
-}
-?>
-</table>
-
 <?php 
-$currentFYID = CurrentFY(); // self-service just focuses on this fiscal year and next fiscal year
-$nextFYID = $currentFYID + 1;
-
-if ($reg_id > 0) {	// show any pledges entered through this self-service interface
-$sSQL = "SELECT *, a.per_FirstName AS EnteredFirstName,
-         a.Per_LastName AS EnteredLastName, b.fun_Name AS fundName FROM 
-         register_pledge_rpg
-		 LEFT JOIN person_per a ON rpg_enteredby = a.per_ID
-		 LEFT JOIN donationfund_fun b ON rpg_fund = b.fun_ID
-		 WHERE rpg_reguser=$reg_id AND (rpg_fyid=$currentFYID OR rpg_fyid=$nextFYID) ORDER BY register_pledge_rpg.rpg_date";
-$rsPledges = $link->query($sSQL);
-}
-?>
-
-
-
-<a href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">Enter New Pledge</a><br>
-<a href="SelfPaymentMethodEdit.php?AutID=0">Enter New Payment Method</a><br>
-<a href="SelfRepeatingPaymentEdit.php?">Set up a repeating Payment</a><br>
-<?php if ($numAutoPayments == 0) 
-	echo "Please create at least one payment method to enable immediate donation option.<br>";
-else
-	echo "<a href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a><br>"
-?>
-<a href="SelfRegisterLogout.php">Log Out</a>
-<?php 
-}
+} // just logging in
 ?>
 
 <?php
