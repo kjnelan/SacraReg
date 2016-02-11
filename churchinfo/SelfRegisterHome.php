@@ -225,9 +225,9 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 
 	$AutoPaymentMethod = "";
 	if ($aut_EnableBankDraft)
-		$AutoPaymentMethod = "Bank ACH";
+		$AutoPaymentMethod = "Bank ACH " . $aut_BankName  . " " . $aut_Account;
 	else if (aut_EnableCreditCard)
-		$AutoPaymentMethod = "Credit Card";
+		$AutoPaymentMethod = "Credit Card " . $aut_CreditCard;
 ?>
 	<tr class="<?php echo $sRowClass ?>" align="center">
 		<td><a href=SelfPaymentMethodEdit.php?AutID=<?php echo $aut_ID ?>>Edit</a></td>
@@ -304,13 +304,12 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 </table>
 <?php } //if ($numAutoPaymentsWithAmount > 0) { ?>
 
-<h2><?php echo gettext("Pledges and Payments for This Fiscal Year and Next Fiscal Year"); ?></h2>
+<h2><?php echo gettext("Pledges for This Fiscal Year and Next Fiscal Year"); ?></h2>
 
 <table cellpadding="4" cellspacing="0" width="100%">
 
 <tr class="TableHeader" align="center">
 	<td><?php echo gettext("Edit"); ?></td>
-	<td><?php echo gettext("Pledge or Payment"); ?></td>
 	<td><?php echo gettext("Fund"); ?></td>
 	<td><?php echo gettext("Fiscal Year"); ?></td>
 	<td><?php echo gettext("Date"); ?></td>
@@ -323,45 +322,80 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 </tr>
 
 <?php
-$tog = 0;
 //Loop through all pledges
 while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 {
-	$tog = (! $tog);
-
 	extract($aRow);
 
-	//Alternate the row style
-	if ($tog)
-		$sRowClass = "RowColorA";
-	else
-		$sRowClass = "RowColorB";
+	if ($plg_PledgeOrPayment == 'Pledge') {
+	?>
+		<tr class="<?php echo $sRowClass ?>" align="center">
+		<?php if ($plg_PledgeOrPayment=="Pledge"||$plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") { ?>
+			<td><a href=SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment?>&PlgID=<?php echo $plg_plgID ?>><?php echo gettext ("Edit");?></a></td>
+		<?php } else { ?>
+			<td></td>
+		<?php } ?>		
+			<td><?php echo $fundName ?>&nbsp;</td>
+			<td><?php echo MakeFYString ($plg_FYID) ?>&nbsp;</td>
+			<td><?php echo $plg_date ?>&nbsp;</td>
+			<td align=center><?php echo $plg_amount ?>&nbsp;</td>
+			<td><?php echo $plg_schedule ?>&nbsp;</td>
+			<td><?php echo $plg_method; ?>&nbsp;</td>
+			<td><?php echo $plg_comment; ?>&nbsp;</td>
+			<td><?php echo $plg_DateLastEdited; ?>&nbsp;</td>
+			<td><?php echo $EnteredFirstName . " " . $EnteredLastName; ?>&nbsp;</td>
+		</tr>
+<?php
+	}
+}
+?>
+</table>
+
+
+<h2><?php echo gettext("Payments for This Fiscal Year and Next Fiscal Year"); ?></h2>
+
+<table cellpadding="4" cellspacing="0" width="100%">
+
+<tr class="TableHeader" align="center">
+	<td><?php echo gettext("Edit"); ?></td>
+	<td><?php echo gettext("Fund"); ?></td>
+	<td><?php echo gettext("Fiscal Year"); ?></td>
+	<td><?php echo gettext("Date"); ?></td>
+	<td><?php echo gettext("Amount"); ?></td>
+	<td><?php echo gettext("Schedule"); ?></td>
+	<td><?php echo gettext("Method"); ?></td>
+	<td><?php echo gettext("Comment"); ?></td>
+	<td><?php echo gettext("Date Updated"); ?></td>
+	<td><?php echo gettext("Updated By"); ?></td>
+</tr>
+
+<?php
+//Loop through all pledges
+$rsPledges->data_seek(0);
+while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
+{
+	extract($aRow);
 
 	if ($plg_PledgeOrPayment == 'Payment') {
-		if ($tog)
-			$sRowClass = "PaymentRowColorA";
-		else
-			$sRowClass = "PaymentRowColorB";
-	}
 	?>
-	<tr class="<?php echo $sRowClass ?>" align="center">
-	<?php if ($plg_PledgeOrPayment=="Pledge"||$plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") { ?>
-		<td><a href=SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment?>&PlgID=<?php echo $plg_plgID ?>><?php echo gettext ("Edit");?></a></td>
-	<?php } else { ?>
-		<td></td>
-	<?php } ?>		
-		<td><?php echo $plg_PledgeOrPayment ?>&nbsp;</td>
-		<td><?php echo $fundName ?>&nbsp;</td>
-		<td><?php echo MakeFYString ($plg_FYID) ?>&nbsp;</td>
-		<td><?php echo $plg_date ?>&nbsp;</td>
-		<td align=center><?php echo $plg_amount ?>&nbsp;</td>
-		<td><?php echo $plg_schedule ?>&nbsp;</td>
-		<td><?php echo $plg_method; ?>&nbsp;</td>
-		<td><?php echo $plg_comment; ?>&nbsp;</td>
-		<td><?php echo $plg_DateLastEdited; ?>&nbsp;</td>
-		<td><?php echo $EnteredFirstName . " " . $EnteredLastName; ?>&nbsp;</td>
-	</tr>
+		<tr class="<?php echo $sRowClass ?>" align="center">
+		<?php if ($plg_PledgeOrPayment=="Pledge"||$plg_method=="CREDITCARD" || $plg_method=="BANKDRAFT") { ?>
+			<td><a href=SelfPledgeEdit.php?PledgeOrPayment=<?php echo $plg_PledgeOrPayment?>&PlgID=<?php echo $plg_plgID ?>><?php echo gettext ("Edit");?></a></td>
+		<?php } else { ?>
+			<td></td>
+		<?php } ?>		
+			<td><?php echo $fundName ?>&nbsp;</td>
+			<td><?php echo MakeFYString ($plg_FYID) ?>&nbsp;</td>
+			<td><?php echo $plg_date ?>&nbsp;</td>
+			<td align=center><?php echo $plg_amount ?>&nbsp;</td>
+			<td><?php echo $plg_schedule ?>&nbsp;</td>
+			<td><?php echo $plg_method; ?>&nbsp;</td>
+			<td><?php echo $plg_comment; ?>&nbsp;</td>
+			<td><?php echo $plg_DateLastEdited; ?>&nbsp;</td>
+			<td><?php echo $EnteredFirstName . " " . $EnteredLastName; ?>&nbsp;</td>
+		</tr>
 <?php
+	}
 }
 ?>
 </table>

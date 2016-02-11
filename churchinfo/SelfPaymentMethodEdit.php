@@ -234,7 +234,7 @@ include "Include/VancoChurchInfo.php";
 
 	<tr>
 		<td class="RegLabelColumn"<?php addToolTip("Format: YYYY-MM-DD<br>or enter the date by clicking on the calendar icon to the right."); ?>><?php echo gettext("Date:"); ?></td>
-		<td class="RegTextColumn"><input type="text" name="NextPayDate" id="NextPayDate" value="<?php echo $aut_NextPayDate; ?>" maxlength="10" id="Date" size="11">&nbsp;<input type="image" onclick="return showCalendar('Date', 'y-mm-dd');" src="Images/calendar.gif"> <span class="SmallText"><?php echo gettext("[format: YYYY-MM-DD]"); ?></span></td>
+		<td class="RegTextColumn"><input type="text" name="NextPayDate" id="NextPayDate" value="<?php echo $aut_NextPayDate; ?>" maxlength="10" id="Date" size="11">&nbsp;<input type="image" onclick="return showCalendar('NextPayDate', 'y-mm-dd');" src="Images/calendar.gif"> <span class="SmallText"><?php echo gettext("[format: YYYY-MM-DD]"); ?></span></td>
 	</tr>
 	
 	<tr>
