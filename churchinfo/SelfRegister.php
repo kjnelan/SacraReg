@@ -315,8 +315,8 @@ if (  (! isset($_POST["Submit"])) && $reg_id == 0) {
 
 	<tr>
 		<td></td><td align="center">
-			<input type="submit" class="icButton" value="<?php echo gettext("Save"); ?>" name="Submit">
-			<input type="submit" class="icButton" value="<?php echo gettext("Cancel"); ?>" name="Cancel">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Save"); ?>" name="Submit">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Cancel"); ?>" name="Cancel">
 		</td>
 	</tr>
 

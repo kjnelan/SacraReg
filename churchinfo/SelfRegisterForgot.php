@@ -88,8 +88,8 @@ if (isset($_POST["Login"])) { // use data from the form to send a reset password
 <?php }?>
 	<tr>
 		<td></td><td align="center">
-			<input type="submit" class="icButton" value="<?php echo gettext("Submit"); ?>" name="Reset">
-			<input type="submit" class="icButton" value="<?php echo gettext("Login"); ?>" name="Login">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Submit"); ?>" name="Reset">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Login"); ?>" name="Login">
 		</td>
 	</tr>
 

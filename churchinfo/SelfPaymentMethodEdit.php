@@ -351,9 +351,9 @@ include "Include/VancoChurchInfo.php";
 
 	<tr>
 		<td></td><td align="center">
-			<input type="button" class="icButton" id="SaveButton" onclick="CreatePaymentAndSave();" value="<?php echo gettext("Save"); ?>" name="Save">
-			<input type="button" class="icButton" id="HomeButton" onclick="SaveAndHome();" value="<?php echo gettext("Home"); ?>" name="Home" hidden>
-			<input type="button" class="icButton" id="CancelButton" onclick="GoHome();" value="<?php echo gettext("Cancel"); ?>" name="Cancel">
+			<input type="button" class="regEditButton" id="SaveButton" onclick="CreatePaymentAndSave();" value="<?php echo gettext("Save"); ?>" name="Save">
+			<input type="button" class="regEditButton" id="HomeButton" onclick="SaveAndHome();" value="<?php echo gettext("Home"); ?>" name="Home" hidden>
+			<input type="button" class="regEditButton" id="CancelButton" onclick="GoHome();" value="<?php echo gettext("Cancel"); ?>" name="Cancel">
 		</td>
 	</tr>
 

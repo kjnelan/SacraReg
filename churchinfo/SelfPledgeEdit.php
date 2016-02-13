@@ -392,11 +392,11 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 	<tr>
 		<td></td><td align="center">
 <?php if ($plg_PledgeOrPayment == "Payment" && (! $plg_aut_Cleared)) {?>
-			<input type="submit" class="icButton" value="<?php echo gettext("Process Payment"); ?>" name="Process">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Process Payment"); ?>" name="Process">
 <?php } else if ($plg_PledgeOrPayment == "Pledge") { ?>
-			<input type="submit" class="icButton" value="<?php echo gettext("Save"); ?>" name="Save">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Save"); ?>" name="Save">
 <?php }?>
-			<input type="submit" class="icButton" value="<?php echo gettext("Cancel"); ?>" name="Cancel">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Cancel"); ?>" name="Cancel">
 			
 			<input type="hidden" name="PledgeOrPayment" id="PledgeOrPayment" value="<?php echo $plg_PledgeOrPayment; ?>">
 

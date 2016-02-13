@@ -124,9 +124,9 @@ if ($reg_id == 0) {
 	<tr>
 		<td></td>
 		<td align="center">
-			<input type="submit" class="icButton" value="<?php echo gettext("Login"); ?>" name="Login">
-			<input type="submit" class="icButton" value="<?php echo gettext("Register"); ?>" name="Register">
-			<input type="submit" class="icButton" value="<?php echo gettext("Forgot User Name or Password"); ?>" name="Forgot">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Login"); ?>" name="Login">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Register"); ?>" name="Register">
+			<input type="submit" class="regEditButton" value="<?php echo gettext("Forgot User Name or Password"); ?>" name="Forgot">
 		</td>
 	</tr>
 
@@ -169,15 +169,23 @@ $rsAutoPayments = $link->query($sSQL);
 <h1><?php echo "$reg_firstname $reg_lastname"; ?></h1>
 
 <h2><?php echo gettext("Self-Service Actions"); ?></h2>
-<a href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">Enter New Pledge</a><br>
-<a href="SelfPaymentMethodEdit.php?AutID=0">Enter New Payment Method</a><br>
-<a href="SelfRepeatingPaymentEdit.php?">Set up a repeating Payment</a><br>
+
+<table>
+<tbody>
+<tr>
+<td><a class="regHomeButton" href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">New Pledge</a></td>
+<td><a class="regHomeButton" href="SelfPaymentMethodEdit.php?AutID=0" >New Payment Method</a></td>
+<td><a class="regHomeButton" href="SelfRepeatingPaymentEdit.php" >Setup Repeating Payment</a></td>
+
 <?php if ($rsAutoPayments->num_rows == 0) 
-	echo "Please create at least one payment method to enable immediate donation option.<br>";
+	echo "<td>Please create at least one payment method to enable immediate donation option.</td>";
 else
-	echo "<a href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a><br>"
+	echo "<td><a class=\"regHomeButton\" href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a></td>"
 ?>
-<a href="SelfRegisterLogout.php">Log Out</a>
+<td><a class="regHomeButton" href="SelfRegisterLogout.php" >Log Out</a></td>
+</tr>
+</tbody>
+</table>
 
 <h2><?php echo gettext("Personal"); ?></h2>
 <?php echo gettext("Name: $per_FirstName $per_LastName<br>"); ?>
