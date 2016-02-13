@@ -62,6 +62,7 @@ $aut_EnableCreditCard = ($enableCode == 2);
 if (! $aut_EnableCreditCard)
 	$aut_EnableCreditCard = 0;
 
+$aut_NextPayDate==$link->real_escape_string($_POST["NextPayDate"]);
 $aut_FirstName=$link->real_escape_string($_POST["FirstName"]);
 $aut_LastName=$link->real_escape_string($_POST["LastName"]);
 $aut_Address1=$link->real_escape_string($_POST["Address1"]);
@@ -110,6 +111,7 @@ if ($errStr == "") {
 		"aut_FamID=$fam_ID,". 
 		"aut_EnableBankDraft=$aut_EnableBankDraft,".
 		"aut_EnableCreditCard=$aut_EnableCreditCard,".
+		"aut_NextPayDate=$aut_NextPayDate,".
 		"aut_FirstName=\"$aut_FirstName\",".
 		"aut_LastName=\"$aut_LastName\",".
 		"aut_Address1=\"$aut_Address1\",".

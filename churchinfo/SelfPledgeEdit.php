@@ -88,7 +88,7 @@ if (isset($_POST["Cancel"])) {
 		// Ok to create or update
 		
 		//Get the selected autopayment record
-		if ($plg_aut_ID > 0) {
+		if ($plg_aut_ID > 0 && ($plg_method == "CREDITCARD" || $plg_method == "BANKDRAFT")) {
 			$sSQL = "SELECT * FROM autopayment_aut WHERE aut_ID=$plg_aut_ID";
 			$rsAutoPayments = $link->query($sSQL);
 			if ($rsAutoPayments->num_rows == 1) {
@@ -250,13 +250,13 @@ if (isset($_POST["Cancel"])) {
 
 // initialize everything if the form did not provide values OR the database record did not provide values
 if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
-	$plg_FYID = CurrentFY();
+	$plg_FYID = CurrentFY() + 1; // next fiscal year
+	$plg_fundID = 1; // pledge receipts
 	$plg_date = date ("Y-m-d");
 	$plg_amount = 0.0;
 	$plg_schedule = "Monthly";
 	$plg_method = "BANKDRAFT";
 	$plg_comment = "";
-	$plg_fundID = 0;
 }
 ?>
 

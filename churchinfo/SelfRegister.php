@@ -160,12 +160,13 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 			$line = $result->fetch_array(MYSQLI_ASSOC);
 			$reg_id = $line["LAST_INSERT_ID()"];
 			SendConfirmMessage ($reg_id);
+			$errStr = gettext ("Please check your email for a confirmation message.");
 			session_destroy();			
 		} else {
+			$errStr = gettext ("Registration information updated.");
 			$sSQL = "UPDATE register_reg " . $setValueSQL . " WHERE reg_id=".$reg_id;
 			$result = $link->query($sSQL);
 		}
-		$errStr = gettext ("Please check your email for a confirmation message.");
 //		header('Location: SelfRegisterHome.php');
 //		exit();
 	}

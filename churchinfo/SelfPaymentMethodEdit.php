@@ -67,6 +67,7 @@ if ($aut_ID != 0) {
 } else {
 	$aut_EnableBankDraft=1;
 	$aut_EnableCreditCard=0;
+	$aut_NextPayDate = date ("Y-m-d");
 	$aut_FirstName=$reg_firstname;
 	$aut_LastName=$reg_lastname;
 	$aut_Address1=$reg_address1;
@@ -311,7 +312,7 @@ include "Include/VancoChurchInfo.php";
 	</tr>
 
 	<tr id="ExpYearRow">
-		<td class="RegLabelColumn"><?php echo gettext("Expiration Year");?></td>
+		<td class="RegLabelColumn"><?php echo gettext("Expiration Year (20xx)");?></td>
 		<td class="RegTextColumn"><input type="text" id="ExpYear" name="ExpYear" value="<?php echo $aut_ExpYear?>"></td>
 	</tr>
 

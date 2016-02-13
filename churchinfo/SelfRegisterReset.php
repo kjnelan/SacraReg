@@ -31,7 +31,7 @@ if (isset($_POST["Submit"])) {
 
 	if ($errStr == "") {
 		$sPasswordHashSha256 = hash ("sha256", $reg_password);
-		$sSQL = "UPDATE register_reg SET reg_password = '$sPasswordHashSha256' WHERE reg_randomtag='".$reg_randomtag."'";
+		$sSQL = "UPDATE register_reg SET reg_confirmed=1, reg_password = '$sPasswordHashSha256' WHERE reg_randomtag='".$reg_randomtag."'";
 		$result = $link->query($sSQL);
 		header('Location: SelfRegisterHome.php');
 		exit();
