@@ -21,7 +21,7 @@ $link = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
     or die('Could not connect: ' . mysqli_error());
 
 // Get the list of funds
-$sSQL = "SELECT fun_ID,fun_Name,fun_Description,fun_Active FROM donationfund_fun WHERE fun_Active = 'true'";
+$sSQL = "SELECT fun_ID,fun_Name,fun_Description,fun_Active FROM donationfund_fun WHERE fun_Name IN ($sSelfServiceFunds) AND fun_Active = 'true'";
 $rsFunds = $link->query($sSQL);
 
 $reg_id = 0; // will be registration id for current user
@@ -123,7 +123,7 @@ if (  (! isset($_POST["Submit"])) && $aut_ID == 0) {
 	$aut_FYID=CurrentFY();
 	$aut_Amount=0.0;
 	$schedName = "Monthly";
-	$aut_Fund=0;
+	$aut_Fund=1;
 }
 ?>
 
