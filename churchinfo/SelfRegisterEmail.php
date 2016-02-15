@@ -36,6 +36,36 @@ function SendConfirmPledgeMessage ($rpg_id)
 	
 }
 
+function SendSelfServiceAdminsEmail ($reg_id)
+{
+	global $link, $sSelfServiceAdminEmails;
+
+	$query = "SELECT * FROM register_reg JOIN person_per ON reg_perid=per_id JOIN family_fam on reg_famid=fam_id WHERE reg_id=$reg_id";
+	$result = $link->query($query) or die('Query failed: ' . $link->error);
+	if ($result->num_rows == 0) {
+		return;
+	} else {
+		$line = $result->fetch_array(MYSQL_ASSOC);
+		extract ($line);
+	}
+	$result->free();
+
+	$bodyContents .= "<h1>$reg_firstname $reg_lastname</h1>";
+	if ($reg_perid > 0) {
+		$bodyContents .= ("<h2>" . gettext ("Matched to an existing person record") . "</h2>");
+	} else {
+		$bodyContents .= ("<h2>" . gettext ("Did not match any existing person record") . "</h2>");
+	}
+	$bodyContents .= "<h1>" . gettext ("Details from registration and matching records: ") . "</h1>";
+	$bodyContents .= var_export($line, true);
+	$bodyContents .= "</html>";
+
+	$emailArray = explode(',', $sSelfServiceAdminEmails);
+	foreach ($emailArray as $email)	{
+		SendAMessage($reg_id, $bodyContents, $email, "ChurchInfo Registration Admin", "ChurchInfo Registration");
+	}
+}
+
 function SendConfirmMessage ($reg_id)
 {
 	global $link, $CONFIRM_EMAIL_URL, $CONFIRM_EMAIL_SUBJECT;

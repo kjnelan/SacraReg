@@ -104,7 +104,7 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 		// try to figure out which family this is
 		$per_fam_id = 0;
 		$per_id = 0;
-		$sSQL = "SELECT per_id, per_fam_id FROM person_per WHERE (per_firstname='$reg_firstname' AND per_lastname='$reg_lastname') OR per_email='$reg_email'";
+		$sSQL = "SELECT per_id, per_fam_id FROM person_per WHERE (per_firstname='$reg_firstname' AND per_lastname='$reg_lastname') OR (per_firstname='$reg_firstname' AND per_email='$reg_email')";
 		$result = $link->query($sSQL);
 		if ($result->num_rows == 1) { // got exactly one matching person
 			$line = $result->fetch_array(MYSQLI_ASSOC);
@@ -119,7 +119,7 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 				$resultfam = $link->query($sSQL);
 				if ($resultfam->num_rows != 1)
 					continue;
-				$linefam = $result->fetch_array(MYSQLI_ASSOC);
+				$linefam = $resultfam->fetch_array(MYSQLI_ASSOC);
 				if ($linefam['fam_address1'] == $reg_address1 &&
 				    $linefam['fam_city'] == $fam_city &&
 				    $linefam['fam_state'] == $fam_state)
@@ -167,6 +167,9 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 			$sSQL = "UPDATE register_reg " . $setValueSQL . " WHERE reg_id=".$reg_id;
 			$result = $link->query($sSQL);
 		}
+
+		SendSelfServiceAdminsEmail ($reg_id);
+		
 //		header('Location: SelfRegisterHome.php');
 //		exit();
 	}
