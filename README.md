@@ -1,12 +1,12 @@
-# Current Project
+# ChurchInfo
 
-ChurchInfo (http://www.churchdb.org/) is a free church database program to help churches track members, families, groups, pledges and payments. 
+ChurchInfo (http://www.churchdb.org/) is a free church database program to help churches track members, families, groups, pledges and payments. The most recent release of ChurchInfo added support for electronic donations via Vanco.  The next release will be focused on adding "self-service" capability so church members can register and maintain their own personal information.
 
 The ChurchInfo project is managed at Sourceforge http://sourceforge.net/projects/churchinfo/ but I try to sync this repo with every release.. 
 
-# New Project
+# ChurchCRM
 
-A new project has been forked from the stable church info project is now called Church Web CRM with the goal of brining new featuers and creating a responsive application.
+A new project has been forked from the stable church info project is now called Church Web CRM with the goal of bringing new featuers and creating a responsive application.
 
 ##Links 
 
