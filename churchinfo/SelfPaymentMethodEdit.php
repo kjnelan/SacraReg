@@ -133,6 +133,7 @@ function CreatePaymentAndSave ()
         traditional: false,
         success: function (saveformdata) {
         	if (saveformdata.result=="Success") {
+        		document.getElementById('SaveButton').style.visibility='hidden';
         		UpdateNvpvar ();
         	} else {
 	        	document.getElementById("ShowErrorStr").innerHTML = saveformdata.errStr;
@@ -140,7 +141,6 @@ function CreatePaymentAndSave ()
         },
         error: function (jqXHR, textStatus, errorThrown, vancodata) {
             alert("Error saving: " + errorThrown);
-        	document.getElementById("SaveButton").hidden = true;
         }
     });
 }
