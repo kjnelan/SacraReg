@@ -191,17 +191,6 @@ function SaveAndHome () {
 
 }
 
-function NotifyVancoSuccess ()
-{
-	document.getElementById("HomeButton").hidden = false;
-	document.getElementById("SaveButton").hidden = true;
-}
-
-function NotifyVancoFailure ()
-{
-	window.location="SelfPaymentMethodEdit.php";
-}
-
 </script>
 <body onload="ShowHidePaymentStuff()">
 <?php 
