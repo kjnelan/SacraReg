@@ -39,7 +39,7 @@ require "Include/Header.php";
 <script>
 function ConfirmDeleteRegistration (RegID)
 {
-	var famName = document.getElementById("LastName"+RegID).innerHTML;
+	var famName = document.getElementById("Name"+RegID).innerHTML;
 	var r = confirm("Delete registration for "+famName);
 	if (r == true) {
 		DeleteSelfRegistration (RegID);
@@ -94,10 +94,13 @@ function ManualMatch (RegID)
 
 <table id="SelfRegisterTable" cellpadding="4" align="center" cellspacing="0" width="100%">
 	<tr class="TableHeader">
-		<td align="center"><b><?php echo gettext("Last Name"); ?></b></td>
-		<td align="center"><b><?php echo gettext("First Name"); ?></b></td>
+		<td align="center"><b><?php echo gettext("Name"); ?></b></td>
+		<td align="center"><b><?php echo gettext("Username"); ?></b></td>
+		<td align="center"><b><?php echo gettext("Email"); ?></b></td>
+		<td align="center"><b><?php echo gettext("Confirmed"); ?></b></td>
 		<td align="center"><b><?php echo gettext("Address"); ?></b></td>
 		<td align="center"><b><?php echo gettext("Match"); ?></b></td>
+		<td align="center"><b><?php echo gettext("Modified"); ?></b></td>
 		<td><b><?php echo gettext("Delete"); ?></b></td>
 	</tr>
 <?php
@@ -110,8 +113,16 @@ while ($aRow = mysql_fetch_array($rsSelfRegistrations)) {
 	//Display the row
 ?>
 	<tr id="RegisterRow<?php echo $reg_id; ?>">
-		<td id=LastName<?php echo $reg_id;?>><?php echo $reg_lastname;?></td>
-		<td><?php echo $reg_firstname;?></td>
+	<?php
+		if ($reg_perid > 0) {
+			echo "<td id=Name$reg_id><a href=PersonView.php?PersonID=$reg_perid>$reg_firstname $reg_lastname</a></td>";
+		} else {
+			echo "<td id=Name$reg_id>$reg_firstname $reg_lastname</td>";
+		}
+		?>
+		<td><?php echo $reg_username;?></td>
+		<td><a href="mailto:<?php echo $reg_email;?>"><?php echo $reg_email;?></a></td>		
+		<td><?php if ($reg_confirmed==1) echo gettext ("Yes"); else echo gettext ("No");?></td>
 		<td><?php echo $reg_address1 . ", ". $reg_city . ", ", $reg_state . " " . $reg_zip;?></td>
 		
 		<td id=MatchedTD<?php echo $reg_id;?>>
@@ -139,6 +150,7 @@ while ($aRow = mysql_fetch_array($rsSelfRegistrations)) {
 ?>
 		</td>
 		
+		<td><?php echo $reg_changedate;?></td>
 		<td><button onclick="ConfirmDeleteRegistration(<?php echo $reg_id; ?>)"><?php echo gettext("Delete"); ?></button></td>
 	</tr>
 	<?php
