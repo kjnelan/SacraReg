@@ -422,17 +422,32 @@ if (($output == "pdf") or ($output == "email")) {
 			$plg_CheckNo .= "    ";
 		if (strlen($fun_Name) > 25)
 			$fun_Name = substr($fun_Name,0,25) . "...";
-		if (strlen($plg_comment) > 25)
-			$plg_comment = substr($plg_comment,0,25) . "...";
+		// Allow multi-line comments, but still keep a limit
+		if (strlen($plg_comment) > 100)
+			$plg_comment = substr($plg_comment,0,100) . "...";
 		// Print Gift Data
 		$pdf->SetFont('Times','', 10);
 		$pdf->Cell (20, $summaryIntervalY, $plg_date);
 		$pdf->Cell (20, $summaryIntervalY, $plg_CheckNo,0,0,"R");
 		$pdf->Cell (25, $summaryIntervalY, $plg_method);
 		$pdf->Cell (40, $summaryIntervalY, $fun_Name);
-		$pdf->Cell (40, $summaryIntervalY, $plg_comment);
+		$multiY = 0;
+		if (strlen($plg_comment) > 25) {
+			$curX = $pdf->GetX();
+			$curY = $pdf->GetY();
+			$pdf->MultiCell(40, $summaryIntervalY, $plg_comment);
+			$pdf->Line($pdf->leftX, $curY, $curX + 65, $curY);
+			$multiY = $pdf->GetY();
+			$pdf->Line($pdf->leftX, $multiY, $curX + 65, $multiY);
+			$pdf->SetXY($curX + 40, $curY);
+		} else {
+			$pdf->Cell (40, $summaryIntervalY, $plg_comment);
+			$oneY = $pdf->GetY();
+		}
 		$pdf->SetFont('Courier','', 9);
 		$pdf->Cell (25, $summaryIntervalY, $plg_amount,0,1,"R");
+		if($multiY && $multiY > $pdf->getY())
+			$pdf->SetY($multiY);
 		$totalAmount += $plg_amount;
 		$totalNonDeductible += $plg_NonDeductible;
 		$cnt += 1;
