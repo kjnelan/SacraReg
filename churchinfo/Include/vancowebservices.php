@@ -199,7 +199,7 @@ class VancoTools
 		}
 		else
 		{
-			$ip = "https://www.vancoservices.com";
+			$ip = "https://myvanco.vancopayments.com";
 			$filepath = "/cgi-bin/wsnvp.vps";
 		}
 		$ch = curl_init();

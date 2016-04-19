@@ -247,7 +247,7 @@ function CreatePaymentMethod()
 	
     $.ajax({
         type: "POST",
-        url: "<?php if ($VancoTest) echo "https://www.vancodev.com/cgi-bin/wsnvptest.vps"; else echo "https://www.vancoservices.com/cgi-bin/wsnvp.vps";?>",
+        url: "<?php if ($VancoTest) echo "https://www.vancodev.com/cgi-bin/wsnvptest.vps"; else echo "https://myvanco.vancopayments.com/cgi-bin/wsnvp.vps";?>",
         data: { "sessionid":sessionid, 
     	        "nvpvar":nvpvarcontent,
     	        "newcustomer":"true", 
