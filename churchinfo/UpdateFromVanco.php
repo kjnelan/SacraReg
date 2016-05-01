@@ -83,7 +83,7 @@ $ReqBody="
 		<RequestVars>
 			<ClientID>$VancoClientid</ClientID>
 			<FromDate>2016-01-01</FromDate>
-			<ToDate>2016-02-06</ToDate>
+			<ToDate>2016-04-24</ToDate>
 		</RequestVars>
 	</Request>
 </VancoWS>";
@@ -97,6 +97,8 @@ printf ("<th>AccountType</th>");
 printf ("<th>CCAuthDesc</th>");
 printf ("<th>CustomerID</th>");
 printf ("<th>Family</th>");
+printf ("<th>plg_Date</th>");
+printf ("<th>plg_aut_Cleared</th>");
 printf ("<th>ProcessDate</th>");
 printf ("<th>DepositDate</th>");
 printf ("<th>SettlementDate</th>");
@@ -107,7 +109,7 @@ printf ("</tr>");
 $cnt = (int) $transactionsxml->Response->TransactionCount;
 $translist = $transactionsxml->Response->Transactions->children();
 foreach ($translist as $onetrans) {
-	$sSQL = "SELECT * FROM pledge_plg JOIN family_fam ON plg_FamID=fam_id WHERE plg_date=\"".$onetrans->ProcessDate."\" AND plg_PledgeOrPayment=\"Payment\" AND plg_aut_Cleared=1 AND plg_aut_ID=". $onetrans->CustomerID;
+	$sSQL = "SELECT * FROM pledge_plg JOIN family_fam ON plg_FamID=fam_id WHERE plg_date+2>=\"".$onetrans->ProcessDate."\" AND plg_date<=\"".$onetrans->ProcessDate."\" AND plg_PledgeOrPayment=\"Payment\" AND plg_aut_Cleared=\"1\" AND plg_aut_ID=". $onetrans->CustomerID;
 	$rsDBInfo = RunQuery($sSQL);
 	extract(mysql_fetch_array($rsDBInfo));
 
@@ -117,6 +119,8 @@ foreach ($translist as $onetrans) {
 	printf ("<td>%s</td>", (string) $onetrans->CCAuthDesc);
 	printf ("<td>%s</td>", (string) $onetrans->CustomerID);
 	printf ("<td>%s</td>", (string) $fam_Name);
+	printf ("<td>%s</td>", (string) $plg_date);
+	printf ("<td>%s</td>", (string) $plg_aut_Cleared);
 	printf ("<td>%s</td>", (string) $onetrans->ProcessDate);
 	printf ("<td>%s</td>", (string) $onetrans->DepositDate);
 	printf ("<td>%s</td>", (string) $onetrans->SettlementDate);

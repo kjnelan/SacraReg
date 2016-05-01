@@ -670,7 +670,8 @@ INSERT INTO `menuconfig_mcf` (`mid`, `name`, `parent`, `ismenu`, `content_englis
 (16, 'userdefault', 'admin', 0, 'Edit User Default Settings', NULL, 'SettingsUser.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 10),
 (17, 'envelopmgr', 'admin', 0, 'Envelope Manager', NULL, 'ManageEnvelopes.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 11),
 (91, 'automaticpayments', 'admin', 0, 'Edit Automatic Payments', NULL, 'ElectronicPaymentList.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 12),
-(18, 'register', 'admin', 0, 'Please select this option to register ChurchInfo after configuring.', NULL, 'Register.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 13),
+(92, 'selfregisteradmin', 'admin', 0, 'Self-Registration Admin', NULL, 'SelfRegisterAdmin.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 13),
+(18, 'register', 'admin', 0, 'Please select this option to register ChurchInfo after configuring.', NULL, 'Register.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 16),
 (19, 'people', 'root', 1, 'People/Families', NULL, '', 'People/Families', 'bAll', NULL, 0, 0, NULL, 1, 3),
 (20, 'newperson', 'people', 0, 'Add New Person', NULL, 'PersonEditor.php', '', 'bAddRecords', NULL, 0, 0, NULL, 1, 1),
 (21, 'viewperson', 'people', 0, 'View All Persons', NULL, 'SelectList.php?mode=person', '', 'bAll', NULL, 0, 0, NULL, 1, 2),
@@ -740,7 +741,7 @@ INSERT INTO `menuconfig_mcf` (`mid`, `name`, `parent`, `ismenu`, `content_englis
 (78, 'helpclassification', 'help', 0, 'Classifications', NULL, 'Help.php?page=Class', '', 'bAll', NULL, 0, 0, NULL, 1, 15),
 (79, 'helpcanvass', 'help', 0, 'Canvass Support', NULL, 'Help.php?page=Canvass', '', 'bAll', NULL, 0, 0, NULL, 1, 16),
 (80, 'helpevents', 'help', 0, 'Events', NULL, 'Help.php?page=Events', '', 'bAll', NULL, 0, 0, NULL, 1, 17),
-(81, 'menusetup', 'admin', 0, 'Menu Options', NULL, 'MenuSetup.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 13),
+(81, 'menusetup', 'admin', 0, 'Menu Options', NULL, 'MenuSetup.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 15),
 (82, 'customfamilyfld', 'admin', 0, 'Edit Custom Family Fields', NULL, 'FamilyCustomFieldsEditor.php', '', 'bAdmin', NULL, 0, 0, NULL, 1, 3);
 
 UPDATE menuconfig_mcf SET content=content_english;
