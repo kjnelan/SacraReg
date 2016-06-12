@@ -10,7 +10,8 @@ function sendVancoXML ($xmlstr)
 	//--- Open Connection ---
 	$socket = fsockopen("ssl://myvanco.vancopayments.com",
 	                 443, $errno, $errstr, 15);
-	
+//print ("Connected to ssl://myvanco.vancopayments.com on port 443, got socket $socket\n");
+
 	if (!$socket) {
 	
 	    echo 'Fail<br>';
@@ -23,48 +24,62 @@ function sendVancoXML ($xmlstr)
 	}
 		
     //--- Create Header ---
-    $ReqHeader  = "POST /cgi-bin/ws2.vps HTTP/1.1\n";
-    $ReqHeader .= "Host: " . "myvanco.vancopayments.com" . "\n";
-    $ReqHeader .= "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
-    $ReqHeader .= "Content-Type: application/x-www-form-urlencoded\n";
-    $ReqHeader .= "Content-length: " . strlen($xmlstr) . "\n";
-    $ReqHeader .= "Connection: close\n\n";
-    $ReqHeader .= $xmlstr . "\n\n";
+    $ReqHeader  = "POST /cgi-bin/ws2.vps HTTP/1.1\r\n";
+    $ReqHeader .= "Host: " . "myvanco.vancopayments.com" . "\r\n";
+    $ReqHeader .= "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n";
+    $ReqHeader .= "Content-Type: application/x-www-form-urlencoded\r\n";
+    $ReqHeader .= "Connection: close\r\n";
+    $ReqHeader .= "Content-length: " . strlen($xmlstr) . "\r\n";
+    $ReqHeader .= $xmlstr . "\r\n\r\n";
+
+//print ("---------------- Sending this mesaage -------------\n");
+//print ($ReqHeader);
+//print ("---------------- End of the message ---------------\n");
 
     // --- Send XML ---
     fwrite($socket, $ReqHeader);
 
+//print ("After calling fwrite to send the XML\n");
+//sleep (1);
     // --- Retrieve XML ---
     while (!feof($socket)) {
         $_return .= fgets($socket, 4096);
     }
 
     fclose($socket);
-
+    
+//print ("---------------- Got this response -------------\n");
+//    print ($_return);
+//print ("---------------- End of response ---------------\n");
+    
 	$pos = strpos($_return, "<?xml");
 	$xmlPart = substr ($_return, $pos, strlen ($_return)-$pos);
-    
-	$xml=simplexml_load_string($xmlPart) or die("Error: Cannot create object");
+
+//print ("---------------- Extracted XML -------------\n");
+//print ($xmlPart);
+//print ("---------------- End of response ---------------\n");
+	
+	$xml=simplexml_load_string($xmlPart);
 	return $xml;
 }
 
 $requestTime = date ("Y-m-d h:m:s");
 //2008-11-24 12:27:52
-$ReqBody=
-"<VancoWS>
-   <Auth>
-     <RequestType>Login</RequestType>
-     <RequestID>Test</RequestID>
-     <RequestTime>$requestTime</RequestTime>
-     <Version>2</Version>
-   </Auth>
-   <Request>
-     <RequestVars>
-       <UserID>$VancoUserid</UserID>
-       <Password>$VancoPassword</Password>
-     </RequestVars>
-   </Request>
- </VancoWS>";
+$ReqBody="
+<VancoWS>
+	<Auth>
+		<RequestType>Login</RequestType>
+		<RequestID>123456</RequestID>
+		<RequestTime>$requestTime</RequestTime>
+		<Version>2</Version>
+	</Auth>
+	<Request>
+		<RequestVars>
+			<UserID>$VancoUserid</UserID>
+			<Password>$VancoPassword</Password>
+		</RequestVars>
+	</Request>
+</VancoWS>";
 
 $regxml = sendVancoXML ($ReqBody);
 $sessionID = (string) $regxml->Response->SessionID;
@@ -109,7 +124,7 @@ printf ("</tr>");
 $cnt = (int) $transactionsxml->Response->TransactionCount;
 $translist = $transactionsxml->Response->Transactions->children();
 foreach ($translist as $onetrans) {
-	$sSQL = "SELECT * FROM pledge_plg JOIN family_fam ON plg_FamID=fam_id WHERE plg_date+2>=\"".$onetrans->ProcessDate."\" AND plg_date<=\"".$onetrans->ProcessDate."\" AND plg_PledgeOrPayment=\"Payment\" AND plg_aut_Cleared=\"1\" AND plg_aut_ID=". $onetrans->CustomerID;
+	$sSQL = "SELECT * FROM pledge_plg JOIN family_fam ON plg_FamID=fam_id WHERE DATE_ADD(plg_date, INTERVAL 2 DAY)>=\"".$onetrans->ProcessDate."\" AND plg_date<=\"".$onetrans->ProcessDate."\" AND plg_PledgeOrPayment=\"Payment\" AND plg_aut_Cleared=\"1\" AND plg_aut_ID=". $onetrans->CustomerID;
 	$rsDBInfo = RunQuery($sSQL);
 	extract(mysql_fetch_array($rsDBInfo));
 
