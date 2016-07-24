@@ -132,7 +132,7 @@ function SendAMessage ($reg_id, $bodyContents, $to_email, $to_name, $email_subje
     if ($delimeter === FALSE) {
         $sSMTPPort = 25;                // Default port number
     } else {
-        $sSMTPPort = substr($sSMTPHost, $delimeter+1);
+        $sSMTPPort = intval(substr($sSMTPHost, $delimeter+1));
         $sSMTPHost = substr($sSMTPHost, 0, $delimeter);   
     }
     if (is_int($sSMTPPort))
@@ -145,7 +145,7 @@ function SendAMessage ($reg_id, $bodyContents, $to_email, $to_name, $email_subje
 	$mail->Debugoutput = 'html';
 	$mail->Host = $sSMTPHost;
 	$mail->SMTPAuth = $sSMTPAuth;
-	$mail->SMTPAutoTLS = false;
+	$mail->SMTPAutoTLS = true;
 	$mail->Username = $sSMTPUser;
 	$mail->Password = $sSMTPPass;
 	$mail->setFrom($sToEmailAddress, $sFromName);
