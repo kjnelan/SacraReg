@@ -173,6 +173,9 @@ $rsAutoPayments = $link->query($sSQL);
 <table>
 <tbody>
 <tr>
+
+<?php  if ($reg_famid > 0) { // only give pledge and payment buttons if matched to a family ?>
+
 <td><a class="regHomeButton" href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">New Pledge</a></td>
 <td><a class="regHomeButton" href="SelfPaymentMethodEdit.php?AutID=0" >New Payment Method</a></td>
 <td><a class="regHomeButton" href="SelfRepeatingPaymentEdit.php" >Setup Repeating Payment</a></td>
@@ -182,10 +185,15 @@ $rsAutoPayments = $link->query($sSQL);
 else
 	echo "<td><a class=\"regHomeButton\" href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a></td>"
 ?>
+
+<?php  } ?>
+
 <td><a class="regHomeButton" href="SelfRegisterLogout.php" >Log Out</a></td>
 </tr>
 </tbody>
 </table>
+
+<?php  if ($reg_perid > 0) { // only give person information if matched to a person ?>
 
 <h2><?php echo gettext("Personal"); ?></h2>
 <?php echo gettext("Name: $per_FirstName $per_LastName<br>"); ?>
@@ -194,16 +202,26 @@ else
 <?php echo gettext("Cell Phone: $per_CellPhone<br>"); ?>
 <a href="SelfEditPerson.php"><?php echo gettext("Edit personal information"); ?></a>
 
+<?php  } ?>
+
+<?php  if ($reg_famid > 0) { // only family information if matched to a family ?>
+
 <h2><?php echo gettext("Family"); ?></h2>
 <?php echo gettext("Address: $fam_Address1 $fam_Address2 $fam_City, $fam_State $fam_Zip<br>"); ?>
 <?php echo gettext("Home Phone: $fam_HomePhone<br>"); ?>
 <?php echo gettext("Family Email: $fam_Email<br>"); ?>
 <a href="SelfEditFamily.php"><?php echo gettext("Edit family information"); ?></a>
 
+<?php  } ?>
+
 <h2><?php echo gettext("Online Registration"); ?></h2>
 <?php echo gettext("Address: $reg_address1 $reg_address2 $reg_city, $reg_state $reg_zip<br>"); ?>
 <?php echo gettext("Email: $reg_email<br>"); ?>
 <a href="SelfRegister.php">Edit Registration</a><br>
+
+<?php  if ($reg_famid > 0) { // only family information if matched to a family ?>
+
+<?php if ($rsAutoPayments->num_rows > 0) { ?>
 
 <h2><?php echo gettext("Electronic Payment Methods"); ?></h2>
 
@@ -217,6 +235,7 @@ else
 </tr>
 
 <?php
+
 $numAutoPayments = 0;
 $numAutoPaymentsWithAmount = 0;
 //Loop through all payment methods
@@ -311,6 +330,9 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 ?>
 </table>
 <?php } //if ($numAutoPaymentsWithAmount > 0) { ?>
+<?php } // if ($rsAutoPayments->num_rows > 0) { ?>
+
+<?php if ($rsPledges->num_rows > 0) { ?>
 
 <h2><?php echo gettext("Pledges for This Fiscal Year and Next Fiscal Year"); ?></h2>
 
@@ -407,6 +429,11 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 }
 ?>
 </table>
+
+<?php } // if ($rsPledges->num_rows > 0) { ?>
+
+
+<?php  } // all financial stuff is conditional on match to family ?>
 
 <?php 
 } // just logging in

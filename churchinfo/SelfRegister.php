@@ -93,7 +93,7 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 		$query = 'SELECT * FROM register_reg WHERE reg_username="' . $reg_username . '"';
 		$result = $link->query($query) or die('Query failed: ' . $link->error);
 		if ($result->num_rows > 0) {
-			$errStr .= "User name is already taken (did you forget your password?)<br>\n";
+			$errStr .= "User name is already taken (did you <a href=\"SelfRegisterForgot.php\">forget your password?</a>)<br>\n";
 		}
 		$result->free();
 	}
@@ -125,8 +125,42 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 				    $linefam['fam_state'] == $fam_state)
 					break; // break out and leave per_fam_id as set above
 			}
-		} else { // no matching people
+		} else { // no matching people, create a family and person record
+			$sCreateFamilySQL = "INSERT INTO family_fam SET 
+				fam_Name=\"$reg_famname\",
+				fam_Address1=\"$reg_address1\",
+				fam_Address2=\"$reg_address2\",
+				fam_City=\"$reg_city\",
+				fam_state=\"$reg_state\",
+				fam_Zip=\"$reg_zip\",
+				fam_Country=\"$reg_country\",
+				fam_HomePhone=\"$reg_phone\",
+				fam_Email=\"$reg_email\",
+				fam_DateEntered=NOW(),
+				fam_DateLastEdited=NOW()";
+			$result = $link->query($sCreateFamilySQL);
 			
+			$sSQL = "SELECT LAST_INSERT_ID();";
+			$result = $link->query($sSQL);
+			$line = $result->fetch_array(MYSQLI_ASSOC);
+			$per_fam_id = $line["LAST_INSERT_ID()"];
+
+			$sCreatePersonSQL = "INSERT INTO person_per SET
+				per_FirstName=\"$reg_firstname\",
+				per_LastName=\"$reg_lastname\",
+				per_CellPhone=\"$reg_phone\",
+				per_Email=\"$reg_email\",
+				per_fmr_ID=1,
+				per_fam_ID=$per_fam_id,
+				per_DateLastEdited=NOW(),
+				per_DateEntered=NOW(),
+				per_FriendDate=NOW()";
+			$result = $link->query($sCreatePersonSQL);
+			
+			$sSQL = "SELECT LAST_INSERT_ID();";
+			$result = $link->query($sSQL);
+			$line = $result->fetch_array(MYSQLI_ASSOC);
+			$per_id = $line["LAST_INSERT_ID()"];
 		}
 		
 		$setValueSQL = "SET " .
