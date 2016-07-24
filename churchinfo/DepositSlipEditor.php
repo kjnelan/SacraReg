@@ -70,7 +70,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 	$sComment = FilterInput($_POST["Comment"]);
 	$bClosed = false;
 	if (array_key_exists ("Closed", $_POST))
-		$bClosed = FilterInput($_POST["Closed"]);
+	$bClosed = FilterInput($_POST["Closed"]);
 	$sDepositType = FilterInput($_POST["DepositType"]);
 
 	if (! $bClosed)
@@ -493,7 +493,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 				RunQuery ($sSQL);
 			}
 				
-			$sSQL = "UPDATE pledge_plg SET plg_aut_Cleared='" . $bApproved . "' WHERE plg_plgID=" . $plg_plgID;
+			$sSQL = "UPDATE pledge_plg SET plg_aut_Cleared='" . $bApproved . "', plg_TransactionRef='" .  $retArr["transactionref"] . "' WHERE plg_plgID=" . $plg_plgID;
 			RunQuery($sSQL);
 			
 			if ($plg_aut_ResultID) {
@@ -608,6 +608,8 @@ require "Include/Header.php";
 				$selectCreditCard = "";
 				$selectBankDraft = "";
 				$selecteGive = "";
+				$selectSelfCreditCard = "";
+				$selectSelfBankDraft = "";
 				
 				echo "<tr><td class=LabelColumn>".gettext("Deposit Type:")."</td>";
 				if ($sDepositType == "BankDraft")
@@ -616,17 +618,23 @@ require "Include/Header.php";
 					$selectCreditCard = "Checked ";
 				elseif ($sDepositType == "eGive")
 					$selecteGive = "Checked ";
+				elseif ($sDepositType == "SelfCreditCard")
+					$selectSelfCreditCard = "Checked ";
+				elseif ($sDepositType == "SelfBankDraft")
+					$selectSelfBankDraft = "Checked ";
 				else
 					$selectOther = "Checked ";
 				echo "<td class=TextColumn><input type=radio name=DepositType id=DepositType value=\"Bank\" $selectOther>".gettext("Bank")." &nbsp; ";
 				echo "<input type=radio name=DepositType id=DepositType value=\"CreditCard\" $selectCreditCard>".gettext("Credit Card")." &nbsp; ";
 				echo "<input type=radio name=DepositType id=DepositType value=\"BankDraft\" $selectBankDraft>".gettext("Bank Draft")." &nbsp; ";
 				echo "<input type=radio name=DepositType id=DepositType value=\"eGive\" $selecteGive>".gettext("eGive")."</td></td>";
+				echo "<input type=radio name=DepositType id=DepositType value=\"SelfCreditCard\" $selectSelfCreditCard>".gettext("Self-Service Credit Card")." &nbsp; ";
+				echo "<input type=radio name=DepositType id=DepositType value=\"SelfBankDraft\" $selectSelfBankDraft>".gettext("Self-Service Bank Draft")." &nbsp; ";
 			} else {
 				echo "<input type=hidden name=DepositType id=DepositType value=\"$sDepositType\"></td></td>";
 			}
 			?>
-			
+
 			<tr>
 				<td class="LabelColumn"><?php echo gettext("Comment:"); ?></td>
 				<td class="TextColumn"><input type="text" size=40 name="Comment" id="Comment" value="<?php echo $sComment; ?>"></td>

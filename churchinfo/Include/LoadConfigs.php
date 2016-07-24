@@ -31,13 +31,16 @@
 *
 ******************************************************************************/
 
-// Establish the database connection
+// Establish the database connection (mysql_ library)
 $cnInfoCentral = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD) 
         or die ('Cannot connect to the MySQL server because: ' . mysql_error());
 
 mysql_select_db($sDATABASE) 
         or die ('Cannot select the MySQL database because: ' . mysql_error());
 
+// Establish the database connection (mysqli_ library)
+$cnChurchInfo = mysqli_connect($sSERVERNAME,$sUSER,$sPASSWORD,$sDATABASE);
+        
 $sql = "SHOW TABLES FROM `$sDATABASE`";
 $tablecheck = mysql_num_rows( mysql_query($sql) );
 

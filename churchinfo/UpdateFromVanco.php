@@ -4,7 +4,20 @@ include "Include/Config.php";
 require "Include/Functions.php";
 require "Include/VancoConfig.php";
 
+if (array_key_exists ("FromDate", $_GET))
+	$dFromDate = FilterInput($_GET["FromDate"], 'date');
+else {
+	// default behavior go back 2 months
+	$d = new DateTime();
+	$d->sub(new DateInterval('P2M'));
+	$dFromDate = $d->format('Y-m-d');
+}
 
+if (array_key_exists ("ToDate", $_GET))
+	$dToDate = FilterInput($_GET["ToDate"], 'date');
+else
+	$dToDate = date("Y-m-d");
+	
 function sendVancoXML ($xmlstr)
 {
 	//--- Open Connection ---
@@ -42,6 +55,7 @@ function sendVancoXML ($xmlstr)
 //print ("After calling fwrite to send the XML\n");
 //sleep (1);
     // --- Retrieve XML ---
+    $_return = "";
     while (!feof($socket)) {
         $_return .= fgets($socket, 4096);
     }
@@ -97,53 +111,127 @@ $ReqBody="
 	<Request>
 		<RequestVars>
 			<ClientID>$VancoClientid</ClientID>
-			<FromDate>2016-01-01</FromDate>
-			<ToDate>2016-04-24</ToDate>
+			<FromDate>$dFromDate</FromDate>
+			<ToDate>$dToDate</ToDate>
 		</RequestVars>
 	</Request>
 </VancoWS>";
 
-$transactionsxml = sendVancoXML ($ReqBody);
+$sSQL = "SELECT `dep_ID` as CCDepId FROM  `deposit_dep` WHERE dep_type='SelfCreditCard' ORDER BY dep_date DESC LIMIT 1";
+$rsCCDepInfo = RunQueryI($sSQL);
+extract($rsCCDepInfo->fetch_array(MYSQLI_ASSOC));
 
-printf ("<table>");
-printf ("<tr>");
-printf ("<th>TransactionRef</th>");
-printf ("<th>AccountType</th>");
-printf ("<th>CCAuthDesc</th>");
-printf ("<th>CustomerID</th>");
-printf ("<th>Family</th>");
-printf ("<th>plg_Date</th>");
-printf ("<th>plg_aut_Cleared</th>");
-printf ("<th>ProcessDate</th>");
-printf ("<th>DepositDate</th>");
-printf ("<th>SettlementDate</th>");
-printf ("<th>Amount</th>");
-printf ("<th>TransactionFee</th>");
-printf ("</tr>");
+$sSQL = "SELECT `dep_ID` as BDDepId FROM  `deposit_dep` WHERE dep_type='SelfBankDraft' ORDER BY dep_date DESC LIMIT 1";
+$rsCCDepInfo = RunQueryI($sSQL);
+extract($rsCCDepInfo->fetch_array(MYSQLI_ASSOC));
+
+$transactionsxml = sendVancoXML ($ReqBody);
 
 $cnt = (int) $transactionsxml->Response->TransactionCount;
 $translist = $transactionsxml->Response->Transactions->children();
+
 foreach ($translist as $onetrans) {
-	$sSQL = "SELECT * FROM pledge_plg JOIN family_fam ON plg_FamID=fam_id WHERE DATE_ADD(plg_date, INTERVAL 2 DAY)>=\"".$onetrans->ProcessDate."\" AND plg_date<=\"".$onetrans->ProcessDate."\" AND plg_PledgeOrPayment=\"Payment\" AND plg_aut_Cleared=\"1\" AND plg_aut_ID=". $onetrans->CustomerID;
-	$rsDBInfo = RunQuery($sSQL);
-	extract(mysql_fetch_array($rsDBInfo));
+	$fam_Name = "";
+	$plg_date = "";
+	$plg_aut_Cleared = "";
+	$plg_depID = 0;
+	$dep_Date = "";
+	$dep_Comment = "";
+	$plg_plgID = 0;
+	$plg_method = "";
+	
+	$sSQL = "SELECT * FROM pledge_plg JOIN family_fam ON plg_FamID=fam_id LEFT JOIN deposit_dep on plg_depID=dep_ID WHERE DATE_ADD(plg_date, INTERVAL 2 DAY)>=\"".$onetrans->ProcessDate."\" AND plg_date<=\"".$onetrans->ProcessDate."\" AND plg_PledgeOrPayment=\"Payment\" AND plg_aut_ID=". $onetrans->CustomerID .  " AND plg_Amount=". $onetrans->Amount;
+	$rsDBInfo = RunQueryI($sSQL);
+	extract($rsDBInfo->fetch_array(MYSQLI_ASSOC));
 
-	printf ("<tr>");
-	printf ("<td>%s</td>", (string) $onetrans->TransactionRef);
-	printf ("<td>%s</td>", (string) $onetrans->AccountType);
-	printf ("<td>%s</td>", (string) $onetrans->CCAuthDesc);
-	printf ("<td>%s</td>", (string) $onetrans->CustomerID);
-	printf ("<td>%s</td>", (string) $fam_Name);
-	printf ("<td>%s</td>", (string) $plg_date);
-	printf ("<td>%s</td>", (string) $plg_aut_Cleared);
-	printf ("<td>%s</td>", (string) $onetrans->ProcessDate);
-	printf ("<td>%s</td>", (string) $onetrans->DepositDate);
-	printf ("<td>%s</td>", (string) $onetrans->SettlementDate);
-	printf ("<td>%s</td>", (string) $onetrans->Amount);
-	printf ("<td>%s</td>", (string) $onetrans->TransactionFee);
-	printf ("</tr>");
+	if ($onetrans->DepositDate != "" && $plg_plgID > 0 && $plg_depID == 0) {
+		// this transaction has a record in pledge_plg and it cleared but it does not have a deposit slip.  
+		// assign it to the latest deposit slip for internet donations
+		if ($plg_method == 'CREDITCARD')
+			$plg_depID = $CCDepId;
+		else if ($plg_method == 'BANKDRAFT')	
+			$plg_depID = $BDDepID;
+		$sSQL = "UPDATE pledge_plg SET plg_depID=$plg_depID WHERE plg_plgID=$plg_plgID";		
+		$rsUpdate = RunQueryI($sSQL);
+	}
+	
+	if ($onetrans->DepositDate != "" && $plg_DateCleared != $onetrans->DepositDate) {
+		$sSQL = "UPDATE pledge_plg SET plg_DateCleared='".$onetrans->DepositDate."', plg_TransactionFee='".$onetrans->TransactionFee."', plg_TransactionRef='".$onetrans->TransactionRef."' WHERE plg_PlgID=$plg_plgID";		
+		$rsUpdate = RunQueryI($sSQL);
+	}
 }
-printf ("</table>");
 
+$sSQL = "SELECT plg_plgID, plg_depID, plg_DateCleared, plg_amount, plg_TransactionFee, dep_Comment, dep_Type, b.fun_Name AS fundName
+         FROM pledge_plg 
+         JOIN deposit_dep ON plg_depID = dep_ID
+		 LEFT JOIN donationfund_fun b ON plg_fundID = b.fun_ID
+         WHERE plg_date>='$dFromDate' AND plg_date<='$dToDate' AND plg_PledgeOrPayment=\"Payment\" AND (plg_Method='CREDITCARD' OR plg_Method='BANKDRAFT') 
+         ORDER BY plg_depID, plg_DateCleared, plg_fundID";
+$rsTransToReport = RunQueryI($sSQL);
+
+$thisDeposit = 0;
+
+$thisClearDate = "";
+$thisClearTotalAmount = array();
+$thisClearTotalFee = 0;
+
+//Set the page title
+$sPageTitle = gettext("Reconcile Credit Card and Bank Draft Deposits ") . $dFromDate . gettext(" To ") . $dToDate;
+require "Include/Header.php";
+
+while ($aRow = $rsTransToReport->fetch_array(MYSQL_ASSOC))
+{
+	extract($aRow);
+
+	if ($thisDeposit != $plg_depID) {
+		// need to wrap up the previous deposit slip and start a new one
+		if ($thisDeposit > 0) {
+			// wrapping up the previous deposit
+			printf ("<p style=\"margin-left: 40px\">Total amount donated ");
+			foreach ($thisClearTotalAmount as $key => $value)
+			    printf ("(Fund: $key $value) ");
+			printf ("</p>");
+			printf ("<p style=\"margin-left: 40px\">Total of fees $thisClearTotalFee</p>");
+		}
+
+		// starting a new deposit
+		printf ("<p class=\"MediumLargeText\">$dep_Type $plg_depID $dep_Comment</p>");
+		printf ("<p style=\"margin-left: 20px\">Clearing date $plg_DateCleared</p>");
+		$thisDeposit = $plg_depID;
+		$thisClearDate = $plg_DateCleared;
+		$thisClearTotalAmount = array();
+		$thisClearTotalAmount[$fundName] = $plg_amount;
+		$thisClearTotalFee = $plg_TransactionFee;
+	} else {
+		// continuing with the same deposit
+		if ($thisClearDate != $plg_DateCleared) {
+			// need to wrap up the previous clear date and start a new one
+			if ($thisClearDate != "") {
+				// wrapping up the previous clear date
+				printf ("<p style=\"margin-left: 40px\">Total amount donated");
+				foreach ($thisClearTotalAmount as $key => $value)
+			    	printf ("(Fund: $key $value) ");
+				printf ("</p>");
+				printf ("<p style=\"margin-left: 40px\">Total of fees $thisClearTotalFee</p>");
+			}
+			// starting a new clear date
+			$thisClearDate = $plg_DateCleared;
+			$thisClearTotalAmount = array();
+			$thisClearTotalAmount[$fundName] = $plg_amount;
+			$thisClearTotalFee = $plg_TransactionFee;
+			printf ("<p style=\"margin-left: 20px\">Clearing date $thisClearDate</p>");
+		} else {
+			// continuing with the same clear date
+			$thisClearTotalAmount[$fundName] += $plg_amount;
+			$thisClearTotalFee += $plg_TransactionFee;
+		}
+	}	
+}
+printf ("<p style=\"margin-left: 40px\">Total amount donated");
+foreach ($thisClearTotalAmount as $key => $value)
+    printf ("(Fund: $key $value) ");
+printf ("</p>");
+printf ("<p style=\"margin-left: 40px\">Total of fees $thisClearTotalFee</p>");
+
+require "Include/Footer.php";
 ?>
-

@@ -161,6 +161,28 @@ function RunQuery($sSQL, $bStopOnError = true)
         return FALSE;
 }
 
+// Runs an SQL query using the mysqli_ library.  Returns the result resource.
+// By default stop on error, unless a second (optional) argument is passed as false.
+function RunQueryI($sSQL, $bStopOnError = true)
+{
+    global $cnChurchInfo;
+    global $debug;
+
+    if ($result = mysqli_query($cnChurchInfo, $sSQL))
+        return $result;
+    elseif ($bStopOnError)
+    {
+        if ($debug) {
+        	printf ("RunQueryI: database handle $cnChurchInfo<br>\n");
+            die(gettext("RunQueryI: Cannot execute query.") . "<p>$sSQL<p>" . mysqli_error($cnChurchInfo));
+        } else {
+            die("Database error or invalid data");
+        }
+    }
+    else
+        return FALSE;
+}
+
 function FilterInputArr ($arr, $key, $type='string', $size=1)
 {
 	if (array_key_exists ($key, $arr))

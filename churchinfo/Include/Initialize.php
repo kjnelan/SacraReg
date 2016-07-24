@@ -32,9 +32,12 @@ if ($debug == TRUE) // Report all PHP errors (-1)
 else // Turn off error reporting
     error_reporting(0);
 
-// Establish the database connection
+// Establish the database connection (mysql_ library)
 $cnInfoCentral = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD);
 mysql_select_db($sDATABASE);
+
+// Establish the database connection (mysqli_ library)
+$cnChurchInfo = mysqli_connect($sSERVERNAME,$sUSER,$sPASSWORD,$sDATABASE);
 
 // Basic security: If the UserID isn't set (no session), redirect to the login page
 if (!isset($_SESSION['iUserID']))

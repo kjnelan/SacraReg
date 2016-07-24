@@ -88,7 +88,7 @@ if (isset($_POST["Cancel"])) {
 		// Ok to create or update
 		
 		//Get the selected autopayment record
-		if ($plg_aut_ID > 0 && ($plg_method == "CREDITCARD" || $plg_method == "BANKDRAFT")) {
+		if ($plg_aut_ID > 0) {
 			$sSQL = "SELECT * FROM autopayment_aut WHERE aut_ID=$plg_aut_ID";
 			$rsAutoPayments = $link->query($sSQL);
 			if ($rsAutoPayments->num_rows == 1) {
@@ -199,7 +199,8 @@ if (isset($_POST["Cancel"])) {
 			if ($errStr == "")
 				$errStr = "Success: Transaction reference number " . $retArr["transactionref"] . "<br>";
 				
-			$sSQL = "UPDATE pledge_plg SET plg_aut_Cleared='" . $bApproved . "' WHERE plg_plgID=" . $plg_plgID;
+			$sSQL = "UPDATE pledge_plg SET plg_aut_Cleared='" . $bApproved . "', plg_TransactionRef='" .  $retArr["transactionref"] . "' WHERE plg_plgID=" . $plg_plgID;
+			
 			RunQuery($sSQL);
 			
 			if ($plg_aut_ResultID) {

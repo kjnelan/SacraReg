@@ -43,7 +43,10 @@ function SendSelfServiceAdminsEmail ($reg_id)
 	$query = "SELECT * FROM register_reg JOIN person_per ON reg_perid=per_id JOIN family_fam on reg_famid=fam_id WHERE reg_id=$reg_id";
 	$result = $link->query($query) or die('Query failed: ' . $link->error);
 	if ($result->num_rows == 0) {
-		return;
+		$query = "SELECT * FROM register_reg WHERE reg_id=$reg_id";
+		$result = $link->query($query) or die('Query failed: ' . $link->error);
+		$line = $result->fetch_array(MYSQL_ASSOC);
+		extract ($line);
 	} else {
 		$line = $result->fetch_array(MYSQL_ASSOC);
 		extract ($line);

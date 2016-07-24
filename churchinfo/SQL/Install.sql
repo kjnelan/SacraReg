@@ -220,7 +220,7 @@ CREATE TABLE `deposit_dep` (
   `dep_Comment` text,
   `dep_EnteredBy` mediumint(9) unsigned default NULL,
   `dep_Closed` tinyint(1) NOT NULL default '0',
-  `dep_Type` enum('Bank','CreditCard','BankDraft','eGive') NOT NULL default 'Bank',
+  `dep_Type` enum('Bank','CreditCard','BankDraft','eGive','SelfCreditCard','SelfBankDraft') NOT NULL default 'Bank',
   PRIMARY KEY  (`dep_ID`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci PACK_KEYS=0 AUTO_INCREMENT=1 ;
 
@@ -693,7 +693,8 @@ INSERT INTO `menuconfig_mcf` (`mid`, `name`, `parent`, `ismenu`, `content_englis
 (36, 'newdeposit', 'deposit', 0, 'Create New Deposit', NULL, 'DepositSlipEditor.php?DepositType=Bank', '', 'bFinance', NULL, 0, 0, NULL, 1, 1),
 (37, 'viewdeposit', 'deposit', 0, 'View All Deposits', NULL, 'FindDepositSlip.php', '', 'bFinance', NULL, 0, 0, NULL, 1, 2),
 (38, 'depositreport', 'deposit', 0, 'Deposit Reports', NULL, 'FinancialReports.php', '', 'bFinance', NULL, 0, 0, NULL, 1, 3),
-(39, 'separator3', 'deposit', 0, '---------------------------', NULL, '', '', 'bFinance', NULL, 0, 0, NULL, 1, 4),
+(92, 'depositreconcile', 'deposit', 0, 'Reconcile Electronic Transactions', NULL, 'UpdateFromVanco.php', '', 'bFinance', NULL, 0, 0, NULL, 1, 4),
+(39, 'separator3', 'deposit', 0, '---------------------------', NULL, '', '', 'bFinance', NULL, 0, 0, NULL, 1, 5),
 (40, 'depositslip', 'deposit', 0, 'Edit Deposit Slip', NULL, 'DepositSlipEditor.php', '', 'bFinance', 'iCurrentDeposit', 1, 1, 'DepositSlipID', 1, 5),
 
 (84, 'fundraiser', 'root', 1, 'Fundraiser', NULL, '', '', 'bAll', NULL, 0, 0, NULL, 1, 5),
@@ -923,6 +924,9 @@ CREATE TABLE `pledge_plg` (
   `plg_aut_ResultID` mediumint(9) NOT NULL default '0',
   `plg_NonDeductible` decimal(8,2) NOT NULL,
   `plg_GroupKey` VARCHAR( 64 ) NOT NULL,
+  `plg_DateCleared` text NULL,
+  `plg_TransactionRef` text NULL,
+  `plg_TransactionFee` decimal(8,2) NULL,
   PRIMARY KEY  (`plg_plgID`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
