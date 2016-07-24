@@ -288,7 +288,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 			$donation->state = $state;
 			$donation->zip = $zip;
 			$donation->country = $country;
-			$donation->description = "UU Nashua Pledge";
+			$donation->description = "Pledge payment";
 			$donation->email = $email;
 			$donation->phone = $phone;
 	

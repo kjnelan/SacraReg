@@ -11,7 +11,7 @@ if ($rsConfig) {
 
 $CONFIRM_EMAIL_URL = URL_Origin() . $sRootPath . '/';
 $CONFIRM_EMAIL_SUBJECT = $sChurchName . " " . gettext ("Registration Confirmation");
-$RESET_EMAIL_SUBJECT = $sChurchName . " " . gettext ("Nashua Password Reset");
+$RESET_EMAIL_SUBJECT = $sChurchName . " " . gettext ("Password Reset");
 
 function getGUID(){
     if (function_exists('com_create_guid')){
