@@ -693,7 +693,7 @@ INSERT INTO `menuconfig_mcf` (`mid`, `name`, `parent`, `ismenu`, `content_englis
 (36, 'newdeposit', 'deposit', 0, 'Create New Deposit', NULL, 'DepositSlipEditor.php?DepositType=Bank', '', 'bFinance', NULL, 0, 0, NULL, 1, 1),
 (37, 'viewdeposit', 'deposit', 0, 'View All Deposits', NULL, 'FindDepositSlip.php', '', 'bFinance', NULL, 0, 0, NULL, 1, 2),
 (38, 'depositreport', 'deposit', 0, 'Deposit Reports', NULL, 'FinancialReports.php', '', 'bFinance', NULL, 0, 0, NULL, 1, 3),
-(92, 'depositreconcile', 'deposit', 0, 'Reconcile Electronic Transactions', NULL, 'UpdateFromVanco.php', '', 'bFinance', NULL, 0, 0, NULL, 1, 4),
+(93, 'depositreconcile', 'deposit', 0, 'Reconcile Electronic Transactions', NULL, 'UpdateFromVanco.php', '', 'bFinance', NULL, 0, 0, NULL, 1, 4),
 (39, 'separator3', 'deposit', 0, '---------------------------', NULL, '', '', 'bFinance', NULL, 0, 0, NULL, 1, 5),
 (40, 'depositslip', 'deposit', 0, 'Edit Deposit Slip', NULL, 'DepositSlipEditor.php', '', 'bFinance', 'iCurrentDeposit', 1, 1, 'DepositSlipID', 1, 5),
 
