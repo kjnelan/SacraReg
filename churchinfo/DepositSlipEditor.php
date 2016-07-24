@@ -627,9 +627,9 @@ require "Include/Header.php";
 				echo "<td class=TextColumn><input type=radio name=DepositType id=DepositType value=\"Bank\" $selectOther>".gettext("Bank")." &nbsp; ";
 				echo "<input type=radio name=DepositType id=DepositType value=\"CreditCard\" $selectCreditCard>".gettext("Credit Card")." &nbsp; ";
 				echo "<input type=radio name=DepositType id=DepositType value=\"BankDraft\" $selectBankDraft>".gettext("Bank Draft")." &nbsp; ";
-				echo "<input type=radio name=DepositType id=DepositType value=\"eGive\" $selecteGive>".gettext("eGive")."</td></td>";
+				echo "<input type=radio name=DepositType id=DepositType value=\"eGive\" $selecteGive>".gettext("eGive")." &nbsp; ";
 				echo "<input type=radio name=DepositType id=DepositType value=\"SelfCreditCard\" $selectSelfCreditCard>".gettext("Self-Service Credit Card")." &nbsp; ";
-				echo "<input type=radio name=DepositType id=DepositType value=\"SelfBankDraft\" $selectSelfBankDraft>".gettext("Self-Service Bank Draft")." &nbsp; ";
+				echo "<input type=radio name=DepositType id=DepositType value=\"SelfBankDraft\" $selectSelfBankDraft>".gettext("Self-Service Bank Draft")."</td></td>";
 			} else {
 				echo "<input type=hidden name=DepositType id=DepositType value=\"$sDepositType\"></td></td>";
 			}
