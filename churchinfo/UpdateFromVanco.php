@@ -142,6 +142,8 @@ foreach ($translist as $onetrans) {
 	
 	$sSQL = "SELECT * FROM pledge_plg JOIN family_fam ON plg_FamID=fam_id LEFT JOIN deposit_dep on plg_depID=dep_ID WHERE DATE_ADD(plg_date, INTERVAL 2 DAY)>=\"".$onetrans->ProcessDate."\" AND plg_date<=\"".$onetrans->ProcessDate."\" AND plg_PledgeOrPayment=\"Payment\" AND plg_aut_ID=". $onetrans->CustomerID .  " AND plg_Amount=". $onetrans->Amount;
 	$rsDBInfo = RunQueryI($sSQL);
+	if ($rsDBInfo->num_rows == 0)
+		continue; // probably a failed transaction that got deleted from the database
 	extract($rsDBInfo->fetch_array(MYSQLI_ASSOC));
 
 	if ($onetrans->DepositDate != "" && $plg_plgID > 0 && $plg_depID == 0) {
@@ -150,7 +152,7 @@ foreach ($translist as $onetrans) {
 		if ($plg_method == 'CREDITCARD')
 			$plg_depID = $CCDepId;
 		else if ($plg_method == 'BANKDRAFT')	
-			$plg_depID = $BDDepID;
+			$plg_depID = $BDDepId;
 		$sSQL = "UPDATE pledge_plg SET plg_depID=$plg_depID WHERE plg_plgID=$plg_plgID";		
 		$rsUpdate = RunQueryI($sSQL);
 	}
