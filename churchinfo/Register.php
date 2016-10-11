@@ -25,9 +25,9 @@ echo gettext ("With this information, we are able to maintain a credible presenc
 echo gettext ("We will never sell or otherwise distribute this information.");
 
 // Read in report settings from database
-$rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
-	while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$reportConfig[$cfg_name] = $cfg_value;
 	}
 }
@@ -57,8 +57,8 @@ $sSQL = "INSERT INTO email_message_pending_emp ".
         "SET " . 
 			"emp_usr_id='" .$_SESSION['iUserID']. "',".
 			"emp_to_send='0'," .
-			"emp_subject='" . mysql_real_escape_string($sEmailSubject). "',".
-			"emp_message='" . mysql_real_escape_string($sEmailMessage). "'";
+			"emp_subject='" . EscapeString ($sEmailSubject). "',".
+			"emp_message='" . EscapeString ($sEmailMessage). "'";
 RunQuery($sSQL);
 
 // Turn off the registration flag so the menu option is less obtrusive

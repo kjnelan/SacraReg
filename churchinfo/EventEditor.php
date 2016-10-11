@@ -69,8 +69,8 @@ if ($sAction==gettext('Create=>Event') && !empty($tyid)){
   $EventExists = 0;
   $sSQL = "SELECT * FROM event_types WHERE type_id=$tyid";
   $rsOpps = RunQuery($sSQL);
-  $numRows = mysql_num_rows($rsOpps);
-  $ceRow = mysql_fetch_array($rsOpps, MYSQL_BOTH);
+  $numRows = mysqli_num_rows($rsOpps);
+  $ceRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH);
   extract($ceRow);
 
   $iTypeID = $type_id;
@@ -83,7 +83,7 @@ if ($sAction==gettext('Create=>Event') && !empty($tyid)){
   
   $sSQL = "SELECT evctnm_countid, evctnm_countname FROM eventcountnames_evctnm WHERE evctnm_eventtypeid='$iTypeID' ORDER BY evctnm_countid ASC";
   $cOpps = RunQuery($sSQL);
-  $iNumCounts = mysql_num_rows($cOpps);
+  $iNumCounts = mysqli_num_rows($cOpps);
   
   $aCountID = array();
   $aCountName = array();    
@@ -91,7 +91,7 @@ if ($sAction==gettext('Create=>Event') && !empty($tyid)){
   
   if($iNumCounts) {
     for($c = 0; $c <$iNumCounts; $c++){
-        $cRow = mysql_fetch_array($cOpps, MYSQL_BOTH);
+        $cRow = mysqli_fetch_array($cOpps,  MYSQLI_BOTH);
         extract($cRow);
         $aCountID[$c] = $evctnm_countid;
         $aCountName[$c] = $evctnm_countname;    
@@ -121,10 +121,10 @@ if ($sAction==gettext('Create=>Event') && !empty($tyid)){
     //
       $sSQL = "SELECT * FROM events_event WHERE event_type = '$iTypeID' ORDER BY event_start DESC LIMIT 1";
       $ecOpps = RunQuery($sSQL);
-      $numRows = mysql_num_rows($ecOpps);
+      $numRows = mysqli_num_rows($ecOpps);
       if($numRows >0){
         // use the most recent event if it exists
-        $ecRow = mysql_fetch_array($ecOpps, MYSQL_BOTH);
+        $ecRow = mysqli_fetch_array($ecOpps,  MYSQLI_BOTH);
         extract($ecRow);
         $aStartTokens = explode(" ", $event_start);
         $ceEventStartDate = $aStartTokens[0];
@@ -156,10 +156,10 @@ if ($sAction==gettext('Create=>Event') && !empty($tyid)){
     //
       $sSQL = "SELECT * FROM events_event WHERE event_type = '$iTypeID' ORDER BY event_start DESC LIMIT 1";
       $ecOpps = RunQuery($sSQL);
-      $numRows = mysql_num_rows($ecOpps);
+      $numRows = mysqli_num_rows($ecOpps);
       if($numRows >0){
         // use the most recent event if it exists
-        $ecRow = mysql_fetch_array($ecOpps, MYSQL_BOTH);
+        $ecRow = mysqli_fetch_array($ecOpps,  MYSQLI_BOTH);
         extract($ecRow);
         $aStartTokens = explode(" ", $event_start);
         $ceEventStartDate = $aStartTokens[0];
@@ -193,10 +193,10 @@ if ($sAction==gettext('Create=>Event') && !empty($tyid)){
     case "yearly": 
       $sSQL = "SELECT * FROM events_event WHERE event_type = '$iTypeID' ORDER BY event_start DESC LIMIT 1";
       $ecOpps = RunQuery($sSQL);
-      $numRows = mysql_num_rows($ecOpps);
+      $numRows = mysqli_num_rows($ecOpps);
       if($numRows >0){
         // use the most recent event if it exists
-        $ecRow = mysql_fetch_array($ecOpps, MYSQL_BOTH);
+        $ecRow = mysqli_fetch_array($ecOpps,  MYSQLI_BOTH);
         extract($ecRow);
         $aStartTokens = explode(" ", $event_start);
         $sEventStartDate = $aStartTokens[0];
@@ -246,7 +246,7 @@ else if ($sAction = gettext('Edit') && !empty($sOpp))
 
         $rsOpps = RunQuery($sSQL);
 
-        $aRow = mysql_fetch_array($rsOpps, MYSQL_BOTH);
+        $aRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH);
         extract($aRow);
 
         $iEventID = $event_id;
@@ -270,12 +270,12 @@ else if ($sAction = gettext('Edit') && !empty($sOpp))
         $sSQL= "SELECT * FROM eventcounts_evtcnt WHERE evtcnt_eventid='$iEventID' ORDER BY evtcnt_countid ASC"; 
 //        echo $cvSQL;
         $cvOpps = RunQuery($sSQL);
-        $iNumCounts = mysql_num_rows($cvOpps);
+        $iNumCounts = mysqli_num_rows($cvOpps);
         $nCnts = $iNumCounts;
 //        echo "numcounts = {$aNumCounts}\n\l";
         if($iNumCounts) {
           for($c = 0; $c <$iNumCounts; $c++){
-            $aRow = mysql_fetch_array($cvOpps, MYSQL_BOTH);
+            $aRow = mysqli_fetch_array($cvOpps,  MYSQLI_BOTH);
             extract($aRow);
             $aCountID[$c] = $evtcnt_countid;
             $aCountName[$c] = $evtcnt_countname;     
@@ -352,7 +352,7 @@ else if ($sAction = gettext('Edit') && !empty($sOpp))
                      `inactive` = '".$iEventStatus."',  
                      `event_typename` = '".$sTypeName."'";  
             RunQuery($sSQL);
-            $iEventID = mysql_insert_id();
+            $iEventID = mysqli_insert_id($cnInfoCentral);
             for($c=0; $c<$iNumCounts; $c++)
             {
               $cCnt = ltrim(rtrim($aCountName[$c]));

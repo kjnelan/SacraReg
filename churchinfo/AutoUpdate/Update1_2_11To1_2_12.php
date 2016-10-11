@@ -2,7 +2,7 @@
 /*******************************************************************************
 *
 *  filename    : Update1_2_11To1_2_12.php
-*  description : Update MySQL database from 1.2.11 To 1.2.12
+*  description : Update mysql database from 1.2.11 To 1.2.12
 *
 *  http://www.churchdb.org/
 *
@@ -278,12 +278,12 @@ break;
 }  // End of for  
 
 
-$sError = mysql_error();
+$sError = MySQLError ();
 $sSQL_Last = $sSQL;
 
-// Let's check if MySQL database is in sync with PHP code
+// Let's check if mysql database is in sync with PHP code
 $sSQL = 'SELECT * FROM version_ver ORDER BY ver_ID DESC';
-$aRow = mysql_fetch_array(RunQuery($sSQL));
+$aRow = mysqli_fetch_array(RunQuery($sSQL));
 extract($aRow);
 
 if ($ver_version == $sVersion) {

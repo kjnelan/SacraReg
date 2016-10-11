@@ -37,12 +37,12 @@ function GetMenu($menu, $plvl) {
 	
 	$query = "SELECT mid, name, ismenu, content, uri, statustext, session_var, session_var_in_text, session_var_in_uri, url_parm_name, security_grp, active FROM menuconfig_mcf WHERE parent = '$menu' ORDER BY sortorder";
 	
-	$rsMenu = mysql_query($query, $cnInfoCentral);
-	$item_cnt = mysql_num_rows($rsMenu);
+	$rsMenu = mysqli_query( $cnInfoCentral, $query);
+	$item_cnt = mysqli_num_rows($rsMenu);
 	$idx = 1;
 	$ptr = 1;
 	$lvl = $plvl + 1;
-	while ($aRow = mysql_fetch_array($rsMenu)) {	
+	while ($aRow = mysqli_fetch_array($rsMenu)) {	
 		GetMenuItem($aRow, $idx, $lvl);
 		if ($ptr < $item_cnt) {
 			$idx++;

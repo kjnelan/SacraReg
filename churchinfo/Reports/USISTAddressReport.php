@@ -162,9 +162,9 @@ class PDF_AddressReport extends ChurchInfoReport {
 }
 
 // Read in report settings from database
-$rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
-	while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$pdf->$cfg_name = $cfg_value;
 	}
 }
@@ -191,7 +191,7 @@ $sSQL .= 'ORDER BY fam_Name';
 
 $rsFamilies = RunQuery($sSQL);
 
-while ($aRow = mysql_fetch_array($rsFamilies)) {
+while ($aRow = mysqli_fetch_array($rsFamilies)) {
 
 	extract($aRow);
 
@@ -199,7 +199,7 @@ while ($aRow = mysql_fetch_array($rsFamilies)) {
 	$sSQL .= "WHERE lu_fam_ID IN ($fam_ID)";
 	
 	$rsLookup = RunQuery($sSQL);
-	extract(mysql_fetch_array($rsLookup));
+	extract(mysqli_fetch_array($rsLookup));
 	if ($idexists == '0') {
 		$lu_DeliveryLine1 = $sMissing;
 		$lu_DeliveryLine2 = '';
@@ -211,7 +211,7 @@ while ($aRow = mysql_fetch_array($rsFamilies)) {
 		$sSQL  = 'SELECT * FROM istlookup_lu ';
 		$sSQL .= "WHERE lu_fam_ID IN ($fam_ID)";
 		$rsLookup = RunQuery($sSQL);
-		extract(mysql_fetch_array($rsLookup));
+		extract(mysqli_fetch_array($rsLookup));
 
 	}
 

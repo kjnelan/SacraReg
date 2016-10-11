@@ -20,7 +20,7 @@ require "Include/Functions.php";
 $EID = FilterInput($_GET['EID'], 'int');
 $sSQL = "SELECT * FROM events_event WHERE event_id = ". $EID;
 $rsOpps = RunQuery($sSQL);
-$aRow = mysql_fetch_array($rsOpps, MYSQL_BOTH) or die(mysql_error());
+$aRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH) or die(MySQLError());
 extract($aRow);
 $aEventID = $event_id;
 $aEventTitle = htmlentities(stripslashes($event_title));

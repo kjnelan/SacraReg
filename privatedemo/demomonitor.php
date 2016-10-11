@@ -29,25 +29,23 @@ require_once ('Functions.php');
 
 $include_path = dirname(__FILE__);
 
-$cnTempDB = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD)
-        or die ('Cannot connect to the MySQL server because: ' . mysql_error());
-mysql_select_db($sDATABASE)
-        or die ('Cannot select the MySQL database because: ' . mysql_error());
+$cnTempDB = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
+        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
 
 // see if an expire button was pressed
 $sSQL = "SELECT a.ac_dir, dbp_id, a.ac_id FROM DBPool LEFT JOIN AdminContact a ON dbp_assignedto = a.ac_id WHERE dbp_assignedto IS NOT NULL";
-$rsDBP = mysql_query ($sSQL);
-while (list ($dbdir, $dbid, $acid) = mysql_fetch_row($rsDBP)) {
+$rsDBP = mysqli_query($cnInfoCentral, $sSQL);
+while (list ($dbdir, $dbid, $acid) = mysqli_fetch_row($rsDBP)) {
 	if (isset ($_POST["Expire$dbid"])) {
 		print "Expired demo # $dbid from directory $dbdir";
 		$cmdStr = "rm -rf $dbdir";
 		system ($cmdStr);
 		$sSQL = "UPDATE DBPool SET dbp_assignedto=NULL WHERE dbp_id=$dbid";
-		mysql_query ($sSQL);
+		mysqli_query($cnInfoCentral], $sSQL);
 	}
 	if (isset ($_POST["ReceivedEmail$dbid"])) {
 		$sSQL = "UPDATE AdminContact SET ac_received_email=1 WHERE ac_id=$acid";
-		mysql_query ($sSQL);
+		mysqli_query($cnInfoCentral, $sSQL);
 	}
 }
 
@@ -57,20 +55,18 @@ if (isset ($_POST["UpdateMailingList"])) {
 	$emailArr = array();
 	
 	$sSQL = "SELECT ac_id,ac_email FROM AdminContact";
-	$rsDBP = mysql_query ($sSQL);
+	$rsDBP = mysqli_query($GLOBALS["___mysqli_ston"], $sSQL);
 	
-	while ($emailArr[] = mysql_fetch_row($rsDBP))
+	while ($emailArr[] = mysqli_fetch_row($rsDBP))
 	;
 
 	// switch databases to the mailing list one to poke in all these email addresses
-	$cnTempDB = mysql_connect($sPhpMailSERVERNAME,$sPhpMailUSER,$sPhpMailPASSWORD)
-	        or die ('Cannot connect to the MySQL server because: ' . mysql_error());
-	mysql_select_db($sPhpMailDATABASE)
-	        or die ('Cannot select the MySQL database because: ' . mysql_error());
+	$cnTempDB = mysqli_connect($sPhpMailSERVERNAME, $sPhpMailUSER, $sPhpMailPASSWORD, $sPhpMailDATABASE))
+	        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
 	        
 	// always rebuild list 1 to match all the people who have registered for private demos.
 	$sSQL = "DELETE FROM phplist_listuser WHERE listid=1";
-	$rsDBP = mysql_query ($sSQL);
+	$rsDBP = mysqli_query($GLOBALS["___mysqli_ston"], $sSQL);
 	
 	foreach ($emailArr as $oneRow ) {
 		$id = $oneRow[0];
@@ -78,18 +74,16 @@ if (isset ($_POST["UpdateMailingList"])) {
 
 		// this INSERT IGNORE will quietly do nothing for existing users
 		$sSQL = "INSERT IGNORE INTO phplist_user_user (id, email, confirmed, uniqid, htmlemail) VALUES ($id, \"$email\", 1, $id, 1)";
-		$rsDBP = mysql_query ($sSQL);
+		$rsDBP = mysqli_query($cnInfoCentral, $sSQL);
 		
 		$sSQL = "INSERT IGNORE INTO phplist_listuser (userid, listid) VALUES ($id, 1)";
-		$rsDBP = mysql_query ($sSQL);
+		$rsDBP = mysqli_query($cnInfoCentral, $sSQL);
 	}
 
 	// switch databases back to the default for personal demo monitor
-	$cnTempDB = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD)
-	        or die ('Cannot connect to the MySQL server because: ' . mysql_error());
-	mysql_select_db($sDATABASE)
-	        or die ('Cannot select the MySQL database because: ' . mysql_error());		
-}
+	$cnTempDB = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
+        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
+	}
 ?>
 
 <html>
@@ -103,7 +97,7 @@ if (isset ($_POST["UpdateMailingList"])) {
 
 <?php
 $sSQL = "SELECT a.ac_firstname, a.ac_lastname, a.ac_received_email, a.ac_organization, a.ac_city, a.ac_state, dbp_id, dbp_assigneddate, a.ac_dir, a.ac_email FROM DBPool LEFT JOIN AdminContact a ON dbp_assignedto = a.ac_id WHERE dbp_assignedto IS NOT NULL ORDER BY dbp_assigneddate";
-$rsDBP = mysql_query ($sSQL);
+$rsDBP = mysqli_query($cnTempDB, $sSQL);
 ?>
 
 <form id="form_demomonitor" method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>">
@@ -117,7 +111,7 @@ $activeDemoCnt = 0;
 
 echo "<tr><td>Expire</td><td>First</td><td>Last</td><td>Received Email</td><td>Organization</td><td>City</td><td>State</td><td>Directory</td><td>Mail</td><td>Date</td></tr>";
 
-while (list ($firstname, $lastname, $receivedEmail, $organization, $city, $state, $dbid, $dbdate, $demodir, $email) = mysql_fetch_row($rsDBP))
+while (list ($firstname, $lastname, $receivedEmail, $organization, $city, $state, $dbid, $dbdate, $demodir, $email) = mysqli_fetch_row($rsDBP))
 {
 	echo "<tr><td><input type=\"submit\" class=\"button\" value=\"Expire\" name=\"Expire$dbid\"></td>";
 	echo "\t<td>$firstname</td>\n";

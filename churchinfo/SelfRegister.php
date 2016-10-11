@@ -215,7 +215,7 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 		session_destroy ();
 		$reg_id = 0;
 	} else {
-		while ($line = $result->fetch_array(MYSQL_ASSOC)) {
+		while ($line = $result->fetch_array(MYSQLI_ASSOC)) {
 			extract ($line);
 		}
 	}

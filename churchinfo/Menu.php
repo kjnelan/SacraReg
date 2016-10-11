@@ -44,7 +44,7 @@ if ($_SESSION['iLoginCount'] == 0) {
     $dLL = $_SESSION['dLastLogin'];
     $sSQL = "SELECT DAYNAME('$dLL') as dn, MONTHNAME('$dLL') as mn, DAYOFMONTH('$dLL') as dm, "
     .       "YEAR('$dLL') as y, HOUR('$dLL') as h, DATE_FORMAT('$dLL', ':%i') as m";
-    extract(mysql_fetch_array(RunQuery($sSQL)));
+    extract(mysqli_fetch_array(RunQuery($sSQL)));
 
     echo '<p>'.gettext('Welcome back').'.';
 

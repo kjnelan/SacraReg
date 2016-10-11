@@ -2,7 +2,7 @@
 /*******************************************************************************
 *
 *  filename    : Update1.2.7To1.2.8.php
-*  description : Update MySQL database from 1.2.7 To 1.2.8
+*  description : Update mysql database from 1.2.7 To 1.2.8
 *
 *  http://www.churchdb.org/
 *
@@ -22,6 +22,6 @@
 
 $sSQL = "INSERT INTO `version_ver` (`ver_version`, `ver_date`) VALUES ('1.2.8',NOW())";
 RunQuery($sSQL, FALSE); // False means do not stop on error
-$sError = mysql_error();
+$sError = MySQLError ();
 
 ?>

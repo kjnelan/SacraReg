@@ -33,8 +33,7 @@ else // Turn off error reporting
     error_reporting(0);
 
 // Establish the database connection (mysql_ library)
-$cnInfoCentral = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD);
-mysql_select_db($sDATABASE);
+$cnInfoCentral = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE);
 
 // Establish the database connection (mysqli_ library)
 $cnChurchInfo = mysqli_connect($sSERVERNAME,$sUSER,$sPASSWORD,$sDATABASE);
@@ -94,12 +93,12 @@ function RunQuery($sSQL, $bStopOnError = true)
     global $cnInfoCentral;
     global $debug;
 
-    if ($result = mysql_query($sSQL, $cnInfoCentral))
+    if ($result = mysqli_query( $cnInfoCentral, $sSQL))
         return $result;
     elseif ($bStopOnError)
     {
         if ($debug)
-            die(gettext("Cannot execute query.") . "<p>$sSQL<p>" . mysql_error());
+            die(gettext("Cannot execute query.") . "<p>$sSQL<p>" . MySQLError ());
         else
             die("Database error or invalid data");
     }

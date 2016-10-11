@@ -2,7 +2,7 @@
 /*******************************************************************************
 *
 *  filename    : Update1_2_8To1_2_9.php
-*  description : Update MySQL database from 1.2.8 To 1.2.9
+*  description : Update mysql database from 1.2.8 To 1.2.9
 *
 *  http://www.churchdb.org/
 *
@@ -92,6 +92,6 @@ RunQuery($sSQL, FALSE);
 $sSQL = "UPDATE config_cfg SET cfg_value='0' WHERE cfg_name='bRegistered'";
 RunQuery($sSQL, FALSE);
 
-$sError = mysql_error();
+$sError = MySQLError ();
 
 ?>

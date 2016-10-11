@@ -9,9 +9,9 @@ $iGroupID = FilterInput($_GET["GroupID"],'int');
 // Read values from config table into local variables
 // **************************************************
 $sSQL = "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'";
-$rsConfig = mysql_query($sSQL);			// Can't use RunQuery -- not defined yet
+$rsConfig = mysqli_query($cnInfoCentral, $sSQL);			// Can't use RunQuery -- not defined yet
 if ($rsConfig) {
-	while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$$cfg_name = $cfg_value;
 	}
 }
@@ -77,7 +77,7 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 		$sSQL = "SELECT per_fam_ID FROM person_per, person2group2role_p2g2r WHERE per_ID = p2g2r_per_ID AND p2g2r_grp_ID = " . $iGroupID;
 		$rsGroupMembers = RunQuery($sSQL);
 		$appendToQuery = " WHERE fam_ID IN (";
-		while ($aPerFam = mysql_fetch_array($rsGroupMembers)) {
+		while ($aPerFam = mysqli_fetch_array($rsGroupMembers)) {
 			extract ($aPerFam);
 			$appendToQuery .= $per_fam_ID . ",";
 		}
@@ -88,7 +88,7 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 		$sSQL = "SELECT per_fam_ID FROM person_per WHERE per_ID IN (" . ConvertCartToString($_SESSION['aPeopleCart']) . ")";
 		$rsGroupMembers = RunQuery($sSQL);
 		$appendToQuery = " WHERE fam_ID IN (";
-		while ($aPerFam = mysql_fetch_array($rsGroupMembers)) {
+		while ($aPerFam = mysqli_fetch_array($rsGroupMembers)) {
 			extract ($aPerFam);
 			$appendToQuery .= $per_fam_ID . ",";
 		}
@@ -102,7 +102,7 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 	$markerIcons =  explode ( "," , $sGMapIcons );
 	array_unshift($markerIcons, "red-pushpin");
 
-	while ($aFam = mysql_fetch_array($rsFams)) {
+	while ($aFam = mysqli_fetch_array($rsFams)) {
 		extract ($aFam);
 		if ($fam_longitude != 0 && $fam_latitude != 0) {
 ?>
@@ -145,7 +145,7 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 <?php
 	$sSQL = "SELECT lst_OptionID, lst_OptionName from list_lst WHERE lst_ID = 1 ORDER BY lst_OptionSequence";
 	$rsIcons = RunQuery ($sSQL);
-        while ($aIcons = mysql_fetch_array($rsIcons)) {
+        while ($aIcons = mysqli_fetch_array($rsIcons)) {
 	    extract ($aIcons);
             ?>
       <tr>

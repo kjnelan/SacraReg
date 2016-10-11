@@ -90,9 +90,9 @@ class PDF_FundRaiserReport extends ChurchInfoReport {
 }
 
 // Read in report settings from database
-$rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
-	while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$pdf->$cfg_name = $cfg_value;
 	}
 }
@@ -101,7 +101,7 @@ $totalAuctionItems = 0.0;
 $totalSellToAll = array();
 
 // Loop through result array
-while ($row = mysql_fetch_array($rsPaddleNums)) {
+while ($row = mysqli_fetch_array($rsPaddleNums)) {
 	extract ($row);
 
 	// Get individual auction items first
@@ -115,7 +115,7 @@ while ($row = mysql_fetch_array($rsPaddleNums)) {
 	                WHERE di_FR_ID = ".$iFundRaiserID." AND di_buyer_id = " . $pn_per_ID;
 	$rsPurchasedItems = RunQuery($sSQL);
 	
-	while ($itemRow = mysql_fetch_array($rsPurchasedItems)) {
+	while ($itemRow = mysqli_fetch_array($rsPurchasedItems)) {
 		extract ($itemRow);
 		$totalAuctionItems += $di_sellprice;
 	}
@@ -133,7 +133,7 @@ while ($row = mysql_fetch_array($rsPaddleNums)) {
 					LEFT JOIN family_fam c ON a.per_fam_id = c.fam_ID
 					WHERE b.di_FR_ID=".$iFundRaiserID." AND mb_per_ID=" . $pn_per_ID;
 	$rsMultiBuy = RunQuery($sqlMultiBuy);
-	while ($mbRow = mysql_fetch_array($rsMultiBuy)) {
+	while ($mbRow = mysqli_fetch_array($rsMultiBuy)) {
 		extract ($mbRow);
 		$totalSellToAll[$di_title] += $mb_count * $di_sellprice;
 	}

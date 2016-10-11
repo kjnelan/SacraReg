@@ -29,7 +29,7 @@ if (!$_SESSION['bEditRecords'])
 
 $sSQL = "SELECT `per_fam_id` FROM person_per WHERE per_id=$per_id";
 $result = RunQuery($sSQL);
-extract (mysql_fetch_array($result));
+extract (mysqli_fetch_array($result));
 $reg_famid = 0;
 if (isset ($per_fam_id))
 	$reg_famid = $per_fam_id;

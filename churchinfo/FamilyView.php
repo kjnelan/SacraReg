@@ -51,7 +51,7 @@ $dResults = RunQuery($dSQL);
 $last_id = 0;
 $next_id = 0;
 $capture_next = 0;
-while($myrow = mysql_fetch_row($dResults))
+while($myrow = mysqli_fetch_row($dResults))
 {
 	$fid = $myrow[0];
 	if ($capture_next == 1)
@@ -84,7 +84,7 @@ $sSQL = "SELECT *, a.per_FirstName AS EnteredFirstName, a.Per_LastName AS Entere
 		LEFT JOIN person_per b ON fam_EditedBy = b.per_ID
 		WHERE fam_ID = " . $iFamilyID;
 $rsFamily = RunQuery($sSQL);
-extract(mysql_fetch_array($rsFamily));
+extract(mysqli_fetch_array($rsFamily));
 
 // Get the lists of custom person fields
 $sSQL = "SELECT family_custom_master.* FROM family_custom_master
@@ -98,7 +98,7 @@ $rsRightFamCustomFields = RunQuery($sSQL);
 // Get the custom field data for this person.
 $sSQL = "SELECT * FROM family_custom WHERE fam_ID = " . $iFamilyID;
 $rsFamCustomData = RunQuery($sSQL);
-$aFamCustomData = mysql_fetch_array($rsFamCustomData, MYSQL_BOTH);
+$aFamCustomData = mysqli_fetch_array($rsFamCustomData,  MYSQLI_BOTH);
 
 //Get the notes for this family
 $sSQL = "SELECT nte_ID, nte_Text, nte_DateEntered, nte_EnteredBy, nte_DateLastEdited, nte_EditedBy, a.per_FirstName AS EnteredFirstName, a.Per_LastName AS EnteredLastName, b.per_FirstName AS EditedFirstName, b.per_LastName AS EditedLastName 		FROM note_nte
@@ -158,7 +158,7 @@ $rsClassifications = RunQuery($sSQL);
 $sSQL = "SELECT * FROM list_lst WHERE lst_ID = 5 ORDER BY lst_OptionSequence";
 $rsSecurityGrp = RunQuery($sSQL);
 
-while ($aRow = mysql_fetch_array($rsSecurityGrp))
+while ($aRow = mysqli_fetch_array($rsSecurityGrp))
 {
 	extract ($aRow);
 	$aSecurityType[$lst_OptionID] = $lst_OptionName;
@@ -382,7 +382,7 @@ elseif ($next_link_text != "") {
 			</tr>
 			<?php
 				// Display the left-side custom fields
-				while ($Row = mysql_fetch_array($rsLeftFamCustomFields)) {
+				while ($Row = mysqli_fetch_array($rsLeftFamCustomFields)) {
 					extract($Row);
 					if (($aSecurityType[$fam_custom_FieldSec] == 'bAll') or ($_SESSION[$aSecurityType[$fam_custom_FieldSec]]))
 					{
@@ -423,7 +423,7 @@ elseif ($next_link_text != "") {
 <?php } ?>
 			<?php
 				// Display the right-side custom fields
-				while ($Row = mysql_fetch_array($rsRightFamCustomFields)) {
+				while ($Row = mysqli_fetch_array($rsRightFamCustomFields)) {
 					extract($Row);
 					if (($aSecurityType[$fam_custom_FieldSec] == 'bAll') or ($_SESSION[$aSecurityType[$fam_custom_FieldSec]]))
 					{
@@ -446,7 +446,7 @@ elseif ($next_link_text != "") {
 $sAssignedProperties = ",";
 
 //Was anything returned?
-if (mysql_num_rows($rsAssignedProperties) == 0)
+if (mysqli_num_rows($rsAssignedProperties) == 0)
 {
 	//No, indicate nothing returned
 	echo "<p align=\"center\">" . gettext("No property assignments.") . "</p>";
@@ -473,7 +473,7 @@ else
 	$bIsFirst = true;
 
 	//Loop through the rows
-	while ($aRow = mysql_fetch_array($rsAssignedProperties))
+	while ($aRow = mysqli_fetch_array($rsAssignedProperties))
 	{
 		$pro_Prompt = "";
 		$r2p_Value = "";
@@ -535,7 +535,7 @@ else
       <p align="center"> <span class="SmallText"><?php echo gettext("Assign a New Property:"); ?></span>
           <select name="PropertyID">
             <?php
-		while ($aRow = mysql_fetch_array($rsProperties))
+		while ($aRow = mysqli_fetch_array($rsProperties))
 		{
 			extract($aRow);
 			//If the property doesn't already exist for this Person, write the <OPTION> tag
@@ -599,7 +599,7 @@ elseif ($next_link_text != "") {
 $sRowClass = "RowColorA";
 
 //Loop through all the family members
-while ($aRow =mysql_fetch_array($rsFamilyMembers))
+while ($aRow =mysqli_fetch_array($rsFamilyMembers))
 {
 	$per_Title = "";
 	$per_FirstName = "";
@@ -678,7 +678,7 @@ while ($aRow =mysql_fetch_array($rsFamilyMembers))
 
 <?php if ($_SESSION['bFinance']) { ?>
 
-<?php if (mysql_num_rows ($rsAutoPayments) > 0) { ?>
+<?php if (mysqli_num_rows($rsAutoPayments) > 0) { ?>
 
 <br>
 <b><?php echo gettext("Automatic Payments:"); ?></b>
@@ -703,7 +703,7 @@ while ($aRow =mysql_fetch_array($rsFamilyMembers))
 	$tog = 0;
 
 	//Loop through all automatic payments
-	while ($aRow =mysql_fetch_array($rsAutoPayments))
+	while ($aRow =mysqli_fetch_array($rsAutoPayments))
 	{
 		$tog = (! $tog);
 
@@ -799,7 +799,7 @@ $tog = 0;
 if ($_SESSION['sshowPledges'] || $_SESSION['sshowPayments'])
 {
 	//Loop through all pledges
-	while ($aRow =mysql_fetch_array($rsPledges))
+	while ($aRow =mysqli_fetch_array($rsPledges))
 	{
 		$tog = (! $tog);
 
@@ -917,7 +917,7 @@ if ($_SESSION['sshowPledges'] || $_SESSION['sshowPayments'])
 <?php
 
 //Loop through all the notes
-while($aRow = mysql_fetch_array($rsNotes))
+while($aRow = mysqli_fetch_array($rsNotes))
 {
 	extract($aRow);
 

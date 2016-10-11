@@ -23,11 +23,11 @@ function DelChildren($menu) {
 	$sSQL = "SELECT mid, name, ismenu, content, uri, statustext, session_var, session_var_in_text, session_var_in_uri, url_parm_name, security_grp, active FROM menuconfig_mcf WHERE parent = '$menu' ORDER BY sortorder";
 	
 	$rsMenu = RunQuery($sSQL);
-	$item_cnt = mysql_num_rows($rsMenu);
+	$item_cnt = mysqli_num_rows($rsMenu);
 	$idx = 1;
 	$ptr = 1;
 	$lvl = $plvl + 1;
-	while ($aRow = mysql_fetch_array($rsMenu)) {	
+	while ($aRow = mysqli_fetch_array($rsMenu)) {	
 		DelIndividual($aRow, $idx, $lvl);
 		if ($ptr < $item_cnt) {
 			$idx++;
@@ -49,7 +49,7 @@ function AdjustOrder($sAdjParent,$iDelOrder) {
 
 	$sSQL = "SELECT mid, sortorder FROM menuconfig_mcf WHERE parent = '$sAdjParent' AND sortorder > $iDelOrder ORDER BY sortorder";
 	$rsTemp = RunQuery($sSQL);
-	while ($aRow = mysql_fetch_array($rsTemp))
+	while ($aRow = mysqli_fetch_array($rsTemp))
 	{
 		extract ($aRow);
 				
@@ -85,7 +85,7 @@ if (isset($_POST["DeleteCancel"])) {
 if (isset($_POST["DeleteSubmit"])) {
 	$sSQL = "SELECT name, parent ismenu, sortorder FROM menuconfig_mcf WHERE mid = $iMenuID";
 	$rsDelNode = RunQuery($sSQL);
-	$aDelNode = mysql_fetch_array($rsDelNode);
+	$aDelNode = mysqli_fetch_array($rsDelNode);
 	
 	$sDelName = $aDelNode['name'];
 	$sDelParent = $aDelNode['parent'];
@@ -124,7 +124,7 @@ if (isset($_POST["MenuSubmit"]))
 	// Verify menu item has already been added.
 	$sSQL = "SELECT '' FROM menuconfig_mcf WHERE mid = $iMenuID";
 	$rsCount = RunQuery($sSQL);
-	if (mysql_num_rows($rsCount) == 0)
+	if (mysqli_num_rows($rsCount) == 0)
 	{
 		Redirect("MenuManager.php");
 	}
@@ -176,13 +176,13 @@ if (isset($_POST["MenuSubmit"]))
 		{
 			$sSQL = "SELECT sortorder FROM menuconfig_mcf WHERE mid = $iMenuID";
 			$rsMenu = RunQuery($sSQL);
-			$aRow = mysql_fetch_array($rsMenu);
+			$aRow = mysqli_fetch_array($rsMenu);
 			extract ($aRow);
 			$iOldSortOrder = $sortorder;
 			
 			$sSQL = "SELECT '' FROM menuconfig_mcf WHERE parent = '$sParent'";
 			$rsTemp = RunQuery($sSQL);
-			$numRows = mysql_num_rows($rsTemp);
+			$numRows = mysqli_num_rows($rsTemp);
 			$iNewSortOrder = $numRows + 1;
 			
 			$sSQL = "UPDATE menuconfig_mcf SET sortorder = '" . $iNewSortOrder . "' WHERE mid = '" . $iMenuID ."'";
@@ -213,7 +213,7 @@ else
 	
 	$sSQL = "SELECT * FROM menuconfig_mcf WHERE mid = '". $iMenuID . "'";
 	$rsMenuRead = RunQuery($sSQL);
-	$aRow = mysql_fetch_array($rsMenuRead);
+	$aRow = mysqli_fetch_array($rsMenuRead);
 	
 	extract($aRow);
 	$iMenuID = $mid;
@@ -249,7 +249,7 @@ $aSecurityList[] = "bCanvasser";
 $sSQL = "SELECT DISTINCT ucfg_name FROM userconfig_ucfg WHERE ucfg_per_id = 0 AND ucfg_cat = 'SECURITY' ORDER by ucfg_id";
 $rsSecGrpList = RunQuery($sSQL);
 			
-while ($aRow = mysql_fetch_array($rsSecGrpList))
+while ($aRow = mysqli_fetch_array($rsSecGrpList))
 {
 	$aSecurityList[] = $aRow['ucfg_name'];
 }
@@ -393,7 +393,7 @@ if ($sMode == "Delete") {
 			$rsMenuList = RunQuery($sSQL);
 			
 			$sMenuList = "<select name=\"NewParent\">";
-			while ($aRow = mysql_fetch_array($rsMenuList))
+			while ($aRow = mysqli_fetch_array($rsMenuList))
 			{
 				$sMenuList .= "<option value=\"" . $aRow['name'] . "\"";
 //		echo "lst_OptionName:".$aAryRow['lst_OptionName']."<br>";

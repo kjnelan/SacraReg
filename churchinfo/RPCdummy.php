@@ -32,11 +32,11 @@ switch ($mode)
 					WHERE per_Envelope=" . $data;
 		$rsQuery = RunQuery($sSQL);
 
-		if (mysql_num_rows($rsQuery) == 0)
+		if (mysqli_num_rows($rsQuery) == 0)
 			$sGeneratedHTML = "invalid";
 		else
 		{
-			extract(mysql_fetch_array($rsQuery));
+			extract(mysqli_fetch_array($rsQuery));
 
 			$sCity = SelectWhichInfo($per_City, $fam_City, false);
 			$sState = SelectWhichInfo($per_State, $fam_State, false);
@@ -68,17 +68,17 @@ switch ($mode)
 		if ($data > 0) {
 			$sSQL = "SELECT grp_DefaultRole,grp_RoleListID FROM group_grp WHERE grp_ID = " . $data;
 			$rsQuery = RunQuery($sSQL);
-			extract(mysql_fetch_array($rsQuery));
+			extract(mysqli_fetch_array($rsQuery));
 
 			$sSQL = "SELECT lst_OptionID,lst_OptionName FROM list_lst WHERE lst_ID = " . $grp_RoleListID . " ORDER BY lst_OptionSequence";
 			$rsQuery = RunQuery($sSQL);
 
-			if (mysql_num_rows($rsQuery) == 0)
+			if (mysqli_num_rows($rsQuery) == 0)
 				$sGeneratedHTML = "invalid";
 			else
 			{
 				$sGeneratedHTML = "<select name=\"GroupRole\">";
-				while($aRow = mysql_fetch_array($rsQuery))
+				while($aRow = mysqli_fetch_array($rsQuery))
 				{
 					extract($aRow);
 					$sGeneratedHTML .= "<option value=\"" . $lst_OptionID . "\"";

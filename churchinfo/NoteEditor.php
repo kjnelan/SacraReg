@@ -104,7 +104,7 @@ else
 		//Get the data for this note
 		$sSQL = "SELECT * FROM note_nte WHERE nte_ID = " . $iNoteID;
 		$rsNote = RunQuery($sSQL);
-		extract(mysql_fetch_array($rsNote));
+		extract(mysqli_fetch_array($rsNote));
 
 		//Assign everything locally
 		$sNoteText = $nte_Text;

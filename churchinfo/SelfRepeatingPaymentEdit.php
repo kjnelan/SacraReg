@@ -110,7 +110,7 @@ if (isset($_POST["Cancel"])) {
 	if ($result->num_rows == 0) {
 		$aut_ID = 0;
 	} else {
-		while ($line = $result->fetch_array(MYSQL_ASSOC)) {
+		while ($line = $result->fetch_array(MYSQLI_ASSOC)) {
 			extract ($line);
 		}
 	}
@@ -164,7 +164,7 @@ if (  (! isset($_POST["Submit"])) && $aut_ID == 0) {
 			echo ">" . gettext ("Select online payment record") . "</option>\n";
 			$sSQLTmp = "SELECT aut_ID, aut_CreditCard, aut_BankName, aut_Route, aut_Account FROM autopayment_aut WHERE aut_FamID=" . $reg_famid;
 			$rsFindAut = RunQuery($sSQLTmp);
-			while ($aRow = mysql_fetch_array($rsFindAut)) {
+			while ($aRow = mysqli_fetch_array($rsFindAut)) {
 				extract($aRow);
 				if ($aut_CreditCard <> "") {
 					$showStr = gettext ("Credit card ...") . substr ($aut_CreditCard, strlen ($aut_CreditCard) - 4, 4);
@@ -219,7 +219,7 @@ if (  (! isset($_POST["Submit"])) && $aut_ID == 0) {
 			<option value="0"><?php echo gettext("None"); ?></option>
 			<?php
 			mysqli_data_seek($rsFunds,0);
-			while ($row = $rsFunds->fetch_array(MYSQL_ASSOC)) {
+			while ($row = $rsFunds->fetch_array(MYSQLI_ASSOC)) {
 				$fun_id = $row["fun_ID"];
 				$fun_name = $row["fun_Name"];
 				$fun_active = $row["fun_Active"];

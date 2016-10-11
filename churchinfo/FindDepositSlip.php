@@ -142,7 +142,7 @@ $sSQLTotal = "SELECT COUNT(dep_id) FROM deposit_dep $sCriteria";
 // Execute SQL statement and get total result
 $rsDep = RunQuery($sSQL);
 $rsTotal = RunQuery($sSQLTotal);
-list ($Total) = mysql_fetch_row($rsTotal);
+list ($Total) = mysqli_fetch_row($rsTotal);
 
 echo '<div align="center">';
 echo  '<form action="FindDepositSlip.php" method="get" name="ListNumber">';
@@ -260,7 +260,7 @@ echo "<table cellpadding='4' align='center' cellspacing='0' width='100%'>\n
 	</tr>";
 
 // Display Deposits
-while (list ($dep_ID, $dep_Date, $dep_Comment, $dep_Closed, $dep_Type) = mysql_fetch_row($rsDep))
+while (list ($dep_ID, $dep_Date, $dep_Comment, $dep_Closed, $dep_Type) = mysqli_fetch_row($rsDep))
 {
 	echo "<tr><td><a href='DepositSlipEditor.php?DepositSlipID=$dep_ID'>" . gettext("Edit") . "</td>";
 	echo "<td>$dep_ID</td>";
@@ -268,7 +268,7 @@ while (list ($dep_ID, $dep_Date, $dep_Comment, $dep_Closed, $dep_Type) = mysql_f
 	// Get deposit total
 	$sSQL = "SELECT SUM(plg_amount) AS deposit_total FROM pledge_plg WHERE plg_depID = '$dep_ID' AND plg_PledgeOrPayment = 'Payment'";
 	$rsDepositTotal = RunQuery($sSQL);
-	list ($deposit_total) = mysql_fetch_row($rsDepositTotal);
+	list ($deposit_total) = mysqli_fetch_row($rsDepositTotal);
 	echo "<td>$deposit_total</td>";
 	echo "<td>$dep_Comment</td>";
 	if ($dep_Closed == 1)

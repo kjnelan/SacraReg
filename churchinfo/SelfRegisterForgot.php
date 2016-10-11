@@ -43,7 +43,7 @@ if (isset($_POST["Login"])) { // use data from the form to send a reset password
 		$reg_id = 0;
 		$errMsg = "Cannot find user name or email";
 	} else {
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		$reg_id = $line['reg_id'];
 		$reg_username = $line['reg_username'];
 		$reg_email = $line['reg_email'];

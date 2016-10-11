@@ -181,7 +181,7 @@ $thisClearTotalFee = 0;
 $sPageTitle = gettext("Reconcile Credit Card and Bank Draft Deposits ") . $dFromDate . gettext(" To ") . $dToDate;
 require "Include/Header.php";
 
-while ($aRow = $rsTransToReport->fetch_array(MYSQL_ASSOC))
+while ($aRow = $rsTransToReport->fetch_array(MYSQLI_ASSOC))
 {
 	extract($aRow);
 

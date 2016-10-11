@@ -56,7 +56,7 @@ echo '	<center><table cellpadding="4" cellspacing="0" width="70%">
 $sRowClass = 'RowColorA';
 
 //Loop through the person recordset
-while ($aRow = mysql_fetch_array($rsGroups))
+while ($aRow = mysqli_fetch_array($rsGroups))
 {
 	extract($aRow);
 
@@ -66,7 +66,7 @@ while ($aRow = mysql_fetch_array($rsGroups))
 	//Get the count for this group
 	$sSQL = "SELECT Count(*) AS iCount FROM person2group2role_p2g2r " .
 			"WHERE p2g2r_grp_ID='$grp_ID'";
-	$rsMemberCount = mysql_fetch_array(RunQuery($sSQL));
+	$rsMemberCount = mysqli_fetch_array(RunQuery($sSQL));
 	extract($rsMemberCount);
 		
 	//Get the group's type name
@@ -74,7 +74,7 @@ while ($aRow = mysql_fetch_array($rsGroups))
 	{
 		$sSQL =	"SELECT lst_OptionName FROM list_lst WHERE " . 
 				"lst_ID=3 AND lst_OptionID = " . $grp_Type;
-		$rsGroupType = mysql_fetch_array(RunQuery($sSQL));
+		$rsGroupType = mysqli_fetch_array(RunQuery($sSQL));
 		$sGroupType = $rsGroupType[0];
 	}
 	else
@@ -95,7 +95,7 @@ while ($aRow = mysql_fetch_array($rsGroups))
 		$bNoneInCart = TRUE;
 		$bAllInCart = TRUE;
 		//Loop through the recordset
-		while ($aPeople = mysql_fetch_array($rsGroupMembers))
+		while ($aPeople = mysqli_fetch_array($rsGroupMembers))
 		{
 			extract($aPeople);
 

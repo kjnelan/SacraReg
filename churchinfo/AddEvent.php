@@ -89,12 +89,12 @@ if (isset($_POST["AddEvent"]))
         $sSQL .= " ORDER BY event_start";
 
         $rsOpps = RunQuery($sSQL);
-        $numRows = mysql_num_rows($rsOpps);
+        $numRows = mysqli_num_rows($rsOpps);
 
         // Create arrays of the fundss.
         for ($row = 1; $row <= $numRows; $row++)
         {
-                $aRow = mysql_fetch_array($rsOpps, MYSQL_BOTH);
+                $aRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH);
                 extract($aRow);
 
                 $aEventID[$row] = $event_id;
@@ -199,12 +199,12 @@ else
 $sSQL = "SELECT * FROM `event_types`";
 
         $rsOpps = RunQuery($sSQL);
-        $numRows = mysql_num_rows($rsOpps);
+        $numRows = mysqli_num_rows($rsOpps);
 
         // Create arrays of the events.
         for ($row = 1; $row <= $numRows; $row++)
         {
-                $aRow = mysql_fetch_array($rsOpps, MYSQL_BOTH);
+                $aRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH);
                 extract($aRow);
 
                 echo '<option value="'.$type_id.'">'.$type_name.'</option>';

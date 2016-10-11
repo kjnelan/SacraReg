@@ -35,7 +35,7 @@ printf ("<tr>");
 printf ("<th>Start</th><th>Most Recent</th><th>Outreach Fund</th><th>Total</th>");
 printf ("</tr>");
 
-while ($row = $rsDonationTotal->fetch_array(MYSQL_ASSOC)) {
+while ($row = $rsDonationTotal->fetch_array(MYSQLI_ASSOC)) {
 	$totThisFund = $row["totAmount"];
 	$firstDate = date_create($row["firstDate"])->format ("M, Y");
 	$lastDate = date_create($row["lastDate"])->format ("M, Y");

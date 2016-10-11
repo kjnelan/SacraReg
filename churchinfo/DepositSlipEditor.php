@@ -36,7 +36,7 @@ if ($iDepositSlipID) {
 	// Get the current deposit slip
 	$sSQL = "SELECT * from deposit_dep WHERE dep_ID = " . $iDepositSlipID;
 	$rsDeposit = RunQuery($sSQL);
-	extract(mysql_fetch_array($rsDeposit));
+	extract(mysqli_fetch_array($rsDeposit));
 	// Set current deposit slip
 	$_SESSION['iCurrentDeposit'] = $iDepositSlipID;
 
@@ -120,7 +120,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 		{
 			$sSQL = "SELECT MAX(dep_ID) AS iDepositSlipID FROM deposit_dep";
 			$rsDepositSlipID = RunQuery($sSQL);
-			extract(mysql_fetch_array($rsDepositSlipID));
+			extract(mysqli_fetch_array($rsDepositSlipID));
 			$_SESSION['iCurrentDeposit'] = $iDepositSlipID;
 		}
 
@@ -160,7 +160,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 
 	$rsAuthorizedPayments = RunQuery($sSQL);
 
-	while ($aAutoPayment =mysql_fetch_array($rsAuthorizedPayments))
+	while ($aAutoPayment =mysqli_fetch_array($rsAuthorizedPayments))
 	{
 		extract($aAutoPayment);
 		if ($dep_Type == "CreditCard") {
@@ -180,7 +180,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 		// Check for this automatic payment already loaded into this deposit slip
 		$sSQL = "SELECT plg_plgID FROM pledge_plg WHERE plg_depID=" . $dep_ID . " AND plg_aut_ID=" . $aut_ID;
 		$rsDupPayment = RunQuery ($sSQL);
-		$dupCnt = mysql_num_rows ($rsDupPayment);
+		$dupCnt = mysqli_num_rows($rsDupPayment);
 
 		if ($amount > 0.00 && $dupCnt == 0) {
 			$sSQL = "INSERT INTO pledge_plg (plg_FamID, 
@@ -271,7 +271,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 		include "Include/VancoConfig.php";
 	}
 	
-	while ($aTransaction =mysql_fetch_array($rsTransactions))
+	while ($aTransaction =mysqli_fetch_array($rsTransactions))
 	{
 		extract($aTransaction);
 
@@ -403,19 +403,19 @@ if (isset($_POST["DepositSlipSubmit"])) {
 								res_reference,
 								res_status)
 							VALUES (" .
-								"'" . mysql_real_escape_string($response->response_reason_code) . "'," .
-								"'" . mysql_real_escape_string($response->response_reason_text) . "'," .
-								"'" . mysql_real_escape_string($response->response_code) . "'," .
-								"'" . mysql_real_escape_string($response->response_subcode) . "'," .
-								"'" . mysql_real_escape_string($response->authorization_code) . "'," .
-								"'" . mysql_real_escape_string($response->avs_response) . "'," .
-								"'" . mysql_real_escape_string($response->transaction_id) . "')";
+								"'" . EscapeString($response->response_reason_code) . "'," .
+								"'" . EscapeString($response->response_reason_text) . "'," .
+								"'" . EscapeString($response->response_code) . "'," .
+								"'" . EscapeString($response->response_subcode) . "'," .
+								"'" . EscapeString($response->authorization_code) . "'," .
+								"'" . EscapeString($response->avs_response) . "'," .
+								"'" . EscapeString($response->transaction_id) . "')";
 				RunQuery($sSQL);
 	
 				// Now get the ID for the newly created record
 				$sSQL = "SELECT MAX(res_ID) AS iResID FROM result_res";
 				$rsLastEntry = RunQuery($sSQL);
-				extract(mysql_fetch_array($rsLastEntry));
+				extract(mysqli_fetch_array($rsLastEntry));
 				$plg_aut_ResultID = $iResID;
 	
 				// Poke the ID of the new result record back into this pledge (payment) record
@@ -499,17 +499,17 @@ if (isset($_POST["DepositSlipSubmit"])) {
 			if ($plg_aut_ResultID) {
 				// Already have a result record, update it.
 				
-				$sSQL = "UPDATE result_res SET res_echotype2='" . mysql_real_escape_string($errStr)	. "' WHERE res_ID=" . $plg_aut_ResultID;
+				$sSQL = "UPDATE result_res SET res_echotype2='" . EscapeString($errStr) . "' WHERE res_ID=" . $plg_aut_ResultID;
 				RunQuery($sSQL);
 			} else {
 				// Need to make a new result record
-				$sSQL = "INSERT INTO result_res (res_echotype2) VALUES ('" . mysql_real_escape_string($errStr) . "')";
+				$sSQL = "INSERT INTO result_res (res_echotype2) VALUES ('" . EscapeString($errStr) . "')";
 				RunQuery($sSQL);
 	
 				// Now get the ID for the newly created record
 				$sSQL = "SELECT MAX(res_ID) AS iResID FROM result_res";
 				$rsLastEntry = RunQuery($sSQL);
-				extract(mysql_fetch_array($rsLastEntry));
+				extract(mysqli_fetch_array($rsLastEntry));
 				$plg_aut_ResultID = $iResID;
 	
 				// Poke the ID of the new result record back into this pledge (payment) record
@@ -529,7 +529,7 @@ if (isset($_POST["DepositSlipSubmit"])) {
 																		
 		$sSQL = "SELECT * FROM deposit_dep WHERE dep_ID = " . $iDepositSlipID;
 		$rsDepositSlip = RunQuery($sSQL);
-		extract(mysql_fetch_array($rsDepositSlip));
+		extract(mysqli_fetch_array($rsDepositSlip));
 
 		$dDate = $dep_Date;
 		$sComment = $dep_Comment;
@@ -661,26 +661,26 @@ require "Include/Header.php";
 	// Get deposit totals
 	$sSQL = "SELECT SUM(plg_amount) FROM pledge_plg WHERE plg_depID = '$iDepositSlipID' AND plg_PledgeOrPayment = 'Payment'";
 	$rsDepositTotal = RunQuery($sSQL);
-	list ($deposit_total) = mysql_fetch_row($rsDepositTotal);
+	list ($deposit_total) = mysqli_fetch_row($rsDepositTotal);
 	$sSQL = "SELECT SUM(plg_amount) FROM pledge_plg WHERE plg_depID = '$iDepositSlipID' AND plg_PledgeOrPayment = 'Payment' AND plg_method = 'CASH'";
 	$rsDepositTotal = RunQuery($sSQL);
-	list ($totalCash) = mysql_fetch_row($rsDepositTotal);
+	list ($totalCash) = mysqli_fetch_row($rsDepositTotal);
 	$sSQL = "SELECT SUM(plg_amount) FROM pledge_plg WHERE plg_depID = '$iDepositSlipID' AND plg_PledgeOrPayment = 'Payment' AND plg_method = 'CHECK'";
 	$rsDepositTotal = RunQuery($sSQL);
-	list ($totalChecks) = mysql_fetch_row($rsDepositTotal);
+	list ($totalChecks) = mysqli_fetch_row($rsDepositTotal);
 	$sSQL = "SELECT COUNT(plg_plgID) AS deposit_total FROM pledge_plg WHERE plg_depID = '$iDepositSlipID' AND plg_PledgeOrPayment = 'Payment'";
 	$rsDepositTotal = RunQuery($sSQL);
-	list ($totalItems) = mysql_fetch_row($rsDepositTotal);
+	list ($totalItems) = mysqli_fetch_row($rsDepositTotal);
 	if (!$totalItems)
 		$totalItems = "0";
 	$sSQL = "SELECT COUNT(plg_plgID) AS deposit_total FROM pledge_plg WHERE plg_depID = '$iDepositSlipID' AND plg_PledgeOrPayment = 'Payment' AND plg_method = 'CASH'";
 	$rsDepositTotal = RunQuery($sSQL);
-	list ($totalCashItems) = mysql_fetch_row($rsDepositTotal);
+	list ($totalCashItems) = mysqli_fetch_row($rsDepositTotal);
 	if (!$totalCashItems)
 		$totalCashItems = "0";
 	$sSQL = "SELECT COUNT(plg_plgID) AS deposit_total FROM pledge_plg WHERE plg_depID = '$iDepositSlipID' AND plg_PledgeOrPayment = 'Payment' AND plg_method = 'CHECK'";
 	$rsDepositTotal = RunQuery($sSQL);
-	list ($totalCheckItems) = mysql_fetch_row($rsDepositTotal);
+	list ($totalCheckItems) = mysqli_fetch_row($rsDepositTotal);
 	if (!$totalCheckItems)
 		$totalCheckItems = "0";
 	echo "<b>\$$deposit_total - TOTAL AMOUNT </b> &nbsp; (Items: $totalItems)<br>";
@@ -732,7 +732,7 @@ $depositHashOrder2Key = array ();
 $depositArray = array ();
 $depositHash = array ();
 
-while ($aRow = mysql_fetch_array($rsPledges)) {
+while ($aRow = mysqli_fetch_array($rsPledges)) {
 	extract($aRow);
 
 	if (array_key_exists($plg_GroupKey, $depositHash)) {

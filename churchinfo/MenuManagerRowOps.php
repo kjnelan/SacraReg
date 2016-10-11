@@ -51,7 +51,7 @@ switch ($sAction)
 	case delete:
 		$sSQL = "SELECT '' FROM menuconfig_mcf WHERE parent = '$menu'";
 		$rsPropList = RunQuery($sSQL);
-		$numRows = mysql_num_rows($rsPropList);
+		$numRows = mysqli_num_rows($rsPropList);
 
 		// Make sure we never delete the only option
 		if ($numRows > 1)

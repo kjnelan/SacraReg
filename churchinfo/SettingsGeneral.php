@@ -36,7 +36,7 @@ $sSQL = "SELECT * FROM config_cfg WHERE cfg_section='General' ORDER BY cfg_id";
 
 $rsConfigs = RunQuery($sSQL);
 $iRowCount=0;
-while ($aRow = mysql_fetch_array($rsConfigs)) {
+while ($aRow = mysqli_fetch_array($rsConfigs)) {
     $iRowCount++;
     extract($aRow);
     if ($cfg_name == "sHeader") {
@@ -107,7 +107,7 @@ echo "<tr><td><h3>". gettext("Variable name") . "</h3></td>
 
 $r = 1;
 // List Individual Settings
-while (list($cfg_id, $cfg_name, $cfg_value, $cfg_type, $cfg_default, $cfg_tooltip, $cfg_section) = mysql_fetch_row($rsConfigs)) {
+while (list($cfg_id, $cfg_name, $cfg_value, $cfg_type, $cfg_default, $cfg_tooltip, $cfg_section) = mysqli_fetch_row($rsConfigs)) {
 	
 	// Cancel, Save Buttons every 13 rows
 	if ($r == 13) {

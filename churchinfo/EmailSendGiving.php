@@ -48,7 +48,7 @@ if (!($bEmailSend && $bSendPHPMail))
     exit;
 }
 
-// Keep a detailed log of events in MySQL.
+// Keep a detailed log of events in mysql.
 function ClearEmailLog()
 {
     global $iUserID;
@@ -74,7 +74,7 @@ function ClearEmailLog()
     RunQuery($sSQL);
 
     $sSQL = "INSERT INTO $sLogTable ". 
-            "SET ejl_text='".mysql_real_escape_string($sMessage)."', ". 
+            "SET ejl_text='".EscapeString($sMessage)."', ". 
             "    ejl_time='$tSec', ".
             "    ejl_usec='$tUsec'";
 
@@ -90,7 +90,7 @@ function AddToEmailLog($sMessage, $iUserID)
     $tUsec = str_pad($tSystem['usec'], 6, '0');
 
     $sSQL = "INSERT INTO $sLogTable ". 
-            "SET ejl_text='".mysql_real_escape_string($sMessage)."', ". 
+            "SET ejl_text='".EscapeString($sMessage)."', ". 
             "    ejl_time='$tSec', ".
             "    ejl_usec='$tUsec'";
 
@@ -174,7 +174,7 @@ function SendEmail($sSubject, $sMessage)
 
         $tTimeStamp = date('Y-m-d H:i:s');
         $rsEmailAddress = RunQuery($sSQLGetEmail); // This query has limit one to pick up one job
-        $aRow = mysql_fetch_array($rsEmailAddress);
+        $aRow = mysqli_fetch_array($rsEmailAddress);
         extract($aRow);
         $mail->AddAddress($gre_Email);
         $mail->Subject = $sSubject;
@@ -225,7 +225,7 @@ function SendEmail($sSubject, $sMessage)
         $mail->ClearBCCs();
 
         // Are we done?
-        extract(mysql_fetch_array(RunQuery($sSQL_GRE))); // this query counts remaining recipient records
+        extract(mysqli_fetch_array(RunQuery($sSQL_GRE))); // this query counts remaining recipient records
         if ($countrecipients == 0) {
             $bContinue = FALSE;
             $sEmailTaxState = 'finish';
@@ -319,15 +319,15 @@ $bPHPMAILER_Installed = $bHavePHPMailerClass && $bHaveSMTPClass && $bHavePHPMail
 // if the table doesn't exist..but the log file does, show that.
 // if the table exists..with no entries, we've just finished, so show the log file
 $bLogTable_exists = True;
-if(mysql_num_rows(mysql_query("SHOW TABLES LIKE '".$sLogTable."';")) == 1 ) {
+if(mysqli_num_rows(RunQuery("SHOW TABLES LIKE '".$sLogTable."';")) == 1 ) {
     $bLogTable_exists = True;
 } else {
     $bLogTable_exists = False;
 }
-if(mysql_num_rows(mysql_query("SHOW TABLES LIKE '".$sGreTable."';")) == 1 ) {
+if(mysqli_num_rows(RunQuery("SHOW TABLES LIKE '".$sGreTable."';")) == 1 ) {
     $bGreTable_exists = True;
     $sSQL_GRE = "SELECT COUNT(gre_FamID) as countrecipients FROM $sGreTable ;";
-    extract(mysql_fetch_array(RunQuery($sSQL_GRE))); // this query counts remaining recipient records
+    extract(mysqli_fetch_array(RunQuery($sSQL_GRE))); // this query counts remaining recipient records
 } else {
     $bGreTable_exists = False;
     $countrecipients = 0;
@@ -432,7 +432,7 @@ if ($sEmailTaxState == 'start') {
     echo '</form>';
     $iUserID = $_SESSION['iUserID']; // Read into local variable for faster access
     $sGreTable = 'giving_rpt_email_gre_'.$iUserID;
-    if(mysql_num_rows(mysql_query("SHOW TABLES LIKE '".$sGreTable."';")) <> 0 ) {
+    if(mysqli_num_rows(RunQuery("SHOW TABLES LIKE '".$sGreTable."';")) <> 0 ) {
         $sSQL = 'SELECT gre_FamID, gre_FamName, gre_Email, gre_Attach FROM '.$sGreTable.' '.
                 "ORDER BY gre_FamName";
         $rsGivingReports = RunQuery($sSQL);
@@ -443,7 +443,7 @@ if ($sEmailTaxState == 'start') {
             ."</div><select name=givingreports[] size=6 multiple>";
         echo "<option value=0 selected>".gettext("All Families")."</option>";
         echo "<option value=0>----------</option>";
-        while ($aRow = mysql_fetch_array($rsGivingReports)) {
+        while ($aRow = mysqli_fetch_array($rsGivingReports)) {
             extract($aRow);
             echo "<option value=\"".$gre_FamID."\">".$gre_FamName."&nbsp;".$gre_Email;"&nbsp;</option>";
         }
@@ -461,7 +461,7 @@ if ($sEmailTaxState == 'start') {
     $sSQL = "SELECT * FROM email_job_log_$iUserID ".
             "ORDER BY ejl_id";
     $rsEJL = RunQuery($sSQL);
-    while ($aRow = mysql_fetch_array($rsEJL)) {
+    while ($aRow = mysqli_fetch_array($rsEJL)) {
         extract($aRow);
         $sTime = date('i:s', intval($ejl_time)).'.';
         $sTime .= substr($ejl_usec,0,3);
@@ -484,7 +484,7 @@ if ($sEmailTaxState == 'start') {
     echo '<br><br><div align="center"><table>';
     $sSQL = "SELECT * FROM email_job_log_$iUserID ORDER BY ejl_id";
     $rsEJL = RunQuery($sSQL);
-    while ($aRow = mysql_fetch_array($rsEJL)) {
+    while ($aRow = mysqli_fetch_array($rsEJL)) {
         extract($aRow);
         $sTime = date('i:s', intval($ejl_time)).'.';
         $sTime .= substr($ejl_usec,0,3);

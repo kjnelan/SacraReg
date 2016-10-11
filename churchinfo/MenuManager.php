@@ -39,7 +39,7 @@ $sSQL = "SELECT '' FROM menuconfig_mcf WHERE name = '$menu' AND ismenu = 1 ORDER
 $rsTemp = RunQuery($sSQL);
 
 // Validate that this is a valid menu item
-if (mysql_num_rows($rsTemp) == 0) {
+if (mysqli_num_rows($rsTemp) == 0) {
 	Redirect("Menu.php");
 }
 
@@ -60,7 +60,7 @@ if (isset($_POST["AddField"]))
 		// Check for a duplicate option name
 		$sSQL = "SELECT '' FROM menuconfig_mcf WHERE parent = '$menu' AND name = '" . $newFieldName . "'";
 		$rsCount = RunQuery($sSQL);
-		if (mysql_num_rows($rsCount) > 0)
+		if (mysqli_num_rows($rsCount) > 0)
 		{
 			$bNewNameError = 2;
 			$bNewNameError = true;
@@ -71,7 +71,7 @@ if (isset($_POST["AddField"]))
 			// Get count of the menu item
 			$sSQL = "SELECT '' FROM menuconfig_mcf WHERE parent = '$menu'";
 			$rsTemp = RunQuery($sSQL);
-			$numRows = mysql_num_rows($rsTemp);
+			$numRows = mysqli_num_rows($rsTemp);
 			$newOptionSequence = $numRows + 1;
 
 			// Insert into the appropriate options table
@@ -90,11 +90,11 @@ if (isset($_POST["SaveChanges"]))
 	// Get the original list of options..
 	$sSQL = "SELECT mid, name FROM menuconfig_mcf WHERE parent='$menu' ORDER BY sortorder";
 	$rsList = RunQuery($sSQL);
-	$numRows = mysql_num_rows($rsList);
+	$numRows = mysqli_num_rows($rsList);
 
 	for ($row = 1; $row <= $numRows; $row++)
 	{
-		$aRow = mysql_fetch_array($rsList, MYSQL_BOTH);
+		$aRow = mysqli_fetch_array($rsList,  MYSQLI_BOTH);
 		$aOldNameFields[$row] = $aRow["name"];
 
 		$aNameFields[$row] = FilterInput($_POST[$row . "name"]);
@@ -148,12 +148,12 @@ if (isset($_POST["SaveChanges"]))
 $sSQL = "SELECT mid, name, ismenu FROM menuconfig_mcf WHERE parent = '$menu' ORDER BY sortorder";
 
 $rsRows = RunQuery($sSQL);
-$numRows = mysql_num_rows($rsRows);
+$numRows = mysqli_num_rows($rsRows);
 
 // Create arrays of the option names and IDs
 for ($row = 1; $row <= $numRows; $row++)
 {
-	$aRow = mysql_fetch_array($rsRows, MYSQL_BOTH);
+	$aRow = mysqli_fetch_array($rsRows,  MYSQLI_BOTH);
 
 	if (!$bErrorFlag)
 	{

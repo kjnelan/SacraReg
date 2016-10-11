@@ -44,16 +44,14 @@ require_once ('Functions.php');
 
 $include_path = dirname(__FILE__);
 
-$cnTempDB = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD)
-        or die ('Cannot connect to the MySQL server because: ' . mysql_error());
-mysql_select_db($sDATABASE)
-        or die ('Cannot select the MySQL database because: ' . mysql_error());
+$cnTempDB = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
+        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
 
 $idIn = $_GET['ContactID'];
         
 $sSQL = "SELECT * FROM AdminContact WHERE ac_id = $idIn";
-$rsAC = mysql_query ($sSQL);
-$rsACArr = mysql_fetch_array ($rsAC);
+$rsAC = mysqli_query($cnTempDB, $sSQL);
+$rsACArr = mysqli_fetch_array($rsAC);
 extract ($rsACArr);
 
 if ($ac_dir == "") {
@@ -61,24 +59,24 @@ if ($ac_dir == "") {
 	
 	// find a free database
 	$sSQL = "SELECT * from DBPool WHERE ISNULL(dbp_assignedto) LIMIT 1";
-	$rsDBP = mysql_query ($sSQL);
+	$rsDBP = mysqli_query($cnTempDB, $sSQL);
 	
-	if (mysql_num_rows ($rsDBP) == 0) {
+	if (mysqli_num_rows($rsDBP) == 0) {
 		print "Sorry, all demos are currently taken.  Please try again tomorrow";
 		exit;
 	}
 
-	$rsDBPArr = mysql_fetch_array ($rsDBP);
+	$rsDBPArr = mysqli_fetch_array($rsDBP);
 	extract ($rsDBPArr);
 
 	// assign this database to this admin contact
 	$sSQL = "UPDATE DBPool SET dbp_assignedto='$ac_id', dbp_assigneddate=NOW() WHERE dbp_id=$dbp_id";
-	$rsUpdateAssignment = mysql_query ($sSQL);
+	$rsUpdateAssignment = mysqli_query($cnTempDB, $sSQL);
 	
 	$randNo = rand();
 	$ac_dir = "demo" . $randNo;
 	$sSQL = "UPDATE AdminContact SET ac_dir='$ac_dir' WHERE ac_id=$idIn";
-	mysql_query ($sSQL);	
+	mysqli_query($cnTempDB, $sSQL);	
 
 	// make the new directory, put a vanilla copy of ChurchInfo inside
 	$sCmd = "mkdir " . $ac_dir;

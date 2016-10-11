@@ -32,17 +32,15 @@
 ******************************************************************************/
 
 // Establish the database connection (mysql_ library)
-$cnInfoCentral = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD) 
-        or die ('Cannot connect to the MySQL server because: ' . mysql_error());
-
-mysql_select_db($sDATABASE) 
-        or die ('Cannot select the MySQL database because: ' . mysql_error());
+$cnInfoCentral = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE) 
+        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
 
 // Establish the database connection (mysqli_ library)
 $cnChurchInfo = mysqli_connect($sSERVERNAME,$sUSER,$sPASSWORD,$sDATABASE);
         
 $sql = "SHOW TABLES FROM `$sDATABASE`";
-$tablecheck = mysql_num_rows( mysql_query($sql) );
+$tableRes = mysqli_query ($cnInfoCentral, $sql);
+$tablecheck = mysqli_num_rows($tableRes);
 
 if (!$tablecheck) {
     die ("There are no tables installed in your database.  Please install the tables.");
@@ -57,19 +55,19 @@ if (strlen($sRootPath) < 2) $sRootPath = '';
 // Some webhosts make it difficult to use DOCUMENT_ROOT.  Define our own!
 $sDocumentRoot = dirname(dirname(__FILE__));
 
-$version = mysql_fetch_row(mysql_query("SELECT version()"));
+$version = mysqli_fetch_row(mysqli_query($cnInfoCentral, "SELECT version()"));
 
 if (substr($version[0],0,3) >= "4.1") {
-    mysql_query("SET NAMES 'utf8'");
+    mysqli_query($cnInfoCentral, "SET NAMES 'utf8'");
 }
 
 // Read values from config table into local variables
 // **************************************************
 $sSQL = "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value "
       . "FROM config_cfg WHERE cfg_section='General'";
-$rsConfig = mysql_query($sSQL);         // Can't use RunQuery -- not defined yet
+$rsConfig = mysqli_query($cnInfoCentral, $sSQL);         // Can't use RunQuery -- not defined yet
 if ($rsConfig) {
-    while (list($cfg_name, $value) = mysql_fetch_row($rsConfig)) {
+    while (list($cfg_name, $value) = mysqli_fetch_row($rsConfig)) {
         $$cfg_name = $value;
     }
 }
@@ -79,9 +77,9 @@ if (isset($_SESSION['iUserID'])) {      // Not set on Default.php
     // **************************************************
     $sSQL = "SELECT ucfg_name, ucfg_value AS value "
           . "FROM userconfig_ucfg WHERE ucfg_per_ID='".$_SESSION['iUserID']."'";
-    $rsConfig = mysql_query($sSQL);     // Can't use RunQuery -- not defined yet
+    $rsConfig = mysqli_query($cnInfoCentral, $sSQL);     // Can't use RunQuery -- not defined yet
     if ($rsConfig) {
-        while (list($ucfg_name, $value) = mysql_fetch_row($rsConfig)) {
+        while (list($ucfg_name, $value) = mysqli_fetch_row($rsConfig)) {
             $$ucfg_name = $value;
                 $_SESSION[$ucfg_name] = $value;
 //              echo "<br>".$ucfg_name." ".$_SESSION[$ucfg_name];

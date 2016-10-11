@@ -2,7 +2,7 @@
 /*******************************************************************************
 *
 *  filename    : Update1_2_10To1_2_11.php
-*  description : Update MySQL database from 1.2.10 To 1.2.11
+*  description : Update mysql database from 1.2.10 To 1.2.11
 *
 *  http://www.churchdb.org/
 *
@@ -74,7 +74,7 @@ WHERE ~searchwhat~ LIKE '%~searchstring~%'
 EOD;
 
 $sSQL = "UPDATE `query_qry` SET `qry_SQL` = '" . 
-         mysql_real_escape_string($queryText) . 
+         EscapeString ($queryText). 
          "' WHERE `query_qry`.`qry_ID` = 15 "; 
 if (!RunQuery($sSQL, FALSE))
 	break;
@@ -127,12 +127,12 @@ break;
 }  // End of for  
 
 
-$sError = mysql_error();
+$sError = MySQLError ();
 $sSQL_Last = $sSQL;
 
-// Let's check if MySQL database is in sync with PHP code
+// Let's check if mysql database is in sync with PHP code
     $sSQL = 'SELECT * FROM version_ver ORDER BY ver_ID DESC';
-    $aRow = mysql_fetch_array(RunQuery($sSQL));
+    $aRow = mysqli_fetch_array(RunQuery($sSQL));
     extract($aRow);
 
     if ($ver_version == $sVersion) {

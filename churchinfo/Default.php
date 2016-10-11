@@ -94,7 +94,7 @@ if (isset($_POST['User']) && $sErrorText == '') {
     $UserName = FilterInput($_POST['User'],'string',32);
     $uSQL = "SELECT usr_per_id FROM user_usr WHERE usr_UserName like '$UserName'";
     $usQueryResult = RunQuery($uSQL);
-    $usQueryResultSet = mysql_fetch_array($usQueryResult);
+    $usQueryResultSet = mysqli_fetch_array($usQueryResult);
     if ($usQueryResultSet == Null){
         // Set the error text
         $sErrorText = '&nbsp;' . gettext('Invalid login or password');
@@ -117,10 +117,10 @@ if ($iUserID > 0)
 {
     // Get the information for the selected user
     $sSQL = "SELECT * FROM user_usr WHERE usr_per_ID ='$iUserID'";
-    extract(mysql_fetch_array(RunQuery($sSQL)));
+    extract(mysqli_fetch_array(RunQuery($sSQL)));
 
     $sSQL = "SELECT * FROM person_per WHERE per_ID ='$iUserID'";
-    extract(mysql_fetch_array(RunQuery($sSQL)));
+    extract(mysqli_fetch_array(RunQuery($sSQL)));
 
     $bPasswordMatch = FALSE;
     // Check the user password
@@ -328,7 +328,13 @@ if ($iUserID > 0)
 		    
 		    $_SESSION['webcal_login'] = $UserName;
 		    
-        	$sSQL = "INSERT INTO webcal_user (cal_login, cal_firstname, cal_lastname, cal_is_admin, cal_email) VALUES ('$UserName', '". mysql_real_escape_string ($per_FirstName)." ', '".mysql_real_escape_string ($per_LastName)."', '$sAdmin', '$per_Email') ON DUPLICATE KEY UPDATE cal_login='$UserName', cal_firstname='".mysql_real_escape_string ($per_FirstName)."', cal_lastname='".mysql_real_escape_string ($per_LastName)."',cal_is_admin='$sAdmin', cal_email='$per_Email'";
+        	$sSQL = "INSERT INTO webcal_user (cal_login, cal_firstname, cal_lastname, cal_is_admin, cal_email) VALUES ('$UserName', '".
+        	 EscapeString ($per_FirstName)." ', '".EscapeString($per_LastName).
+        	 "', '$sAdmin', '$per_Email') ON DUPLICATE KEY UPDATE cal_login='$UserName', cal_firstname='".
+        	 EscapeString($per_FirstName).
+        	 "', cal_lastname='".
+        	 EscapeString($per_LastName).
+        	 "',cal_is_admin='$sAdmin', cal_email='$per_Email'";
         	RunQuery($sSQL);
         }
         

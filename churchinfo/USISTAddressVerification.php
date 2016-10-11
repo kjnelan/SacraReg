@@ -373,7 +373,7 @@ if ($myISTReturnCode == '4') {
     $sSQL  = 'SELECT lu_fam_ID FROM istlookup_lu ';
     $rsIST = RunQuery($sSQL);
     $iOrphanCount = 0;
-    while ($aRow = mysql_fetch_array($rsIST)) {
+    while ($aRow = mysqli_fetch_array($rsIST)) {
         extract ($aRow);
         // verify that this ID exists in family_fam with 
         // fam_Country = 'United States'
@@ -381,7 +381,7 @@ if ($myISTReturnCode == '4') {
         $sSQL .= "WHERE fam_ID='$lu_fam_ID' ";
         $sSQL .= "AND fam_Country='United States'";
         $rsExists = RunQuery($sSQL);
-        extract(mysql_fetch_array($rsExists));
+        extract(mysqli_fetch_array($rsExists));
         if ($idexists == '0'){
             $sSQL  = "DELETE FROM istlookup_lu WHERE lu_fam_ID='$lu_fam_ID'";
             RunQuery($sSQL);
@@ -407,7 +407,7 @@ if ($myISTReturnCode == '4') {
     $sSQL .= 'AND fam_DateLastEdited IS NOT NULL';
     $rsUpdated = RunQuery($sSQL);
     $iUpdatedCount = 0;
-    while ($aRow = mysql_fetch_array($rsUpdated)) {
+    while ($aRow = mysqli_fetch_array($rsUpdated)) {
         extract($aRow);
 
         $sFamilyAddress = $fam_Address1 . $fam_Address2 . $fam_City .
@@ -436,7 +436,7 @@ if ($myISTReturnCode == '4') {
     $sSQL .= "WHERE '$twoYearsAgo' > lu_LookupDateTime";
     $rsResult = RunQuery($sSQL);
     $iOutdatedCount = 0;
-    while ($aRow = mysql_fetch_array($rsResult)) {
+    while ($aRow = mysqli_fetch_array($rsResult)) {
         extract($aRow);
         $sSQL  = "DELETE FROM istlookup_lu WHERE lu_fam_ID='$lu_fam_ID'";
         RunQuery($sSQL);
@@ -451,7 +451,7 @@ if ($myISTReturnCode == '4') {
     $sSQL  = 'SELECT count(fam_ID) AS nonustotal FROM family_fam ';
     $sSQL .= "WHERE fam_Country NOT IN ('United States')";
     $rsResult = RunQuery($sSQL);
-    extract(mysql_fetch_array($rsResult));
+    extract(mysqli_fetch_array($rsResult));
     $iNonUSCount = intval($nonustotal);
     if ($iNonUSCount) {
         echo $iNonUSCount . " Non US addresses in database will not be verified.<br>\n";
@@ -461,7 +461,7 @@ if ($myISTReturnCode == '4') {
     $sSQL  = "SELECT count(fam_ID) AS ustotal FROM family_fam ";
     $sSQL .= "WHERE fam_Country IN ('United States')";
     $rsResult = RunQuery($sSQL);
-    extract(mysql_fetch_array($rsResult));
+    extract(mysqli_fetch_array($rsResult));
     $iUSCount = intval($ustotal);
     if ($iUSCount) {
         echo $iUSCount . " Total US addresses in database.<br>\n";
@@ -470,7 +470,7 @@ if ($myISTReturnCode == '4') {
     // Get count of US addresses that do not require a fresh lookup
     $sSQL  = 'SELECT count(lu_fam_ID) AS usokay FROM istlookup_lu';
     $rsResult = RunQuery($sSQL);
-    extract(mysql_fetch_array($rsResult));
+    extract(mysqli_fetch_array($rsResult));
     $iUSOkay = intval($usokay);
     if ($iUSOkay) {
         echo $iUSOkay . " US addresses have had lookups performed.<br>\n";
@@ -481,7 +481,7 @@ if ($myISTReturnCode == '4') {
     $sSQL .= "WHERE fam_Country IN ('United States') AND fam_ID NOT IN (";
     $sSQL .= "SELECT lu_fam_ID from istlookup_lu)";
     $rs = RunQuery($sSQL);
-    extract(mysql_fetch_array($rs));
+    extract(mysqli_fetch_array($rs));
     $iEligible = intval($newcount);
     if ($iEligible)
         echo $iEligible . " US addresses are eligible for lookup.<br>\n";
@@ -509,7 +509,7 @@ if ($myISTReturnCode == '4') {
         $rsResult = RunQuery($sSQL);
 
         $bNormalFinish = TRUE;
-        while ($aRow = mysql_fetch_array($rsResult)) {
+        while ($aRow = mysqli_fetch_array($rsResult)) {
 
             extract($aRow);
             if (strlen($fam_Address2)) {

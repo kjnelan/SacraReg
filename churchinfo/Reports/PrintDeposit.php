@@ -59,7 +59,7 @@ $sSQL = "SELECT plg_plgID, plg_date, SUM(plg_amount) as plg_sum, plg_CheckNo, pl
 $rsPledges = RunQuery($sSQL);
 
 // Exit if no rows returned
-$iCountRows = mysql_num_rows($rsPledges);
+$iCountRows = mysqli_num_rows($rsPledges);
 if ($iCountRows < 1){
 	header("Location: ../FinancialReports.php?ReturnMessage=NoRows&ReportType=Individual%20Deposit%20Report"); 
 }
@@ -111,9 +111,9 @@ if ($output == "pdf") {
 	$pdf = new PDF_AccessReport();
 
 	// Read in report settings from database
-	$rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+	$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 	if ($rsConfig) {
-		while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+		while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 			$pdf->$cfg_name = $cfg_value;
 		}
 	}
@@ -121,7 +121,7 @@ if ($output == "pdf") {
 	// Get Deposit Information
 	$sSQL = "SELECT * FROM deposit_dep WHERE dep_ID = " . $iDepositSlipID;
 	$rsDepositSlip = RunQuery($sSQL);
-	extract(mysql_fetch_array($rsDepositSlip));
+	extract(mysqli_fetch_array($rsDepositSlip));
 
 	$date1X = 12;
 	$date1Y = 35 + 7;
@@ -165,7 +165,7 @@ if ($output == "pdf") {
 	} else {
 
 		// Print Deposit Slip portion of report
-		while ($aRow = mysql_fetch_array($rsPledges))
+		while ($aRow = mysqli_fetch_array($rsPledges))
 		{
 			$OutStr = "";
 			extract($aRow);
@@ -257,7 +257,7 @@ if ($output == "pdf") {
 
 	$totalAmount = 0;
 
-	while ($aRow = mysql_fetch_array($rsPledges))
+	while ($aRow = mysqli_fetch_array($rsPledges))
 	{
 		$pdf->SetFont('Times','', 10);
 
@@ -329,9 +329,9 @@ if ($output == "pdf") {
 
 	$curY += $summaryIntervalY;
 
-	if (mysql_num_rows ($rsFunds) > 0) {
-		mysql_data_seek($rsFunds,0);
-		while ($row = mysql_fetch_array($rsFunds))
+	if (mysqli_num_rows($rsFunds) > 0) {
+		mysqli_data_seek($rsFunds, 0);
+		while ($row = mysqli_fetch_array($rsFunds))
 		{
 			$fun_name = $row["fun_Name"];
 		   if (array_key_exists ($fun_name, $fundTotal) && $fundTotal[$fun_name] > 0) {
@@ -377,7 +377,7 @@ if ($output == "pdf") {
 	$buffer = substr($buffer,0,-1) . $eol;
 	
 	// Add data
-	while ($row = mysql_fetch_row($rsPledges)) {
+	while ($row = mysqli_fetch_row($rsPledges)) {
 		foreach ($row as $field) {
 			$field = str_replace($delimiter, " ", $field);	// Remove any delimiters from data
 			$buffer .= $field . $delimiter;

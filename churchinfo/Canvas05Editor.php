@@ -24,7 +24,7 @@ $iFamily = FilterInput($_GET["FamilyID"]);
 //Get Family name
 $sSQL = "SELECT fam_Name FROM family_fam where fam_ID = " . $iFamily;
 $rsFamily = RunQuery($sSQL);
-extract(mysql_fetch_array($rsFamily));
+extract(mysqli_fetch_array($rsFamily));
 
 $sPageTitle = gettext("Canvas 2005 Input for the " . $fam_Name . " family");
 
@@ -65,8 +65,8 @@ if (isset($_POST["Submit"]))
 } else {
 	$sSQL = "SELECT * FROM canvas05_c05 WHERE c05_famID = " . $iFamily;
 	$rsCanvas05 = RunQuery($sSQL);
-	if (mysql_num_rows ($rsCanvas05) > 0) {
-		extract(mysql_fetch_array($rsCanvas05));
+	if (mysqli_num_rows($rsCanvas05) > 0) {
+		extract(mysqli_fetch_array($rsCanvas05));
 
 		$tChurchColor = $c05_churchColor;
 		$tDoingRight = $c05_doingRight;

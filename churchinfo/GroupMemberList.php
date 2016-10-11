@@ -38,7 +38,7 @@ if (array_key_exists ("RoleListID", $_GET)) {
 	$iRoleListID = FilterInput($_GET["RoleListID"],'int');
 } else { // Get the group's role list ID
 	$sSQL = "SELECT grp_RoleListID,grp_hasSpecialProps FROM group_grp WHERE grp_ID =" . $iGroupID;
-	$aTemp = mysql_fetch_array(RunQuery($sSQL));
+	$aTemp = mysqli_fetch_array(RunQuery($sSQL));
 	$iRoleListID = $aTemp[0];
 }
 
@@ -75,7 +75,7 @@ if (isset($_GET['Action']) and $_GET['Action'] == 'AddGroupViewToCart') {
     $rsGroupMembers = RunQuery($sSQL);
 
     //Loop through the recordset
-    while ($aRow = mysql_fetch_array($rsGroupMembers))
+    while ($aRow = mysqli_fetch_array($rsGroupMembers))
     {
         extract($aRow);
 
@@ -89,7 +89,7 @@ $bHasSpecialProps = ($aTemp[1] == "true");
 // Get the roles
 $sSQL = "SELECT * FROM list_lst WHERE lst_ID = " . $iRoleListID . " ORDER BY lst_OptionSequence";
 $rsRoles = RunQuery($sSQL);
-$numRoles = mysql_num_rows($rsRoles);
+$numRoles = mysqli_num_rows($rsRoles);
 
 //Set Page Break
 $iPerPage = $_SESSION['SearchLimit'];
@@ -116,7 +116,7 @@ if($iSort)
 $sSQL .= " ORDER BY lst_OptionSequence ASC,per_LastName";
 
 $sSQL_Result = RunQuery($sSQL);
-$Total = mysql_num_rows($sSQL_Result);
+$Total = mysqli_num_rows($sSQL_Result);
 
 // Append a LIMIT clause to the SQL statement
 if (empty($_GET['Result_Set']))
@@ -132,7 +132,7 @@ else
 
 // Run The Query With a Limit to get result
 $sSQL_Result = RunQuery($sSQL);
-$sSQL_Rows = mysql_num_rows($sSQL_Result);
+$sSQL_Rows = mysqli_num_rows($sSQL_Result);
 
 // Run The Full Query to Get First Letters
 $sSQL = "SELECT DISTINCT LEFT(per_LastName,1) AS letter FROM person_per
@@ -169,7 +169,7 @@ if (!$bPrintView) {
 	echo ">" . gettext("View All") . "</option>";
 	for ($row = 1; $row <= $numRoles; $row++)
 	{
-		$aRow = mysql_fetch_array($rsRoles, MYSQL_BOTH);
+		$aRow = mysqli_fetch_array($rsRoles,  MYSQLI_BOTH);
 		extract($aRow);
 		$aName[$row] = $lst_OptionName;
 		$aSeq[$row] = $lst_OptionSequence;
@@ -196,7 +196,7 @@ if (!$bPrintView) {
 	echo "<a href=\"GroupMemberList.php?ShowGSP=$bShowGSP&GroupID=" . $iGroupID;
 	if($iSort) echo "&Sort=$iSort";
 	echo "\">" . gettext("View All") . "</a>";
-	while ($aLetter = mysql_fetch_array($rsLetters)) 
+	while ($aLetter = mysqli_fetch_array($rsLetters)) 
 	{
 		echo "&nbsp;&nbsp;|&nbsp;&nbsp;<a href=\"GroupMemberList.php?GroupID=" . $iGroupID;
 		if($iSort) echo "&Sort=$iSort";
@@ -325,7 +325,7 @@ if (!$bPrintView) {
 	</tr>
 	<?php
 	//Loop through the members
-	while ($aRow = mysql_fetch_array($sSQL_Result))
+	while ($aRow = mysqli_fetch_array($sSQL_Result))
 	{
 		$per_Title = "";
 		$per_FirstName = "";
@@ -396,9 +396,9 @@ if (!$bPrintView) {
 
 			$sSQL = "SELECT * FROM groupprop_" . $iGroupID . " WHERE per_ID = " . $per_ID;
 			$rsPersonProps = RunQuery($sSQL);
-			$aPersonProps = mysql_fetch_array($rsPersonProps, MYSQL_BOTH);
+			$aPersonProps = mysqli_fetch_array($rsPersonProps,  MYSQLI_BOTH);
 
-			while ($aProps = mysql_fetch_array($rsPropList))
+			while ($aProps = mysqli_fetch_array($rsPropList))
 			{
 				extract($aProps);
 				$currentData = trim($aPersonProps[$prop_Field]);

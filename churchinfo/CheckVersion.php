@@ -3,7 +3,7 @@
 *
 *  filename     : CheckVersion.php
 *  website      : http://www.churchdb.org
-*  description  : This file checks that the ChurchInfo MySQL database is in
+*  description  : This file checks that the ChurchInfo mysql database is in
 *                   sync with the PHP code.  
 *
 *
@@ -37,15 +37,15 @@ $_SESSION['sChurchInfoPHPDate'] = '2014-12-28';
 // Check if the table version_ver exists.  If the table does not exist then
 // SQL scripts must be manually run to get the database up to version 1.2.7
 $bVersionTableExists = FALSE;
-if(mysql_num_rows(RunQuery("SHOW TABLES LIKE 'version_ver'")) == 1) {
+if(mysqli_num_rows(RunQuery("SHOW TABLES LIKE 'version_ver'")) == 1) {
     $bVersionTableExists = TRUE;
 }
 
-// Let's see if the MySQL version matches the PHP version.  If we have a match then
+// Let's see if the mysql version matches the PHP version.  If we have a match then
 // proceed to Menu.php.  Otherwise further error checking is needed.
 if ($bVersionTableExists) {
     $sSQL = 'SELECT * FROM version_ver ORDER BY ver_ID DESC';
-    $aRow = mysql_fetch_array(RunQuery($sSQL));
+    $aRow = mysqli_fetch_array(RunQuery($sSQL));
     extract($aRow);
 
     if ($ver_version == $_SESSION['sChurchInfoPHPVersion']) {
@@ -82,7 +82,7 @@ if(!$bVersionTableExists) {
     // Display message indicating that the ChurchInfo database must be updated to version
     // 1.2.7 using SQL scripts
 
-    echo    'Error: Please update your ChurchInfo MySQL database to version 1.2.7 '
+    echo    'Error: Please update your ChurchInfo mysql database to version 1.2.7 '
     .       'before using version 1.2.7 (or later) of PHP code.<br>';
     echo    'Your database and PHP code are out of sync.  ChurchInfo is in an untested '
     .       'state and may not be stable. ';
@@ -99,7 +99,7 @@ if (strncmp($ver_version, "1.2.13", 6) == 0) {
     require 'AutoUpdate/Update1_2_13To1_2_14.php';
 
     if ($sError) {
-        echo '<br>MySQL error while upgrading database:<br>'.$sError."<br><br>\n";
+        echo '<br>mysql error while upgrading database:<br>'.$sError."<br><br>\n";
 
         echo '<br><br>You are seeing this message because you have encountered a software bug.'
         .    '<br>Please post to the ChurchInfo '
@@ -108,7 +108,7 @@ if (strncmp($ver_version, "1.2.13", 6) == 0) {
 
         echo "<br>$sSQL<br>\n";
 
-        echo '<br>ChurchInfo MySQL Version = ' . $ver_version;
+        echo '<br>ChurchInfo mysql Version = ' . $ver_version;
         echo '<br>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
     } else {
@@ -132,7 +132,7 @@ if (strncmp($ver_version, "1.2.12", 6) == 0) {
     require 'AutoUpdate/Update1_2_12To1_2_13.php';
 
     if ($sError) {
-        echo '<br>MySQL error while upgrading database:<br>'.$sError."<br><br>\n";
+        echo '<br>mysql error while upgrading database:<br>'.$sError."<br><br>\n";
 
         echo '<br><br>You are seeing this message because you have encountered a software bug.'
         .    '<br>Please post to the ChurchInfo '
@@ -141,7 +141,7 @@ if (strncmp($ver_version, "1.2.12", 6) == 0) {
 
         echo "<br>$sSQL<br>\n";
 
-        echo '<br>ChurchInfo MySQL Version = ' . $ver_version;
+        echo '<br>ChurchInfo mysql Version = ' . $ver_version;
         echo '<br>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
     } else {
@@ -164,7 +164,7 @@ if ($ver_version == '1.2.11') {
     require 'AutoUpdate/Update1_2_11To1_2_12.php';
 
     if ($sError) {
-        echo '<br>MySQL error while upgrading database:<br>'.$sError."<br><br>\n";
+        echo '<br>mysql error while upgrading database:<br>'.$sError."<br><br>\n";
 
         echo '<br><br>You are seeing this message because you have encountered a software bug.'
         .    '<br>Please post to the ChurchInfo '
@@ -173,7 +173,7 @@ if ($ver_version == '1.2.11') {
 
         echo "<br>$sSQL<br>\n";
 
-        echo '<br>ChurchInfo MySQL Version = ' . $ver_version;
+        echo '<br>ChurchInfo mysql Version = ' . $ver_version;
         echo '<br>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
     } else {
@@ -194,7 +194,7 @@ if ($ver_version == '1.2.10') {
     require 'AutoUpdate/Update1_2_10To1_2_11.php';
 
     if ($sError) {
-        echo '<br>MySQL error while upgrading database:<br>'.$sError."<br><br>\n";
+        echo '<br>mysql error while upgrading database:<br>'.$sError."<br><br>\n";
 
         echo '<br><br>You are seeing this message because you have encountered a software bug.'
         .    '<br>Please post to the ChurchInfo '
@@ -203,7 +203,7 @@ if ($ver_version == '1.2.10') {
 
         echo "<br>$sSQL<br>\n";
 
-        echo '<br>ChurchInfo MySQL Version = ' . $ver_version;
+        echo '<br>ChurchInfo mysql Version = ' . $ver_version;
         echo '<br>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
     } else {
@@ -224,7 +224,7 @@ if ($ver_version == '1.2.9') {
     require 'AutoUpdate/Update1_2_9To1_2_10.php';
 
     if ($sError) {
-        echo '<br>MySQL error while upgrading database:<br>'.$sError."<br><br>\n";
+        echo '<br>mysql error while upgrading database:<br>'.$sError."<br><br>\n";
 
         echo '<br><br>You are seeing this message because you have encountered a software bug.'
         .    '<br>Please post to the ChurchInfo '
@@ -233,7 +233,7 @@ if ($ver_version == '1.2.9') {
 
         echo "<br>$sSQL<br>\n";
 
-        echo '<br>ChurchInfo MySQL Version = ' . $ver_version;
+        echo '<br>ChurchInfo mysql Version = ' . $ver_version;
         echo '<br>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
     } else {
@@ -254,7 +254,7 @@ if ($ver_version == '1.2.8') {
     require 'AutoUpdate/Update1_2_8To1_2_9.php';
 
     if ($sError) {
-        echo '<br>MySQL error while upgrading database:<br>'.$sError."<br><br>\n";
+        echo '<br>mysql error while upgrading database:<br>'.$sError."<br><br>\n";
 
         echo '<br><br>You are seeing this message because you have encountered a software bug.'
         .    '<br>Please post to the ChurchInfo '
@@ -263,7 +263,7 @@ if ($ver_version == '1.2.8') {
 
         echo "<br>$sSQL<br>\n";
 
-        echo '<br>ChurchInfo MySQL Version = ' . $ver_version;
+        echo '<br>ChurchInfo mysql Version = ' . $ver_version;
         echo '<br>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
     } else {
@@ -285,7 +285,7 @@ if ($ver_version == '1.2.7') {
     require 'AutoUpdate/Update1_2_7To1_2_8.php';
 
     if ($sError) {
-        echo '<br>MySQL error while upgrading database:<br>'.$sError."<br><br>\n";
+        echo '<br>mysql error while upgrading database:<br>'.$sError."<br><br>\n";
 
         echo '<br><br>You are seeing this message because you have encountered a software bug.'
         .    '<br>Please post to the ChurchInfo '
@@ -294,7 +294,7 @@ if ($ver_version == '1.2.7') {
 
         echo "<br>$sSQL<br>\n";
 
-        echo '<br>ChurchInfo MySQL Version = ' . $ver_version;
+        echo '<br>ChurchInfo mysql Version = ' . $ver_version;
         echo '<br>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
     } else {
@@ -317,7 +317,7 @@ echo    'There is an incompatibility between database schema and PHP script.  Yo
 .       '<a href="http://sourceforge.net/forum/forum.php?forum_id=401180"> Help forum</a> '
 .       'for assistance. ';
 
-echo    '<BR>ChurchInfo MySQL Version = ' . $ver_version;
+echo    '<BR>ChurchInfo mysql Version = ' . $ver_version;
 echo    '<BR>ChurchInfo PHP Version = ' . $_SESSION['sChurchInfoPHPVersion'];
 
 require 'Include/Footer.php';

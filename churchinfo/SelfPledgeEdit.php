@@ -92,7 +92,7 @@ if (isset($_POST["Cancel"])) {
 			$sSQL = "SELECT * FROM autopayment_aut WHERE aut_ID=$plg_aut_ID";
 			$rsAutoPayments = $link->query($sSQL);
 			if ($rsAutoPayments->num_rows == 1) {
-				$aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC);
+				$aRow = $rsAutoPayments->fetch_array(MYSQLI_ASSOC);
 				extract($aRow);
 				if ($aut_CreditCardVanco > 0) // if processing a payment the method is based on the autopayment record
 					$plg_method = "CREDITCARD";
@@ -206,17 +206,17 @@ if (isset($_POST["Cancel"])) {
 			if ($plg_aut_ResultID) {
 				// Already have a result record, update it.
 				
-				$sSQL = "UPDATE result_res SET res_echotype2='" . mysql_real_escape_string($errStr)	. "' WHERE res_ID=" . $plg_aut_ResultID;
+				$sSQL = "UPDATE result_res SET res_echotype2='" . EscapeString($errStr) . "' WHERE res_ID=" . $plg_aut_ResultID;
 				RunQuery($sSQL);
 			} else {
 				// Need to make a new result record
-				$sSQL = "INSERT INTO result_res (res_echotype2) VALUES ('" . mysql_real_escape_string($errStr) . "')";
+				$sSQL = "INSERT INTO result_res (res_echotype2) VALUES ('" . EscapeString($errStr) . "')";
 				RunQuery($sSQL);
 	
 				// Now get the ID for the newly created record
 				$sSQL = "SELECT MAX(res_ID) AS iResID FROM result_res";
 				$rsLastEntry = RunQuery($sSQL);
-				extract(mysql_fetch_array($rsLastEntry));
+				extract(mysqli_fetch_array($rsLastEntry));
 				$plg_aut_ResultID = $iResID;
 	
 				// Poke the ID of the new result record back into this pledge (payment) record
@@ -228,7 +228,7 @@ if (isset($_POST["Cancel"])) {
 			echo "<h1>$reg_firstname $reg_lastname</h1>";
 			echo gettext ("Process payment result:<br>");
 			
-			echo mysql_real_escape_string($errStr);
+			echo (EscapeString($errStr));
 			echo "<br><a href=\"SelfRegisterHome.php\">Done</a>";
 			exit();
 		}
@@ -242,7 +242,7 @@ if (isset($_POST["Cancel"])) {
 	if ($result->num_rows == 0) {
 		$plg_plgID = 0;
 	} else {
-		while ($line = $result->fetch_array(MYSQL_ASSOC)) {
+		while ($line = $result->fetch_array(MYSQLI_ASSOC)) {
 			extract ($line);
 		}
 	}
@@ -322,7 +322,7 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 			echo ">" . gettext ("Select online payment record") . "</option>\n";
 			$sSQLTmp = "SELECT aut_ID, aut_CreditCard, aut_BankName, aut_Route, aut_Account FROM autopayment_aut WHERE aut_FamID=" . $reg_famid;
 			$rsFindAut = RunQuery($sSQLTmp);
-			while ($aRow = mysql_fetch_array($rsFindAut)) {
+			while ($aRow = mysqli_fetch_array($rsFindAut)) {
 				extract($aRow);
 				if ($aut_CreditCard <> "") {
 					$showStr = gettext ("Credit card ...") . substr ($aut_CreditCard, strlen ($aut_CreditCard) - 4, 4);
@@ -357,7 +357,7 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 			<option value="0"><?php echo gettext("None"); ?></option>
 			<?php
 			mysqli_data_seek($rsFunds,0);
-			while ($row = $rsFunds->fetch_array(MYSQL_ASSOC)) {
+			while ($row = $rsFunds->fetch_array(MYSQLI_ASSOC)) {
 				$fun_id = $row["fun_ID"];
 				$fun_name = $row["fun_Name"];
 				$fun_active = $row["fun_Active"];

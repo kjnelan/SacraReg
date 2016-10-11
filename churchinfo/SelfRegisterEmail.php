@@ -2,9 +2,9 @@
 require 'Include/PHPMailer-5.2.14/PHPMailerAutoload.php';
 
 // read the report settings to pick up sChurchName
-$rsConfig = mysql_query("SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
-    while (list($cfg_name, $cfg_value) = mysql_fetch_row($rsConfig)) {
+    while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
         $$cfg_name = $cfg_value;
     }
 }
@@ -45,10 +45,10 @@ function SendSelfServiceAdminsEmail ($reg_id)
 	if ($result->num_rows == 0) {
 		$query = "SELECT * FROM register_reg WHERE reg_id=$reg_id";
 		$result = $link->query($query) or die('Query failed: ' . $link->error);
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		extract ($line);
 	} else {
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		extract ($line);
 	}
 	$result->free();
@@ -79,7 +79,7 @@ function SendConfirmMessage ($reg_id)
 		// Cannot get the email address
 		return;
 	} else {
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		$to_email = $line["reg_email"];
 		$to_name = $line["reg_firstname"] . " " . $line["reg_lastname"];
 		$reg_randomtag = $line["reg_randomtag"];
@@ -102,7 +102,7 @@ function SendForgotMessage ($reg_id)
 		// Cannot get the email address
 		return;
 	} else {
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		$to_email = $line["reg_email"];
 		$to_name = $line["reg_firstname"] . " " . $line["reg_lastname"];
 		$reg_randomtag = $line["reg_randomtag"];

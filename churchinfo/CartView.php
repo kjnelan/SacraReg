@@ -57,26 +57,26 @@ function ExportCartToCSV()
 
     $sCSVstring = "";
 
-    if (mysql_error() != "")
+    if (MySQLError() != "")
     {
-        $sCSVstring = gettext("An error occured: ") . mysql_errno() . "--" . mysql_error();
+        $sCSVstring = gettext("An error occured: ") . MySQLError ();
     }
     else
     {
 
         //Loop through the fields and write the header row
-        for ($iCount = 0; $iCount < mysql_num_fields($rsQueryResults); $iCount++)
+        for ($iCount = 0; $iCount < mysqli_num_fields($rsQueryResults); $iCount++)
         {
-            $sCSVstring .= mysql_field_name($rsQueryResults,$iCount) . ",";
+            $sCSVstring .= mysqli_fetch_field_direct($rsQueryResults, $iCount)->name . ",";
         }
 
         $sCSVstring .= "\n";
 
         //Loop through the recordsert
-        while($aRow =mysql_fetch_array($rsQueryResults))
+        while($aRow =mysqli_fetch_array($rsQueryResults))
         {
             //Loop through the fields and write each one
-            for ($iCount = 0; $iCount < mysql_num_fields($rsQueryResults); $iCount++)
+            for ($iCount = 0; $iCount < mysqli_num_fields($rsQueryResults); $iCount++)
             {
                 $sCSVstring .= $aRow[$iCount] . ",";
             }
@@ -146,7 +146,7 @@ if (array_key_exists('aPeopleCart', $_SESSION) and count($_SESSION['aPeopleCart'
         $rsClassification = RunQuery($sClassSQL);
         unset($aClassificationName);
         $aClassificationName[0] = "Unassigned";
-        while ($aRow = mysql_fetch_array($rsClassification))
+        while ($aRow = mysqli_fetch_array($rsClassification))
         {
             extract($aRow);
             $aClassificationName[intval($lst_OptionID)]=$lst_OptionName;
@@ -157,7 +157,7 @@ if (array_key_exists('aPeopleCart', $_SESSION) and count($_SESSION['aPeopleCart'
         $rsFamilyRole = RunQuery($sFamRoleSQL);
         unset($aFamilyRoleName);
         $aFamilyRoleName[0] = "Unassigned";
-        while ($aRow = mysql_fetch_array($rsFamilyRole))
+        while ($aRow = mysqli_fetch_array($rsFamilyRole))
         {
             extract($aRow);
             $aFamilyRoleName[intval($lst_OptionID)]=$lst_OptionName;
@@ -166,10 +166,10 @@ if (array_key_exists('aPeopleCart', $_SESSION) and count($_SESSION['aPeopleCart'
 
         $sSQL = "SELECT * FROM person_per LEFT JOIN family_fam ON person_per.per_fam_ID = family_fam.fam_ID WHERE per_ID IN (" . ConvertCartToString($_SESSION['aPeopleCart']) . ") ORDER BY per_LastName";
         $rsCartItems = RunQuery($sSQL);
-        $iNumPersons = mysql_num_rows($rsCartItems);
+        $iNumPersons = mysqli_num_rows($rsCartItems);
 
         $sSQL = "SELECT distinct per_fam_ID FROM person_per LEFT JOIN family_fam ON person_per.per_fam_ID = family_fam.fam_ID WHERE per_ID IN (" . ConvertCartToString($_SESSION['aPeopleCart']) . ") ORDER BY per_fam_ID";
-        $iNumFamilies = mysql_num_rows(RunQuery($sSQL));
+        $iNumFamilies = mysqli_num_rows(RunQuery($sSQL));
 
         if ($iNumPersons > 16)
         {
@@ -198,7 +198,7 @@ if (array_key_exists('aPeopleCart', $_SESSION) and count($_SESSION['aPeopleCart'
         $sRowClass = "RowColorA";
         $email_array = array ();
 
-        while ($aRow = mysql_fetch_array($rsCartItems))
+        while ($aRow = mysqli_fetch_array($rsCartItems))
         {
                 $sRowClass = AlternateRowStyle($sRowClass);
 
@@ -331,7 +331,7 @@ if (count($_SESSION['aPeopleCart']) != 0)
                 echo '  <input ';
                 if (array_key_exists ("buildmailpresort", $_COOKIE) and !$_COOKIE["bulkmailpresort"])
                     echo 'disabled ';   // This would be better with $_SESSION variable
-                                        // instead of cookie ... (save $_SESSION in MySQL)
+                                        // instead of cookie ... (save $_SESSION in mysql)
                 echo 'name="bulkmailquiet" type="checkbox" onclick="codename()"';
                 echo '  id="QuietBulkMail" value="1" ';
                 if (array_key_exists ("bulkmailquiet", $_COOKIE) and $_COOKIE["bulkmailquiet"] && array_key_exists ("buildmailpresort", $_COOKIE) and $_COOKIE["bulkmailpresort"])
@@ -412,31 +412,31 @@ if ($bCreateDirectory)
                . "WHERE emp_usr_id='".$_SESSION['iUserID']."'";
 
         $rsPendingEmail = RunQuery($sSQL);
-        $aRow = mysql_fetch_array($rsPendingEmail);
+        $aRow = mysqli_fetch_array($rsPendingEmail);
         extract($aRow);
 
         $sSQL  = "SELECT COUNT(erp_usr_id) as countrecipients "
                . "FROM email_recipient_pending_erp "
                . "WHERE erp_usr_id='".$_SESSION['iUserID']."'";
         $rsCountRecipients = RunQuery($sSQL);
-        $aRow = mysql_fetch_array($rsCountRecipients);
+        $aRow = mysqli_fetch_array($rsCountRecipients);
         extract($aRow);
 
         if ($countjobs) {
-            // There is already a message composed in MySQL
+            // There is already a message composed in mysql
             // Let's check and make sure it has not been sent.
             $sSQL = "SELECT * FROM email_message_pending_emp "
                   . "WHERE emp_usr_id='".$_SESSION['iUserID']."'";
 
             $rsPendingEmail = RunQuery($sSQL);
-            $aRow = mysql_fetch_array($rsPendingEmail);
+            $aRow = mysqli_fetch_array($rsPendingEmail);
             extract($aRow);
 
             if ($emp_to_send==0 && $countrecipients==0) {
                 // if both are zero the email job has not started.  In this
                 // case the user may edit the email and/or change the distribution
 
-                // This user has no email messages stored MySQL
+                // This user has no email messages stored mysql
 
                 $sEmailSubject = "";
                 if (array_key_exists ('emailsubject', $_POST))
@@ -455,10 +455,10 @@ if ($bCreateDirectory)
                 
                 if (strlen($sEmailSubject.$sEmailMessage)) {
 
-                    // User has edited a message.  Update MySQL.                
+                    // User has edited a message.  Update mysql.                
                     $sSQLu = "UPDATE email_message_pending_emp ".
-                             "SET emp_subject='".mysql_real_escape_string($sEmailSubject)."',".
-                             "    emp_message='".mysql_real_escape_string($sEmailMessage)."', ".
+                             "SET emp_subject='" . EscapeString ($sEmailSubject) . "'," .
+                             "    emp_message='". EscapeString($sEmailMessage) . "', " .
                              "    emp_attach_name='".$attachName."',".
                              "    emp_attach='".$hasAttach."' ".
                              "WHERE emp_usr_id='".$_SESSION['iUserID']."'";
@@ -467,10 +467,10 @@ if ($bCreateDirectory)
 
                 } else {
 
-                    // Retrieve subject and message from MySQL
+                    // Retrieve subject and message from mysql
 
                     $rsPendingEmail = RunQuery($sSQL);
-                    $aRow = mysql_fetch_array($rsPendingEmail);
+                    $aRow = mysqli_fetch_array($rsPendingEmail);
                     extract($aRow);
 
                     $sEmailSubject = $emp_subject;
@@ -489,7 +489,7 @@ if ($bCreateDirectory)
 
         } elseif (isset($email_array)) {
 
-            // This user has no email messages stored MySQL
+            // This user has no email messages stored mysql
 			$sEmailSubject = "";
 			$sEmailMessage = "";
 			$hasAttach = 0;
@@ -507,14 +507,14 @@ if ($bCreateDirectory)
 
             if (strlen($sEmailSubject.$sEmailMessage)) {
 
-                // User has written a message.  Store it in MySQL.
+                // User has written a message.  Store it in mysql.
                 // Since this is the first time use INSERT instead of UPDATE                
                 $sSQL = "INSERT INTO email_message_pending_emp ".
                         "SET " . 
                             "emp_usr_id='" .$_SESSION['iUserID']. "',".
                             "emp_to_send='0'," .
-                            "emp_subject='" . mysql_real_escape_string($sEmailSubject). "',".
-                            "emp_message='" . mysql_real_escape_string($sEmailMessage). "',".
+                            "emp_subject='" . EscapeString($sEmailSubject) . "',".
+                            "emp_message='" . EscapeString($sEmailMessage) . "',".
                             "emp_attach_name='" .$attachName . "',".
                 			"emp_attach='".$hasAttach."'";
 
@@ -679,7 +679,7 @@ if ($bCreateDirectory)
                     'ORDER BY ejl_id';
 
             $rsEJL = RunQuery($sSQL, FALSE); // FALSE means do not stop on error
-            $sError = mysql_error();
+            $sError = MySQLError ();
 
             if ($sError) {
                 echo '<br>'.$sError;
@@ -687,7 +687,7 @@ if ($bCreateDirectory)
 
             } else {
                 $sHTMLLog = '<br><br><div align="center"><table>';            
-                while ($aRow = mysql_fetch_array($rsEJL)) {
+                while ($aRow = mysqli_fetch_array($rsEJL)) {
                     extract($aRow);
 
                     $sTime = date('i:s', intval($ejl_time)).'.';

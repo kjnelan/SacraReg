@@ -91,26 +91,26 @@ function ExportQueryResults()
 	//Run the SQL
 	$rsQueryResults = RunQuery($sSQL);
 
-	if (mysql_error() != "")
+	if (MySQLError () != "")
 	{
-		$sCSVstring = gettext("An error occured: ") . mysql_errno() . "--" . mysql_error();
+		$sCSVstring = gettext("An error occured: ") . MySQLError ();
 	}
 	else
 	{
 
 		//Loop through the fields and write the header row
-		for ($iCount = 0; $iCount < mysql_num_fields($rsQueryResults); $iCount++)
+		for ($iCount = 0; $iCount < mysqli_num_fields($rsQueryResults); $iCount++)
 		{
-            $sCSVstring .= mysql_field_name($rsQueryResults,$iCount) . ",";
+            $sCSVstring .= mysqli_fetch_field_direct($rsQueryResults, $iCount)->name . ",";
 		}
 
         $sCSVstring .= "\n";
 
 		//Loop through the recordsert
-		while($aRow =mysql_fetch_array($rsQueryResults))
+		while($aRow =mysqli_fetch_array($rsQueryResults))
 		{
 			//Loop through the fields and write each one
-			for ($iCount = 0; $iCount < mysql_num_fields($rsQueryResults); $iCount++)
+			for ($iCount = 0; $iCount < mysqli_num_fields($rsQueryResults); $iCount++)
 			{
 				$outStr = str_replace ('"', '""', $aRow[$iCount]);
 				$sCSVstring .= "\"" . $outStr . "\",";
@@ -145,9 +145,9 @@ function RunFreeQuery()
 	//Run the SQL
 	$rsQueryResults = RunQuery($sSQL);
 
-	if (mysql_error() != "")
+	if (MySQLError () != "")
 	{
-		echo gettext("An error occured: ") . mysql_errno() . "--" . mysql_error();
+		echo gettext("An error occured: ") . MySQLError ();
 	}
 	else
 	{
@@ -159,17 +159,17 @@ function RunFreeQuery()
 		echo '<tr class="' . $sRowClass . '">';
 
 		//Loop through the fields and write the header row
-		for ($iCount = 0; $iCount < mysql_num_fields($rsQueryResults); $iCount++)
+		for ($iCount = 0; $iCount < mysqli_num_fields($rsQueryResults); $iCount++)
 		{
             echo '  <td align="center">
-                        <b>' . mysql_field_name($rsQueryResults,$iCount) . '</b>
+                        <b>' . mysqli_fetch_field_direct($rsQueryResults, $iCount)->name . '</b>
                     </td>';
 		}
 
 		echo '</tr>';
 
 		//Loop through the recordsert
-		while($aRow =mysql_fetch_array($rsQueryResults))
+		while($aRow =mysqli_fetch_array($rsQueryResults))
 		{
 
 			$sRowClass = AlternateRowStyle($sRowClass);
@@ -177,7 +177,7 @@ function RunFreeQuery()
 			echo '<tr class="' . $sRowClass . '">';
 
 			//Loop through the fields and write each one
-			for ($iCount = 0; $iCount < mysql_num_fields($rsQueryResults); $iCount++)
+			for ($iCount = 0; $iCount < mysqli_num_fields($rsQueryResults); $iCount++)
 			{
 				echo '<td align="center">' . $aRow[$iCount] . '</td>';
 			}

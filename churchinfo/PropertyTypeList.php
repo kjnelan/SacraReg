@@ -49,7 +49,7 @@ echo "</tr>";
 $sRowClass = "RowColorA";
 
 //Loop through the records
-while ($aRow = mysql_fetch_array($rsPropertyTypes))
+while ($aRow = mysqli_fetch_array($rsPropertyTypes))
 {
 	extract($aRow);
 

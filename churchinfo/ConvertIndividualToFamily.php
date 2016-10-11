@@ -52,27 +52,26 @@ $iUserID = $_SESSION['iUserID'];
 // find the family ID so we can associate to person record
 $sSQL = 'SELECT MAX(fam_ID) AS iFamilyID FROM family_fam';
 $rsLastEntry = RunQuery($sSQL);
-extract(mysql_fetch_array($rsLastEntry));
+extract(mysqli_fetch_array($rsLastEntry));
 
 
 // Get list of people that are not assigned to a family
 $sSQL = "SELECT * FROM person_per WHERE per_fam_ID='0' ORDER BY per_LastName, per_FirstName";
 $rsList = RunQuery($sSQL);
-while ($aRow = mysql_fetch_array($rsList)) {
+while ($aRow = mysqli_fetch_array($rsList)) {
     extract($aRow);
 
     echo '<br><br><br>';
     echo '*****************************************';
 
-    $per_LastName = mysql_real_escape_string($per_LastName);
-    $per_Address1 = mysql_real_escape_string($per_Address1);
-    $per_Address2 = mysql_real_escape_string($per_Address2);
-    $per_City = mysql_real_escape_string($per_City);
-    $per_State = mysql_real_escape_string($per_State);
-    $per_Zip = mysql_real_escape_string($per_Zip);
-    $per_Country = mysql_real_escape_string($per_Country);
-    $per_HomePhone = mysql_real_escape_string($per_HomePhone);
-
+    $per_LastName = EscapeString ($per_LastName);
+    $per_Address1 = EscapeString ($per_Address1);
+    $per_Address2 = EscapeString ($per_Address2);
+    $per_City = EscapeString ($per_City);
+    $per_State = EscapeString ($per_State);
+    $per_Zip = EscapeString ($per_Zip);
+    $per_Country = EscapeString ($per_Country);
+    $per_HomePhone = EscapeString ($per_HomePhone);
 
     $sSQL = "INSERT INTO family_fam (
                 fam_Name, 
@@ -105,7 +104,7 @@ while ($aRow = mysql_fetch_array($rsList)) {
     //Get the key back
     $sSQL = 'SELECT MAX(fam_ID) AS iNewFamilyID FROM family_fam';
     $rsLastEntry = RunQuery($sSQL);
-    extract(mysql_fetch_array($rsLastEntry));
+    extract(mysqli_fetch_array($rsLastEntry));
 
     if ($iNewFamilyID != $iFamilyID) {
         echo '<br><br>Error with family ID'; 

@@ -33,7 +33,7 @@ if (array_key_exists ('Action', $_POST) and $_POST['Action']== "Retrieve" && !em
         $aSQL = "SELECT DISTINCT(person_id) FROM event_attend WHERE event_id = ".$_POST['Event'];
         $raOpps = RunQuery($aSQL);
         $aArr = array ();
-        while ($aRow = mysql_fetch_row($raOpps))
+        while ($aRow = mysqli_fetch_row($raOpps))
         {
             $aArr[] = $aRow[0];
         }
@@ -79,12 +79,12 @@ require "Include/Header.php";
 <?php
 // Get data for the form as it now exists..
 $rsOpps = RunQuery($sSQL);
-$numRows = mysql_num_rows($rsOpps);
+$numRows = mysqli_num_rows($rsOpps);
 
 // Create arrays of the attendees.
 for ($row = 1; $row <= $numRows; $row++)
 {
-    $aRow = mysql_fetch_assoc($rsOpps);
+    $aRow = mysqli_fetch_assoc($rsOpps);
     extract($aRow);
 
     if (array_key_exists ('Action', $_GET) and $_GET['Action'] == "List")
@@ -148,12 +148,12 @@ $cSQL = "SELECT COUNT(per_ID) AS cCount
          FROM person_per as t1, events_event as t2, event_attend as t3
          WHERE t1.per_ID = t3.person_id AND t2.event_id = t3.event_id AND t3.event_id = ".$aEventID[$row]." AND per_cls_ID IN ('1','2','5')";
 $cOpps = RunQuery($cSQL);
-$cNumAttend = mysql_result($cOpps, 0);
+$cNumAttend = mysqli_result($cOpps,  0);
 $tSQL = "SELECT COUNT(per_ID) AS tCount
          FROM person_per
          WHERE per_cls_ID IN ('1','2','5')";
 $tOpps = RunQuery($tSQL);
-$tNumTotal = mysql_result($tOpps, 0);
+$tNumTotal = mysqli_result($tOpps,  0);
 ?>
                <input type="submit" name="Type" value="<?php echo gettext("Attending Members").' ['.$cNumAttend.']'; ?>" class="icButton">
              </form>
@@ -180,7 +180,7 @@ $gSQL = "SELECT COUNT(per_ID) AS gCount
          FROM person_per as t1, events_event as t2, event_attend as t3
          WHERE t1.per_ID = t3.person_id AND t2.event_id = t3.event_id AND t3.event_id = ".$aEventID[$row]." AND per_cls_ID = 3";
 $gOpps = RunQuery($gSQL);
-$gNumGuestAttend = mysql_result($gOpps, 0);
+$gNumGuestAttend = mysqli_result($gOpps,  0);
 ?>
                <input <?php echo ($gNumGuestAttend == 0 ? "type=\"button\"":"type=\"submit\""); ?> name="Type" value="<?php echo gettext("Guests").' ['.$gNumGuestAttend.']'; ?>" class="icButton">
              </form>

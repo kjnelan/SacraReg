@@ -54,11 +54,11 @@ if (isset($_POST["Submit"]))
 		$sSQL = "SELECT * FROM person_per, person2group2role_p2g2r WHERE per_ID = p2g2r_per_ID AND p2g2r_grp_ID = " . $iGroupID;
 		$rsGroupMembers = RunQuery($sSQL);
 
-		$calDbId = mysql_select_db ($sWEBCALENDARDB);
+		mysqli_select_db ($cnInfoCentral, $sWEBCALENDARDB);
 
 		$q = "SELECT MAX(cal_id) AS calID FROM webcal_entry";
-		$rsEventID = mysql_query ($q);
-		extract(mysql_fetch_array($rsEventID));
+		$rsEventID = mysqli_query($cnInfoCentral, $q);
+		extract(mysqli_fetch_array($rsEventID));
 
 		$calID = $calID + 1;
 
@@ -97,7 +97,7 @@ if (isset($_POST["Submit"]))
 										"'P'," .
 										"'" . $tName . "'," .
 										"'" . $tDescription . "')";
-		mysql_query ($q);
+		mysqli_query($cnInfoCentral, $q);
 
 		$q = "INSERT INTO webcal_entry_user (cal_id,
 		                                     cal_login,
@@ -105,7 +105,7 @@ if (isset($_POST["Submit"]))
 									VALUES (" . $calID . "," .
 									        "'__public__'," .
 											"'A')";
-		mysql_query ($q);
+		mysqli_query($cnInfoCentral, $q);
 
 		$q = "INSERT INTO webcal_site_extras (cal_id,
 		                                      cal_name,
@@ -119,25 +119,25 @@ if (isset($_POST["Submit"]))
 											"0," .
 											"1," .
 											"'" . ($nNotifyAhead * 60 * 24) . "')";
-		mysql_query ($q);
+		mysqli_query($cnInfoCentral, $q);
 
-		mysql_select_db ($sDATABASE);
-		while ($aRow = mysql_fetch_array($rsGroupMembers))
+		mysqli_select_db ($cnInfoCentral, $sDATABASE);
+		while ($aRow = mysqli_fetch_array($rsGroupMembers))
 		{
 			extract($aRow);
-			$calDbId = mysql_select_db ($sWEBCALENDARDB);
+			mysqli_select_db ($cnInfoCentral, $sWEBCALENDARDB);
 			$q = "INSERT INTO webcal_entry_ext_user (cal_id,
 			                                         cal_fullname,
 													 cal_email)
 											VALUES (" . $calID . "," .
 											        "'" . $per_FirstName . " " . $per_LastName . "'," .
 													"'" . $per_Email . "')";
-			mysql_query ($q);
+			mysqli_query($cnInfoCentral, $q);
 
-			mysql_select_db ($sDATABASE);
+			mysqli_select_db ($cnInfoCentral, $sDATABASE);
 		}
 
-		mysql_select_db ($sDATABASE);
+		mysqli_select_db ($cnInfoCentral, $sDATABASE);
 
 		Redirect ($linkBack);
 	}

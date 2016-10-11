@@ -2,7 +2,7 @@
 /*******************************************************************************
 *
 *  filename    : Update1_2_9To1_2_10.php
-*  description : Update MySQL database from 1.2.9 To 1.2.10
+*  description : Update mysql database from 1.2.9 To 1.2.10
 *
 *  http://www.churchdb.org/
 *
@@ -589,7 +589,7 @@ if (!RunQuery($sSQL, FALSE))
 
 
 
-if (mysql_num_rows(RunQuery("SELECT * FROM person_custom_master"))> 0) {
+if (mysqli_num_rows(RunQuery("SELECT * FROM person_custom_master"))> 0) {
 
 	$sSQL = "UPDATE `person_custom_master` SET `custom_FieldSec` = '1'";	
     if (!RunQuery($sSQL, FALSE))
@@ -628,7 +628,7 @@ DATE_ADD(CONCAT(per_BirthYear,'-',per_BirthMonth,'-',per_BirthDay),INTERVAL
 EOD;
 
 $sSQL = "UPDATE `query_qry` SET `qry_SQL` = '" . 
-         mysql_real_escape_string($queryText) . 
+         EscapeString ($queryText). 
          "' WHERE `query_qry`.`qry_ID` = 4 "; 
 if (!RunQuery($sSQL, FALSE))
 	break;
@@ -650,7 +650,7 @@ Enter any part of the following: Name, City, State, Zip, Home Phone, Email, or W
 EOD;
 
 $sSQL = "UPDATE `queryparameters_qrp` SET `qrp_Description` ='" .
-		mysql_real_escape_string($queryText) .
+		EscapeString($queryText).
 		"' WHERE `queryparameters_qrp`.`qrp_ID` = 14 ";
 if (!RunQuery($sSQL, FALSE))
     break;
@@ -664,7 +664,7 @@ WHERE ~searchwhat~ LIKE '%~searchstring~%'
 EOD;
 
 $sSQL = "UPDATE `query_qry` SET `qry_SQL` = '" . 
-         mysql_real_escape_string($queryText) . 
+         EscapeString($queryText). 
          "' WHERE `query_qry`.`qry_ID` = 15 "; 
 if (!RunQuery($sSQL, FALSE))
 	break;
@@ -674,7 +674,7 @@ Search by any part of Name, City, State, Zip, Home Phone, Email, or Work Email.
 EOD;
 
 $sSQL = "UPDATE `query_qry` SET `qry_Description` = '" . 
-         mysql_real_escape_string($queryText) . 
+         EscapeString($queryText). 
          "' WHERE `query_qry`.`qry_ID` = 15 "; 
 if (!RunQuery($sSQL, FALSE))
 	break;
@@ -690,12 +690,12 @@ break;
 }  // End of for  
 
 
-$sError = mysql_error();
+$sError = MySQLError ();
 $sSQL_Last = $sSQL;
 
-// Let's check if MySQL database is in sync with PHP code
+// Let's check if mysql database is in sync with PHP code
     $sSQL = 'SELECT * FROM version_ver ORDER BY ver_ID DESC';
-    $aRow = mysql_fetch_array(RunQuery($sSQL));
+    $aRow = mysqli_fetch_array(RunQuery($sSQL));
     extract($aRow);
 
     if ($ver_version == $sVersion) {

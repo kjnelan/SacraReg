@@ -116,7 +116,7 @@ if ($sReportType == "") {
 					."</div><select name=classList[] size=6 multiple>";
 					echo "<option value=0 selected>".gettext("All Classifications")."</option>";
 					echo "<option value=0>----------"."</option>";
-					while ($aRow = mysql_fetch_array($rsClassifications)) {
+					while ($aRow = mysqli_fetch_array($rsClassifications)) {
 						extract($aRow);
 						echo "<option value=\"" . $lst_OptionID . "\"";
 						echo ">" . $lst_OptionName . "&nbsp;</option>";
@@ -149,13 +149,13 @@ if ($sReportType == "") {
 		$sSQL = "SELECT per_FirstName, per_fam_ID FROM person_per WHERE per_fam_ID > 0 AND (" . $head_criteria . ") ORDER BY per_fam_ID";
 		$rs_head = RunQuery($sSQL);
 		$aHead = array();
-		while (list ($head_firstname, $head_famid) = mysql_fetch_row($rs_head)){
+		while (list ($head_firstname, $head_famid) = mysqli_fetch_row($rs_head)){
 			if ($head_firstname && array_key_exists ($head_famid, $aHead))
 				$aHead[$head_famid] .= " & " . $head_firstname;
 			elseif ($head_firstname)
 				$aHead[$head_famid] = $head_firstname;
 		}
-		while ($aRow = mysql_fetch_array($rsFamilies))
+		while ($aRow = mysqli_fetch_array($rsFamilies))
 		{
 			extract($aRow);
 			echo "<option value=$fam_ID>$fam_Name";
@@ -211,7 +211,7 @@ if ($sReportType == "") {
 		echo "</div><select name=deposit>";
 		if ($sReportType != "Individual Deposit Report")
 			echo "<option value=0 selected>" . gettext("All deposits within date range") . "</option>";
-		while ($aRow = mysql_fetch_array($rsDeposits)) {
+		while ($aRow = mysqli_fetch_array($rsDeposits)) {
 			extract($aRow);
 			echo "<option value=$dep_ID>$dep_ID &nbsp;$dep_Date &nbsp;$dep_Type "."</option>";
 		}
@@ -228,7 +228,7 @@ if ($sReportType == "") {
 		echo "</div><select name=funds[] size=5 multiple>";
 		echo "<option value=0 selected>".gettext("All Funds")."</option>";
 		echo "<option value=0>----------"."</option>";
-		while ($aRow = mysql_fetch_array($rsFunds)) {
+		while ($aRow = mysqli_fetch_array($rsFunds)) {
 			extract($aRow);
 			echo "<option value=$fun_ID>$fun_Name";
 			if ($fun_Active == "false")

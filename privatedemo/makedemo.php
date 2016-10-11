@@ -63,23 +63,21 @@ if (isset($_POST["Submit"]))
     } else if ($firstName == '' or $lastName == '' or $Organization == '' or $Email == '' or $UserName == '' or $Password == '') {
     	print "<h2>Please fill out the form completely.</h2>";
     } else {
-		$cnTempDB = mysql_connect($sSERVERNAME,$sUSER,$sPASSWORD)
-	        or die ('Cannot connect to the MySQL server because: ' . mysql_error());
-		mysql_select_db($sDATABASE)
-	        or die ('Cannot select the MySQL database because: ' . mysql_error());
+		$cnTempDB = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
+	        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
 
 		$sSQL = "INSERT INTO AdminContact (";
 		$sSQL .= "ac_username, ac_password, ac_ip, ac_lastname, ac_firstname, ac_organization, ";
 		$sSQL .= "ac_address1, ac_address2, ac_city, ac_state, ac_zip, ac_phone, ac_email)";
 		$sSQL .= "VALUES ('$UserName', '$Password', '$remoteAddr', '$lastName', '$firstName', '$Organization', ";
 		$sSQL .= "'$Address1', '$Address2', '$City', '$State', '$Zip', '$Phone', '$Email')"; 
-		$resIns = mysql_query ($sSQL);
+		$resIns = mysqli_query($cnInfoCentral, $sSQL);
 		//Get the key back
 		$sSQL = "SELECT MAX(ac_id) AS iNewID FROM AdminContact";
-		$rsLastEntry = mysql_query($sSQL);
-		extract(mysql_fetch_array($rsLastEntry));
+		$rsLastEntry = mysqli_query($cnTempDB, $sSQL);
+		extract(mysqli_fetch_array($rsLastEntry));
 		session_write_close ();
-	        Redirect ("presentdemo.php?ContactID=".$iNewID);
+	    Redirect ("presentdemo.php?ContactID=".$iNewID);
 		exit;
     }
 } else {

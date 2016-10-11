@@ -69,7 +69,7 @@ echo "<tr><td><h3>". gettext("Variable name") . "</h3></td>
 
 $r = 1;
 // List Individual Settings
-while (list($cfg_id, $cfg_name, $cfg_value, $cfg_type, $cfg_default, $cfg_tooltip, $cfg_section) = mysql_fetch_row($rsConfigs)) {
+while (list($cfg_id, $cfg_name, $cfg_value, $cfg_type, $cfg_default, $cfg_tooltip, $cfg_section) = mysqli_fetch_row($rsConfigs)) {
 	
 	// Cancel, Save Buttons every 13 rows
 	if ($r == 13) {

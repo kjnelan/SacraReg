@@ -59,7 +59,7 @@ if ($aut_ID != 0) {
 	if ($result->num_rows == 0) {
 		$aut_ID = 0;
 	} else {
-		while ($line = $result->fetch_array(MYSQL_ASSOC)) {
+		while ($line = $result->fetch_array(MYSQLI_ASSOC)) {
 			extract ($line);
 		}
 	}

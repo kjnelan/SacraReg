@@ -124,12 +124,12 @@ for (; ; ) {    // This is not a loop but a section of code to be
 	    break;
 }
 
-$sError = mysql_error();
+$sError = MySQLError ();
 $sSQL_Last = $sSQL;
 
-// Let's check if MySQL database is in sync with PHP code
+// Let's check if mysql database is in sync with PHP code
 $sSQL = 'SELECT * FROM version_ver ORDER BY ver_ID DESC';
-$aRow = mysql_fetch_array(RunQuery($sSQL));
+$aRow = mysqli_fetch_array(RunQuery($sSQL));
 extract($aRow);
 
 if ($ver_version == $sVersion) {

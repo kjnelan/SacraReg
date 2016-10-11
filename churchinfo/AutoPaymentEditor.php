@@ -23,7 +23,7 @@ $iAutID = FilterInput($_GET["AutID"], 'int');
 if ($iFamily) {
 	$sSQL = "SELECT * FROM family_fam where fam_ID = " . $iFamily;
 	$rsFamily = RunQuery($sSQL);
-	extract(mysql_fetch_array($rsFamily));
+	extract(mysqli_fetch_array($rsFamily));
 } else {
 	$fam_Name = "TBD";
 }
@@ -122,7 +122,7 @@ if ($iAutID <= 0) {  // Need to create the record so there is a place to store t
 	
 	$sSQL = "SELECT MAX(aut_ID) AS iAutID FROM autopayment_aut";
 	$rsAutID = RunQuery($sSQL);
-	extract(mysql_fetch_array($rsAutID));
+	extract(mysqli_fetch_array($rsAutID));
 }
 
 $sPageTitle = gettext("Automatic payment configuration for the " . $fam_Name . " family");
@@ -214,7 +214,7 @@ if (isset($_POST["Submit"]))
 } else { // not submitting, just get ready to build the page
 	$sSQL = "SELECT * FROM autopayment_aut WHERE aut_ID = " . $iAutID;
 	$rsAutopayment = RunQuery($sSQL);
-	extract(mysql_fetch_array($rsAutopayment));
+	extract(mysqli_fetch_array($rsAutopayment));
 
 	$iFamily=$aut_FamID;
 	$bEnableBankDraft=$aut_EnableBankDraft;
@@ -287,7 +287,7 @@ if ($sElectronicTransactionProcessor == "Vanco") {
 						<option value="0">-----------------------</option>
 
 						<?php
-						while ($aRow = mysql_fetch_array($rsFamilies))
+						while ($aRow = mysqli_fetch_array($rsFamilies))
 						{
 							extract($aRow);
 
@@ -336,8 +336,8 @@ if ($sElectronicTransactionProcessor == "Vanco") {
 					<select name="Fund">
 					<option value="0"><?php echo gettext("None"); ?></option>
 					<?php
-					mysql_data_seek($rsFunds,0);
-					while ($row = mysql_fetch_array($rsFunds))
+					mysqli_data_seek($rsFunds, 0);
+					while ($row = mysqli_fetch_array($rsFunds))
 					{
 						$fun_id = $row["fun_ID"];
 						$fun_name = $row["fun_Name"];

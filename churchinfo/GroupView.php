@@ -38,7 +38,7 @@ if (array_key_exists ('Action', $_GET) and $_GET['Action'] == 'AddGroupToCart')
     $rsGroupMembers = RunQuery($sSQL);
 
     //Loop through the recordset
-    while ($aRow = mysql_fetch_array($rsGroupMembers))
+    while ($aRow = mysqli_fetch_array($rsGroupMembers))
     {
         extract($aRow);
 
@@ -49,24 +49,24 @@ if (array_key_exists ('Action', $_GET) and $_GET['Action'] == 'AddGroupToCart')
 
 //Get the data on this group
 $sSQL = 'SELECT * FROM group_grp WHERE grp_ID = ' . $iGroupID;
-$aGroupData = mysql_fetch_array(RunQuery($sSQL));
+$aGroupData = mysqli_fetch_array(RunQuery($sSQL));
 extract($aGroupData);
 
 //Look up the default role name
 $sSQL = "SELECT lst_OptionName FROM list_lst WHERE lst_ID = $grp_RoleListID AND lst_OptionID = " . $grp_DefaultRole;
-$aDefaultRole = mysql_fetch_array(RunQuery($sSQL));
+$aDefaultRole = mysqli_fetch_array(RunQuery($sSQL));
 $sDefaultRole = $aDefaultRole[0];
 
 //Get the count of members
 $sSQL = 'SELECT COUNT(*) AS iTotalMembers FROM person2group2role_p2g2r WHERE p2g2r_grp_ID = ' . $iGroupID;
-$rsTotalMembers = mysql_fetch_array(RunQuery($sSQL));
+$rsTotalMembers = mysqli_fetch_array(RunQuery($sSQL));
 extract($rsTotalMembers);
 
 //Get the group's type name
 if ($grp_Type > 0)
 {
     $sSQL = 'SELECT lst_OptionName FROM list_lst WHERE lst_ID = 3 AND lst_OptionID = ' . $grp_Type;
-    $rsGroupType = mysql_fetch_array(RunQuery($sSQL));
+    $rsGroupType = mysqli_fetch_array(RunQuery($sSQL));
     $sGroupType = $rsGroupType[0];
 }
 else
@@ -88,12 +88,12 @@ $rsProperties = RunQuery($sSQL);
 // Lookup the Group's Name from GroupID
 $sSQL = 'SELECT grp_Name FROM group_grp WHERE grp_ID = ' . $iGroupID;
 $rsGrpName = RunQuery($sSQL);
-$aTemp = mysql_fetch_array($rsGrpName);
+$aTemp = mysqli_fetch_array($rsGrpName);
 
 // Get data for the form as it now exists..
 $sSQL = 'SELECT * FROM groupprop_master WHERE grp_ID = ' . $iGroupID . ' ORDER BY prop_ID';
 $rsPropList = RunQuery($sSQL);
-$numRows = mysql_num_rows($rsPropList);
+$numRows = mysqli_num_rows($rsPropList);
 
 require 'Include/Header.php';
 
@@ -121,7 +121,7 @@ $sSQL = "SELECT per_Email, fam_Email
         WHERE p2g2r_grp_ID = " . $iGroupID;
 $rsEmailList = RunQuery($sSQL);
 $sEmailLink = '';
-while (list ($per_Email, $fam_Email) = mysql_fetch_row($rsEmailList))
+while (list ($per_Email, $fam_Email) = mysqli_fetch_row($rsEmailList))
 {
     $sEmail = SelectWhichInfo($per_Email, $fam_Email, False);
     if ($sEmail)
@@ -181,7 +181,7 @@ if ($sEmailLink)
         // Create arrays of the properties.
         for ($row = 1; $row <= $numRows; $row++)
         {
-            $aRow = mysql_fetch_array($rsPropList, MYSQL_BOTH);
+            $aRow = mysqli_fetch_array($rsPropList,  MYSQLI_BOTH);
             extract($aRow);
 
             $aNameFields[$row] = $prop_Name;
@@ -229,7 +229,7 @@ if ($sEmailLink)
     $sAssignedProperties = ',';
 
     //Was anything returned?
-    if (mysql_num_rows($rsAssignedProperties) == 0)
+    if (mysqli_num_rows($rsAssignedProperties) == 0)
     {
         // No, indicate nothing returned
         echo '<p align="center">' . gettext('No property assignments.') . '</p>';
@@ -256,7 +256,7 @@ if ($sEmailLink)
         $bIsFirst = true;
 
         //Loop through the rows
-        while ($aRow = mysql_fetch_array($rsAssignedProperties))
+        while ($aRow = mysqli_fetch_array($rsAssignedProperties))
         {
             $pro_Prompt = '';
             $r2p_Value = '';
@@ -321,7 +321,7 @@ if ($sEmailLink)
         echo '<span class="SmallText">' . gettext('Assign a New Property:') . '</span>';
         echo '<select name="PropertyID">';
 
-        while ($aRow = mysql_fetch_array($rsProperties))
+        while ($aRow = mysqli_fetch_array($rsProperties))
         {
             extract($aRow);
 

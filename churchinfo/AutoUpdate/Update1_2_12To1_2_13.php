@@ -128,7 +128,7 @@ for (; ; ) {    // This is not a loop but a section of code to be
     $sSQL = "SELECT fam_ID, fam_scanCheck from family_fam";
     $rsFamilies = RunQuery($sSQL);
 
-    while ($aRow = mysql_fetch_array($rsFamilies)) {
+    while ($aRow = mysqli_fetch_array($rsFamilies)) {
         $scanFormat = $micrObj->IdentifyFormat ($aRow['fam_scanCheck']);
         if ($aRow['fam_scanCheck'] != '' && $scanFormat != $micrObj->NOT_RECOGNIZED) {
             $newScanCheck = $micrObj->FindRouteAndAccount ($aRow['fam_scanCheck']);
@@ -221,12 +221,12 @@ for (; ; ) {    // This is not a loop but a section of code to be
 
 }
 
-$sError = mysql_error();
+$sError = MySQLError ();
 $sSQL_Last = $sSQL;
 
-// Let's check if MySQL database is in sync with PHP code
+// Let's check if mysql database is in sync with PHP code
 $sSQL = 'SELECT * FROM version_ver ORDER BY ver_ID DESC';
-$aRow = mysql_fetch_array(RunQuery($sSQL));
+$aRow = mysqli_fetch_array(RunQuery($sSQL));
 extract($aRow);
 
 if ($ver_version == $sVersion) {

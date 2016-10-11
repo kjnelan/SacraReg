@@ -269,7 +269,7 @@ function GetSecuritySettings() {
     $sSQL = "SELECT DISTINCT ucfg_name FROM userconfig_ucfg WHERE ucfg_per_id = 0 AND ucfg_cat = 'SECURITY' ORDER by ucfg_id";
     $rsSecGrpList = RunQuery($sSQL);
             
-    while ($aRow = mysql_fetch_array($rsSecGrpList))
+    while ($aRow = mysqli_fetch_array($rsSecGrpList))
     {
         $aSecurityList[] = $aRow['ucfg_name'];
     }
@@ -297,11 +297,11 @@ function addMenu($menu) {
     $sSQL = "SELECT name, ismenu, parent, content, uri, statustext, session_var, session_var_in_text, session_var_in_uri, url_parm_name, security_grp FROM menuconfig_mcf WHERE parent = '$menu' AND active=1 ".$security_matrix." ORDER BY sortorder";
     
     $rsMenu = RunQuery($sSQL);
-    $item_cnt = mysql_num_rows($rsMenu);
+    $item_cnt = mysqli_num_rows($rsMenu);
     $idx = 1;
     $ptr = 1;
     echo "<ul>";
-    while ($aRow = mysql_fetch_array($rsMenu)) {    
+    while ($aRow = mysqli_fetch_array($rsMenu)) {    
         if (addMenuItem($aRow, $idx)) {
             if ($ptr == $item_cnt) {
                 echo "</ul>";
@@ -337,7 +337,7 @@ global $security_matrix, $sURLPath;
     if ($aMenu['ismenu']) {
         $sSQL = "SELECT name FROM menuconfig_mcf WHERE parent = '" . $aMenu['name'] . "' AND active=1 " . $security_matrix." ORDER BY sortorder";
         $rsItemCnt = RunQuery($sSQL);
-        $numItems = mysql_num_rows($rsItemCnt);
+        $numItems = mysqli_num_rows($rsItemCnt);
     }
     if (!($aMenu['ismenu']) || ($numItems > 0))
     {
@@ -479,10 +479,10 @@ function addSection($menu) {
     $security_matrix .= ")";
     $query = "SELECT name, ismenu, content, uri, statustext, session_var, session_var_in_text, session_var_in_uri, url_parm_name, security_grp FROM menuconfig_mcf WHERE parent = '$menu' AND active=1 ".$security_matrix." ORDER BY sortorder";
     
-    $rsMenu = mysql_query($query, $cnInfoCentral);
-    $item_cnt = mysql_num_rows($rsMenu);
+    $rsMenu = mysqli_query( $cnInfoCentral, $query);
+    $item_cnt = mysqli_num_rows($rsMenu);
     $ptr = 1;
-    while ($aRow = mysql_fetch_array($rsMenu)) {    
+    while ($aRow = mysqli_fetch_array($rsMenu)) {    
         if (isset($aRow['admin_only']) & !$_SESSION['bAdmin']) {
         // hide admin menu
         } else {

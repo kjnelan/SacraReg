@@ -106,7 +106,7 @@ function ManualMatch (RegID)
 <?php
 
 //Loop through the registration records
-while ($aRow = mysql_fetch_array($rsSelfRegistrations)) {
+while ($aRow = mysqli_fetch_array($rsSelfRegistrations)) {
 
 	extract($aRow);
 

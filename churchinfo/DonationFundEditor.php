@@ -56,7 +56,7 @@ if (isset($_POST["SaveChanges"]))
 {
 	$sSQL = "SELECT * FROM donationfund_fun";
 	$rsFunds = RunQuery($sSQL);
-	$numRows = mysql_num_rows($rsFunds);
+	$numRows = mysqli_num_rows($rsFunds);
 
 	for ($iFieldID = 1; $iFieldID <= $numRows; $iFieldID++ )
 	{
@@ -75,7 +75,7 @@ if (isset($_POST["SaveChanges"]))
 		$aDescFields[$iFieldID] = FilterInput($_POST[$iFieldID . "desc"]);
 		$aActiveFields[$iFieldID] = $_POST[$iFieldID . "active"];
 
-		$aRow = mysql_fetch_array($rsFunds);
+		$aRow = mysqli_fetch_array($rsFunds);
 		$aIDFields[$iFieldID] = $aRow[0];
 	}
 
@@ -128,12 +128,12 @@ else
 	$sSQL = "SELECT * FROM donationfund_fun";
 
 	$rsFunds = RunQuery($sSQL);
-	$numRows = mysql_num_rows($rsFunds);
+	$numRows = mysqli_num_rows($rsFunds);
 
 	// Create arrays of the fundss.
 	for ($row = 1; $row <= $numRows; $row++)
 	{
-		$aRow = mysql_fetch_array($rsFunds, MYSQL_BOTH);
+		$aRow = mysqli_fetch_array($rsFunds,  MYSQLI_BOTH);
 		extract($aRow);
 
 		$aIDFields[$row] = $fun_ID;

@@ -27,7 +27,7 @@ $sSQL = "SELECT * FROM person_per
 			LEFT JOIN family_fam ON per_fam_ID = family_fam.fam_ID
 			WHERE per_ID = " . $iPersonID;
 $rsPerson = RunQuery($sSQL);
-extract(mysql_fetch_array($rsPerson));
+extract(mysqli_fetch_array($rsPerson));
 
 $sBirthDate = FormatBirthDate($per_BirthYear, $per_BirthMonth, $per_BirthDay,"-",$per_Flags);
 

@@ -54,7 +54,7 @@ $dResults = RunQuery($dSQL);
 $last_id = 0;
 $next_id = 0;
 $capture_next = 0;
-while($myrow = mysql_fetch_row($dResults))
+while($myrow = mysqli_fetch_row($dResults))
 {
 	$pid = $myrow[0];
 	if ($capture_next == 1)
@@ -89,7 +89,7 @@ $sSQL = "SELECT a.*, family_fam.*, cls.lst_OptionName AS sClassName, fmr.lst_Opt
 			LEFT JOIN person_per c ON a.per_EditedBy = c.per_ID
 			WHERE a.per_ID = " . $iPersonID;
 $rsPerson = RunQuery($sSQL);
-extract(mysql_fetch_array($rsPerson));
+extract(mysqli_fetch_array($rsPerson));
 
 // Get the lists of custom person fields
 $sSQL = "SELECT person_custom_master.* FROM person_custom_master
@@ -103,7 +103,7 @@ $rsRightCustomFields = RunQuery($sSQL);
 // Get the custom field data for this person.
 $sSQL = "SELECT * FROM person_custom WHERE per_ID = " . $iPersonID;
 $rsCustomData = RunQuery($sSQL);
-$aCustomData = mysql_fetch_array($rsCustomData, MYSQL_BOTH);
+$aCustomData = mysqli_fetch_array($rsCustomData,  MYSQLI_BOTH);
 
 // Get the notes for this person
 $sSQL = "SELECT nte_Private, nte_ID, nte_Text, nte_DateEntered, nte_EnteredBy, nte_DateLastEdited, nte_EditedBy, a.per_FirstName AS EnteredFirstName, a.Per_LastName AS EnteredLastName, b.per_FirstName AS EditedFirstName, b.per_LastName AS EditedLastName ";
@@ -158,7 +158,7 @@ $rsProperties = RunQuery($sSQL);
 $sSQL = "SELECT * FROM list_lst WHERE lst_ID = 5 ORDER BY lst_OptionSequence";
 $rsSecurityGrp = RunQuery($sSQL);
 
-while ($aRow = mysql_fetch_array($rsSecurityGrp))
+while ($aRow = mysqli_fetch_array($rsSecurityGrp))
 {
 	extract ($aRow);
 	$aSecurityType[$lst_OptionID] = $lst_OptionName;
@@ -217,7 +217,7 @@ if ($_SESSION['bDeleteRecords']) { echo "<a class=\"SmallText\" href=\"SelectDel
 if ($_SESSION['bAdmin'])
 {
 	$sSQL = "SELECT usr_per_ID FROM user_usr WHERE usr_per_ID = " . $per_ID;
-	if (mysql_num_rows(RunQuery($sSQL)) == 0)
+	if (mysqli_num_rows(RunQuery($sSQL)) == 0)
 		echo " | <a class=\"SmallText\" href=\"UserEditor.php?NewPersonID=" . $per_ID . "\">" . gettext("Make User") . "</a>" ;
 	else
 		echo " | <a class=\"SmallText\" href=\"UserEditor.php?PersonID=" . $per_ID . "\">" . gettext("Edit User") . "</a>" ;
@@ -438,7 +438,7 @@ gettext("List View") . "</a> ";
 			</tr>
 			<?php
 				// Display the left-side custom fields
-				while ($Row = mysql_fetch_array($rsLeftCustomFields)) {
+				while ($Row = mysqli_fetch_array($rsLeftCustomFields)) {
 					extract($Row);
 					if (($aSecurityType[$custom_FieldSec] == 'bAll') or ($_SESSION[$aSecurityType[$custom_FieldSec]]))
 					{
@@ -478,7 +478,7 @@ gettext("List View") . "</a> ";
 			</tr>
 			<?php
 				// Display the right-side custom fields
-				while ($Row = mysql_fetch_array($rsRightCustomFields)) {
+				while ($Row = mysqli_fetch_array($rsRightCustomFields)) {
 					extract($Row);
 					$currentData = trim($aCustomData[$custom_Field]);
 					if ($type_ID == 11) $custom_Special = $sPhoneCountry;
@@ -502,7 +502,7 @@ gettext("List View") . "</a> ";
 	$sAssignedProperties = ",";
 
 	//Was anything returned?
-	if (mysql_num_rows($rsAssignedProperties) == 0)
+	if (mysqli_num_rows($rsAssignedProperties) == 0)
 	{
 		echo "<p align\"center\">" . gettext("No property assignments.") . "</p>";
 	}
@@ -526,7 +526,7 @@ gettext("List View") . "</a> ";
 		$bIsFirst = true;
 
 		//Loop through the rows
-		while ($aRow = mysql_fetch_array($rsAssignedProperties))
+		while ($aRow = mysqli_fetch_array($rsAssignedProperties))
 		{
 			$pro_Prompt = "";
 			$r2p_Value = "";
@@ -585,7 +585,7 @@ gettext("List View") . "</a> ";
 		<span class="SmallText"><?php echo gettext("Assign a New Property:"); ?></span>
 		<select name="PropertyID">
 			<?php
-			while ($aRow = mysql_fetch_array($rsProperties))
+			while ($aRow = mysqli_fetch_array($rsProperties))
 			{
 				extract($aRow);
 
@@ -625,7 +625,7 @@ gettext("List View") . "</a> ";
 	$sAssignedGroups = ",";
 
 	//Was anything returned?
-	if (mysql_num_rows($rsAssignedGroups) == 0)
+	if (mysqli_num_rows($rsAssignedGroups) == 0)
 	{
 		echo "<p align=\"center\">" . gettext("No group assignments.") . "</p>";
 	}
@@ -643,7 +643,7 @@ gettext("List View") . "</a> ";
 		echo "</tr>";
 
 		// Loop through the rows
-		while ($aRow = mysql_fetch_array($rsAssignedGroups))
+		while ($aRow = mysqli_fetch_array($rsAssignedGroups))
 		{
 			extract($aRow);
 
@@ -679,9 +679,9 @@ gettext("List View") . "</a> ";
 
 				$sSQL = "SELECT * FROM groupprop_" . $grp_ID . " WHERE per_ID = " . $iPersonID;
 				$rsPersonProps = RunQuery($sSQL);
-				$aPersonProps = mysql_fetch_array($rsPersonProps, MYSQL_BOTH);
+				$aPersonProps = mysqli_fetch_array($rsPersonProps,  MYSQLI_BOTH);
 
-				while ($aProps = mysql_fetch_array($rsPropList))
+				while ($aProps = mysqli_fetch_array($rsPropList))
 				{
 					extract($aProps);
 					$currentData = trim($aPersonProps[$prop_Field]);
@@ -714,7 +714,7 @@ gettext("List View") . "</a> ";
 		<span class="SmallText"><?php echo gettext("Assign a New Group:"); ?></span>
 		<select name="GroupAssignID">
 			<?php
-			while ($aRow = mysql_fetch_array($rsGroups))
+			while ($aRow = mysqli_fetch_array($rsGroups))
 			{
 				extract($aRow);
 
@@ -744,7 +744,7 @@ gettext("List View") . "</a> ";
 	$sAssignedVolunteerOpps = ",";
 
 	//Was anything returned?
-	if (mysql_num_rows($rsAssignedVolunteerOpps) == 0)
+	if (mysqli_num_rows($rsAssignedVolunteerOpps) == 0)
 	{
 		echo "<p align=\"center\">" . gettext("No volunteer opportunity assignments.") . "</p>";
 	}
@@ -760,7 +760,7 @@ gettext("List View") . "</a> ";
 		echo "</tr>";
 
 		// Loop through the rows
-		while ($aRow = mysql_fetch_array($rsAssignedVolunteerOpps))
+		while ($aRow = mysqli_fetch_array($rsAssignedVolunteerOpps))
 		{
 			extract($aRow);
 
@@ -788,7 +788,7 @@ gettext("List View") . "</a> ";
 		<span class="SmallText"><?php echo gettext("Assign a New Volunteer Opportunity:"); ?></span>
 		<select name="VolunteerOpportunityIDs[]", size=6, multiple>
 			<?php
-			while ($aRow = mysql_fetch_array($rsVolunteerOpps)) {
+			while ($aRow = mysqli_fetch_array($rsVolunteerOpps)) {
 				extract($aRow);
 				//If the property doesn't already exist for this Person, write the <OPTION> tag
 				if (strlen(strstr($sAssignedVolunteerOpps,"," . $vol_ID . ",")) == 0) {
@@ -825,7 +825,7 @@ if ($_SESSION['bDeleteRecords']) { echo "<a class=\"SmallText\" href=\"SelectDel
 if ($_SESSION['bAdmin'])
 {
 	$sSQL = "SELECT usr_per_ID FROM user_usr WHERE usr_per_ID = " . $per_ID;
-	if (mysql_num_rows(RunQuery($sSQL)) == 0)
+	if (mysqli_num_rows(RunQuery($sSQL)) == 0)
 		echo " | <a class=\"SmallText\" href=\"UserEditor.php?NewPersonID=" . $per_ID . "\">" . gettext("Make User") . "</a>" ;
 	else
 		echo " | <a class=\"SmallText\" href=\"UserEditor.php?PersonID=" . $per_ID . "\">" . gettext("Edit User") . "</a>" ;
@@ -873,7 +873,7 @@ gettext("List View") . "</a> ";
 <?php
 
 //Loop through all the notes
-while($aRow = mysql_fetch_array($rsNotes))
+while($aRow = mysqli_fetch_array($rsNotes))
 {
 	extract($aRow);
 	?>

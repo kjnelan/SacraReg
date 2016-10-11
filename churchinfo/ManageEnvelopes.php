@@ -69,7 +69,7 @@ asort($familyArray);
 //Get Classifications for the drop-down
 $sSQL = "SELECT * FROM list_lst WHERE lst_ID = 1 ORDER BY lst_OptionSequence";
 $rsClassifications = RunQuery($sSQL);
-while ($aRow = mysql_fetch_array($rsClassifications)) {
+while ($aRow = mysqli_fetch_array($rsClassifications)) {
 	extract($aRow);
 	$classification[$lst_OptionID] = $lst_OptionName;
 }
@@ -211,7 +211,7 @@ function getEnvelopes($classification) {
 	$sSQL .= " ORDER by fam_Envelope";
 	$dEnvelopes = RunQuery($sSQL);
 	$envelopes = array ();
-	while ($aRow = mysql_fetch_array($dEnvelopes)) {
+	while ($aRow = mysqli_fetch_array($dEnvelopes)) {
 		extract($aRow);
 		$envelopes[$fam_ID] = $fam_Envelope;
 	}

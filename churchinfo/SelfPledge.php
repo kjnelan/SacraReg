@@ -114,7 +114,7 @@ if (isset($_POST["Cancel"])) {
 	if ($result->num_rows == 0) {
 		$rpg_id = 0;
 	} else {
-		while ($line = $result->fetch_array(MYSQL_ASSOC)) {
+		while ($line = $result->fetch_array(MYSQLI_ASSOC)) {
 			extract ($line);
 		}
 	}
@@ -195,7 +195,7 @@ if (  (! isset($_POST["Submit"])) && $rpg_id == 0) {
 			<option value="0"><?php echo gettext("None"); ?></option>
 			<?php
 			mysqli_data_seek($rsFunds,0);
-			while ($row = $rsFunds->fetch_array(MYSQL_ASSOC)) {
+			while ($row = $rsFunds->fetch_array(MYSQLI_ASSOC)) {
 				$fun_id = $row["fun_ID"];
 				$fun_name = $row["fun_Name"];
 				$fun_active = $row["fun_Active"];

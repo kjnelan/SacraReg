@@ -33,7 +33,7 @@ $iGroupID = FilterInput($_GET["GroupID"],'int');
 
 $sSQL = "SELECT grp_hasSpecialProps, grp_RoleListID FROM group_grp WHERE grp_ID =" . $iGroupID;
 $rsTemp = RunQuery($sSQL);
-$aTemp = mysql_fetch_array($rsTemp);
+$aTemp = mysqli_fetch_array($rsTemp);
 $hasSpecialProps = $aTemp[0];
 $iRoleListID = $aTemp[1];
 
@@ -52,7 +52,7 @@ if (isset($_GET["Confirmed"]))
 	$sSQL = "SELECT pro_ID FROM property_pro WHERE pro_Class='g'";
 	$rsProps = RunQuery($sSQL);
 
-	while($aRow = mysql_fetch_row($rsProps)) {
+	while($aRow = mysqli_fetch_row($rsProps)) {
 		$sSQL = "DELETE FROM record2property_r2p WHERE r2p_pro_ID = " . $aRow[0] . " AND r2p_record_ID = " . $iGroupID;
 		RunQuery($sSQL);
 	}
@@ -79,7 +79,7 @@ if (isset($_GET["Confirmed"]))
 //Get the group record in question
 $sSQL = "SELECT * FROM group_grp WHERE grp_ID = " . $iGroupID;
 $rsGroup = RunQuery($sSQL);
-extract(mysql_fetch_array($rsGroup));
+extract(mysqli_fetch_array($rsGroup));
 
 require "Include/Header.php";
 

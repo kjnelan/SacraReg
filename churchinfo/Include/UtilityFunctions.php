@@ -148,12 +148,12 @@ function RunQuery($sSQL, $bStopOnError = true)
     global $cnInfoCentral;
     global $debug;
 
-    if ($result = mysql_query($sSQL, $cnInfoCentral))
+    if ($result = mysqli_query( $cnInfoCentral, $sSQL))
         return $result;
     elseif ($bStopOnError)
     {
         if ($debug)
-            die(gettext("Cannot execute query.") . "<p>$sSQL<p>" . mysql_error());
+            die(gettext("Cannot execute query.") . "<p>$sSQL<p>" . MySQLError ());
         else
             die("Database error or invalid data");
     }
@@ -183,6 +183,32 @@ function RunQueryI($sSQL, $bStopOnError = true)
         return FALSE;
 }
 
+function EscapeString ($str)
+{
+    global $cnInfoCentral;
+    return (mysqli_real_escape_string($cnInfoCentral, $str));    
+}
+
+function MySQLError ()
+{
+    global $cnInfoCentral;
+    if (is_object($cnInfoCentral)) 
+		return (mysqli_error ($cnInfoCentral));
+	else
+		return (mysqli_connect_error());
+}
+
+function mysqli_result($result, $number, $field=0) 
+{ 
+	mysqli_data_seek($result, $number); 
+	$type = is_numeric($field) ? MYSQLI_NUM : MYSQLI_ASSOC; 
+	$out = mysqli_fetch_array($result, $type); 
+	if ($out === NULL || $out === FALSE) { 
+		return FALSE; 
+	} 
+	return $out; 
+} 
+
 function FilterInputArr ($arr, $key, $type='string', $size=1)
 {
 	if (array_key_exists ($key, $arr))
@@ -204,19 +230,19 @@ function FilterInput($sInput,$type = 'string',$size = 1)
                 $sInput = strip_tags(trim($sInput));
                 if (get_magic_quotes_gpc())
                     $sInput = stripslashes($sInput);
-                $sInput = mysql_real_escape_string($sInput);
+                $sInput = EscapeString ($sInput);
                 return $sInput;
             case 'htmltext':
                 $sInput = strip_tags(trim($sInput),'<a><b><i><u>');
                 if (get_magic_quotes_gpc())
                     $sInput = stripslashes($sInput);
-                $sInput = mysql_real_escape_string($sInput);
+                $sInput = EscapeString($sInput);
                 return $sInput;
             case 'char':
                 $sInput = substr(trim($sInput),0,$size);
                 if (get_magic_quotes_gpc())
                     $sInput = stripslashes($sInput);
-                $sInput = mysql_real_escape_string($sInput);
+                $sInput = EscapeString($sInput);
                 return $sInput;
             case 'int':
                 return (int) intval(trim($sInput));
@@ -246,7 +272,7 @@ function AddToGroup($iPersonID, $iGroupID, $iRoleID)
         // No, get the Default Role for this Group
         $sSQL = "SELECT grp_DefaultRole FROM group_grp WHERE grp_ID = " . $iGroupID;
         $rsRoleID = RunQuery($sSQL);
-        $Row = mysql_fetch_row($rsRoleID);
+        $Row = mysqli_fetch_row($rsRoleID);
         $iRoleID = $Row[0];
     }
 
@@ -258,7 +284,7 @@ function AddToGroup($iPersonID, $iGroupID, $iRoleID)
         // Check if this group has special properties
         $sSQL = "SELECT grp_hasSpecialProps FROM group_grp WHERE grp_ID = " . $iGroupID;
         $rsTemp = RunQuery($sSQL);
-        $rowTemp = mysql_fetch_row($rsTemp);
+        $rowTemp = mysqli_fetch_row($rsTemp);
         $bHasProp = $rowTemp[0];
 
         if ($bHasProp == 'true')
@@ -279,7 +305,7 @@ function RemoveFromGroup($iPersonID, $iGroupID)
     // Check if this group has special properties
     $sSQL = "SELECT grp_hasSpecialProps FROM group_grp WHERE grp_ID = " . $iGroupID;
     $rsTemp = RunQuery($sSQL);
-    $rowTemp = mysql_fetch_row($rsTemp);
+    $rowTemp = mysqli_fetch_row($rsTemp);
     $bHasProp = $rowTemp[0];
 
     if ($bHasProp == 'true')
@@ -291,7 +317,7 @@ function RemoveFromGroup($iPersonID, $iGroupID)
     // Reset any group specific property fields of type "Person from Group" with this person assigned
     $sSQL = "SELECT grp_ID, prop_Field FROM groupprop_master WHERE type_ID = 9 AND prop_Special = " . $iGroupID;
     $result = RunQuery($sSQL);
-    while ($aRow = mysql_fetch_array($result))
+    while ($aRow = mysqli_fetch_array($result))
     {
         $sSQL = "UPDATE groupprop_" . $aRow['grp_ID'] . " SET " . $aRow['prop_Field'] . " = NULL WHERE " . $aRow['prop_Field'] . " = " . $iPersonID;
         RunQuery($sSQL);
@@ -300,7 +326,7 @@ function RemoveFromGroup($iPersonID, $iGroupID)
     // Reset any custom person fields of type "Person from Group" with this person assigned
     $sSQL = "SELECT custom_Field FROM person_custom_master WHERE type_ID = 9 AND custom_Special = " . $iGroupID;
     $result = RunQuery($sSQL);
-    while ($aRow = mysql_fetch_array($result))
+    while ($aRow = mysqli_fetch_array($result))
     {
         $sSQL = "UPDATE person_custom SET " . $aRow['custom_Field'] . " = NULL WHERE " . $aRow['custom_Field'] . " = " . $iPersonID;
         RunQuery($sSQL);
@@ -471,7 +497,7 @@ function AddGroupToPeopleCart($iGroupID)
     $rsGroupMembers = RunQuery($sSQL);
 
     //Loop through the recordset
-    while ($aRow = mysql_fetch_array($rsGroupMembers))
+    while ($aRow = mysqli_fetch_array($rsGroupMembers))
     {
         extract($aRow);
 
@@ -518,7 +544,7 @@ function RemoveGroupFromPeopleCart($iGroupID)
     $rsGroupMembers = RunQuery($sSQL);
 
     //Loop through the recordset
-    while ($aRow = mysql_fetch_array($rsGroupMembers))
+    while ($aRow = mysqli_fetch_array($rsGroupMembers))
     {
         extract($aRow);
 
@@ -529,7 +555,7 @@ function RemoveGroupFromPeopleCart($iGroupID)
 
 
 // Reinstated by Todd Pillars for Event Listing
-// Takes MYSQL DateTime
+// Takes mysql DateTime
 // bWithtime 1 to be displayed
 function FormatDate($dDate, $bWithTime=FALSE)
 {
@@ -552,13 +578,13 @@ function FormatDate($dDate, $bWithTime=FALSE)
 
     // PHP date() function is not used because it is only robust for dates between
     // 1970 and 2038.  This is a problem on systems that are limited to 32 bit integers.  
-    // To handle a much wider range of dates use MySQL date functions.
+    // To handle a much wider range of dates use mysql date functions.
 
     $sSQL = "SELECT DATE_FORMAT('$dDate', '%b') as mn, "
     .       "DAYOFMONTH('$dDate') as dm, YEAR('$dDate') as y, "
     .       "DATE_FORMAT('$dDate', '%k') as h, "
     .       "DATE_FORMAT('$dDate', ':%i') as m";
-    extract(mysql_fetch_array(RunQuery($sSQL)));
+    extract(mysqli_fetch_array(RunQuery($sSQL)));
 
     $month = gettext("$mn"); // Allow for translation of 3 character month abbr
 
@@ -865,7 +891,7 @@ function displayCustomField($type, $data, $special)
             break;
 
 
-        // Handler for extended text fields (MySQL type TEXT, Max length: 2^16-1)
+        // Handler for extended text fields (mysql type TEXT, Max length: 2^16-1)
         case 5:
             /*if (strlen($data) > 100) {
                 return substr($data,0,100) . "...";
@@ -886,7 +912,7 @@ function displayCustomField($type, $data, $special)
             if ($data > 0) {
                 $sSQL = "SELECT per_FirstName, per_LastName FROM person_per WHERE per_ID =" . $data;
                 $rsTemp = RunQuery($sSQL);
-                extract(mysql_fetch_array($rsTemp));
+                extract(mysqli_fetch_array($rsTemp));
                 return $per_FirstName . " " . $per_LastName;
             }
             else return "";
@@ -902,7 +928,7 @@ function displayCustomField($type, $data, $special)
             if ($data > 0) {
                 $sSQL = "SELECT lst_OptionName FROM list_lst WHERE lst_ID = $special AND lst_OptionID = $data";
                 $rsTemp = RunQuery($sSQL);
-                extract(mysql_fetch_array($rsTemp));
+                extract(mysqli_fetch_array($rsTemp));
                 return $lst_OptionName;
             }
             else return "";
@@ -958,7 +984,7 @@ function formCustomField($type, $fieldname, $data, $special, $bFirstPassFlag)
             echo "<textarea Name=\"" . $fieldname . "\" cols=\"40\" rows=\"2\" onKeyPress=\"LimitTextSize(this,100)\">" . htmlentities(stripslashes($data),ENT_NOQUOTES, "UTF-8") . "</textarea>";
             break;
 
-        // Handler for extended text fields (MySQL type TEXT, Max length: 2^16-1)
+        // Handler for extended text fields (mysql type TEXT, Max length: 2^16-1)
         case 5:
             echo "<textarea Name=\"" . $fieldname . "\" cols=\"60\" rows=\"4\" onKeyPress=\"LimitTextSize(this, 65535)\">" . htmlentities(stripslashes($data),ENT_NOQUOTES, "UTF-8") . "</textarea>";
             break;
@@ -1011,7 +1037,7 @@ function formCustomField($type, $fieldname, $data, $special, $bFirstPassFlag)
                 echo ">" . gettext("Unassigned") . "</option>";
                 echo "<option value=\"0\">-----------------------</option>";
 
-                while ($aRow = mysql_fetch_array($rsGroupPeople))
+                while ($aRow = mysqli_fetch_array($rsGroupPeople))
                 {
                     extract($aRow);
 
@@ -1054,7 +1080,7 @@ function formCustomField($type, $fieldname, $data, $special, $bFirstPassFlag)
                 echo "<option value=\"0\" selected>" . gettext("Unassigned") . "</option>";
                 echo "<option value=\"0\">-----------------------</option>";
 
-                while ($aRow = mysql_fetch_array($rsListOptions))
+                while ($aRow = mysqli_fetch_array($rsListOptions))
                 {
                     extract($aRow);
                     echo "<option value=\"" . $lst_OptionID . "\"";
@@ -1665,7 +1691,7 @@ function FindMemberClassID ()
     $sSQL = "SELECT * FROM list_lst WHERE lst_ID = 1 ORDER BY lst_OptionSequence";
     $rsClassifications = RunQuery($sSQL);
 
-    while ($aRow = mysql_fetch_array($rsClassifications))
+    while ($aRow = mysqli_fetch_array($rsClassifications))
     {
         extract($aRow);
         if ($lst_OptionName == gettext ("Member"))
@@ -1674,10 +1700,10 @@ function FindMemberClassID ()
     return (1); // Should not get here, but if we do get here use the default value.
 }
 
-// Prepare data for entry into MySQL database.
-// This function solves the problem of inserting a NULL value into MySQL since
-// MySQL will not accept 'NULL'.  One drawback is that it is not possible
-// to insert the character string "NULL" because it will be inserted as a MySQL NULL!
+// Prepare data for entry into mysql database.
+// This function solves the problem of inserting a NULL value into mysql since
+// mysql will not accept 'NULL'.  One drawback is that it is not possible
+// to insert the character string "NULL" because it will be inserted as a mysql NULL!
 // This will produce a database error if NULL's are not allowed!  Do not use this
 // function if you intend to insert the character string "NULL" into a field.
 function MySQLquote ($sfield)
@@ -1830,7 +1856,7 @@ function getFamilyList($sDirRoleHead, $sDirRoleSpouse, $classification = 0, $sSe
     $sSQL = "SELECT per_FirstName, per_fam_ID FROM person_per WHERE per_fam_ID > 0 AND (" . $head_criteria . ") ORDER BY per_fam_ID";
     $rs_head = RunQuery($sSQL);
     $aHead = array ();
-    while (list ($head_firstname, $head_famid) = mysql_fetch_row($rs_head)) {
+    while (list ($head_firstname, $head_famid) = mysqli_fetch_row($rs_head)) {
         if ($head_firstname && isset ($aHead[$head_famid])) {
             $aHead[$head_famid] .= " & " . $head_firstname;
         } elseif ($head_firstname) {
@@ -1838,7 +1864,7 @@ function getFamilyList($sDirRoleHead, $sDirRoleSpouse, $classification = 0, $sSe
         }
     }
     $familyArray = array();
-    while ($aRow = mysql_fetch_array($rsFamilies)) {
+    while ($aRow = mysqli_fetch_array($rsFamilies)) {
         extract($aRow);
         $name = $fam_Name;
         if (isset ($aHead[$fam_ID])) {
@@ -1891,7 +1917,7 @@ function genGroupKey($methodSpecificID, $famID, $fundIDs, $date) {
         $GroupKey = $methodSpecificID . "|" . $uniqueNum . "|" . $famID . "|" . $fundIDs . "|" . $date;
         $sSQL = "SELECT COUNT(plg_GroupKey) FROM pledge_plg WHERE plg_PledgeOrPayment='Payment' AND plg_GroupKey='" . $GroupKey . "'";
         $rsResults = RunQuery($sSQL);
-        list($numGroupKeys) = mysql_fetch_row($rsResults);
+        list($numGroupKeys) = mysqli_fetch_row($rsResults);
         if ($numGroupKeys) {
             ++$uniqueNum;
         } else {

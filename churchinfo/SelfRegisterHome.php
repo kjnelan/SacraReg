@@ -39,7 +39,7 @@ if (isset($_POST["Forgot"])) {
 	
 	$result = $link->query($query) or die('Query failed: ' . $link->error());
 	if ($result->num_rows == 1) {
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		extract ($line);
 		$_SESSION["RegID"] = $reg_id;
 		$_SESSION['CaptchaPassed'] = 'true';
@@ -69,18 +69,18 @@ if (array_key_exists ("RegID", $_SESSION)) {
 	$query = "SELECT * FROM register_reg WHERE reg_id='$reg_id'"; //reg_firstname, reg_lastname
 	$result = $link->query($query) or die('Query failed: ' . $link->error());
 	if ($result->num_rows == 1) {
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		extract ($line);
 		
 		$query = "SELECT * FROM family_fam WHERE fam_id='$reg_famid'";
 		$result = $link->query($query) or die('Query failed: ' . $link->error());
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		if ($result->num_rows == 1)
 			extract ($line);
 			
 		$query = "SELECT * FROM person_per WHERE per_id='$reg_perid'";
 		$result = $link->query($query) or die('Query failed: ' . $link->error());
-		$line = $result->fetch_array(MYSQL_ASSOC);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
 		if ($result->num_rows == 1)
 			extract ($line);
 	}
@@ -239,7 +239,7 @@ else
 $numAutoPayments = 0;
 $numAutoPaymentsWithAmount = 0;
 //Loop through all payment methods
-while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
+while ($aRow = $rsAutoPayments->fetch_array(MYSQLI_ASSOC))
 {
 	$numAutoPayments += 1;
 	
@@ -290,7 +290,7 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 $numAutoPayments = 0;
 //Loop through all payment methods
 $rsAutoPayments->data_seek(0);
-while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
+while ($aRow = $rsAutoPayments->fetch_array(MYSQLI_ASSOC))
 {
 	$numAutoPayments += 1;
 	
@@ -353,7 +353,7 @@ while ($aRow = $rsAutoPayments->fetch_array(MYSQL_ASSOC))
 
 <?php
 //Loop through all pledges
-while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
+while ($aRow = $rsPledges->fetch_array(MYSQLI_ASSOC))
 {
 	extract($aRow);
 
@@ -402,7 +402,7 @@ while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
 <?php
 //Loop through all pledges
 $rsPledges->data_seek(0);
-while ($aRow = $rsPledges->fetch_array(MYSQL_ASSOC))
+while ($aRow = $rsPledges->fetch_array(MYSQLI_ASSOC))
 {
 	extract($aRow);
 

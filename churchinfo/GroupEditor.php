@@ -68,7 +68,7 @@ if (isset($_POST["GroupSubmit"]))
 		{
 			//Get a new Role List ID
 			$sSQL = "SELECT MAX(lst_ID) FROM list_lst";
-			$aTemp = mysql_fetch_array(RunQuery($sSQL));
+			$aTemp = mysqli_fetch_array(RunQuery($sSQL));
 			if ($aTemp[0] > 9)
 				$newListID = $aTemp[0] + 1;
 			else
@@ -87,7 +87,7 @@ if (isset($_POST["GroupSubmit"]))
 		{
 			$sSQLtest = "SELECT grp_hasSpecialProps FROM group_grp WHERE grp_ID = " . $iGroupID;
 			$rstest = RunQuery($sSQLtest);
-			$aRow = mysql_fetch_array($rstest);
+			$aRow = mysqli_fetch_array($rstest);
 
 			$bCreateGroupProps = ($aRow[0] == 'false') && $bUseGroupProps;
 			$bDeleteGroupProps = ($aRow[0] == 'true') && !$bUseGroupProps;
@@ -119,15 +119,15 @@ if (isset($_POST["GroupSubmit"]))
 		if ($bGetKeyBack)
 		{
 			//Get the key back
-			$iGroupID = mysql_insert_id($cnInfoCentral);
+			$iGroupID = mysqli_insert_id($cnInfoCentral);
 
 			if (($cloneGroupRole) && ($seedGroupID>0)) {
 				$sSQL = "SELECT list_lst.* FROM list_lst, group_grp WHERE group_grp.grp_RoleListID = list_lst.lst_ID AND group_grp.grp_id = $seedGroupID ORDER BY list_lst.lst_OptionID";
 				$rsRoleSeed = RunQuery($sSQL);
-				while ($aRow = mysql_fetch_array($rsRoleSeed))
+				while ($aRow = mysqli_fetch_array($rsRoleSeed))
 				{
 					extract ($aRow);
-					$useOptionName = mysql_real_escape_string($lst_OptionName);
+					$useOptionName = EscapeString($lst_OptionName);
 					$sSQL = "INSERT INTO list_lst VALUES ($newListID, $lst_OptionID, $lst_OptionSequence, '$useOptionName')";
 					RunQuery($sSQL);
 				}
@@ -154,7 +154,7 @@ if (isset($_POST["GroupSubmit"]))
 				$sSQL = "SELECT per_ID FROM person_per INNER JOIN person2group2role_p2g2r ON per_ID = p2g2r_per_ID WHERE p2g2r_grp_ID = " . $iGroupID . " ORDER BY per_ID";
 				$rsGroupMembers = RunQuery($sSQL);
 
-				while ($aRow = mysql_fetch_array($rsGroupMembers))
+				while ($aRow = mysqli_fetch_array($rsGroupMembers))
 				{
 					$sSQLr = "INSERT INTO groupprop_" . $iGroupID . " ( `per_ID` ) VALUES ( '" . $aRow[0] . "' );";
 					RunQuery($sSQLr);
@@ -191,7 +191,7 @@ else
 		//Get the information on this familyAge Groups for the drop down
 		$sSQL = "SELECT * FROM group_grp WHERE grp_ID = " . $iGroupID;
 		$rsGroup = RunQuery($sSQL);
-		$aRow = mysql_fetch_array($rsGroup);
+		$aRow = mysqli_fetch_array($rsGroup);
 
 		$iGroupID = $aRow["grp_ID"];
 		$iGroupType = $aRow["grp_Type"];
@@ -262,7 +262,7 @@ function confirmAdd() {
 					<option value="0"><?php echo gettext("Unassigned"); ?></option>
 					<option value="0">-----------------------</option>
 					<?php
-					while ($aRow = mysql_fetch_array($rsGroupTypes))
+					while ($aRow = mysqli_fetch_array($rsGroupTypes))
 					{
 						extract($aRow);
 						echo "<option value=\"" . $lst_OptionID . "\"";
@@ -288,7 +288,7 @@ function confirmAdd() {
 			<option value="0"><?php gettext("Select a group"); ?></option>
 			
 			<?php
-				while ($aRow = mysql_fetch_array($rsGroupRoleSeed))
+				while ($aRow = mysqli_fetch_array($rsGroupRoleSeed))
 				{
 					extract($aRow);
 					echo "<option value=\"" . $grp_ID . "\">" . $grp_Name . "</option>";
