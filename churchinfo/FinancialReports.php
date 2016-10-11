@@ -311,7 +311,9 @@ if ($sReportType == "") {
 		echo "<tr><td class=LabelColumn>".gettext("Output Method:")."</td>";
 		echo "<td class=TextColumnWithBottomBorder><input name=output type=radio checked value='pdf'>".gettext("PDF");
 		echo " <input name=output type=radio value='csv'>".gettext("CSV");
-		echo " <input name=output type=radio value='email'>".gettext("EMAIL TO FAMILY");
+		if ($sReportType == "Giving Report"){
+			echo " <input name=output type=radio value='email'>".gettext("EMAIL TO FAMILY");
+		}
 		echo "</td></tr>";
 	} else {
 		echo "<input name=output type=hidden value='pdf'>";
