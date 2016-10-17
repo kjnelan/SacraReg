@@ -32,8 +32,8 @@
 ******************************************************************************/
 
 // Establish the database connection (mysql_ library)
-$cnInfoCentral = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE) 
-        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
+$cnInfoCentral = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
+        or die ('Cannot connect to the mysql server because: ' . mysqli_connect_error());
 
 // Establish the database connection (mysqli_ library)
 $cnChurchInfo = mysqli_connect($sSERVERNAME,$sUSER,$sPASSWORD,$sDATABASE);
