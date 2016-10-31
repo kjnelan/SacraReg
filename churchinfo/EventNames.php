@@ -60,7 +60,7 @@ if (isset ($_POST['Action'])) {
 	    // Insert into the event_name table
 	    $sSQL = "INSERT INTO event_types () VALUES()";
 	    RunQuery($sSQL);
-	    $theID = mysqli_insert_id($cnInfoCentral);
+	    $theID = mysqli_insert_id($cnChurchInfo);
 	    $editID=$theID;
 	    $editing='TRUE';
 	    $_POST['Action']='';

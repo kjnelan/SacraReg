@@ -458,7 +458,7 @@ function create_side_nav($menu) {
     echo "</p>\n";
 }
 function addSection($menu) {
-    global $cnInfoCentral;
+    global $cnChurchInfo;
     
     $security_matrix = " AND (security_grp = 'bALL'";
     if ($_SESSION['bAdmin']) {
@@ -479,7 +479,7 @@ function addSection($menu) {
     $security_matrix .= ")";
     $query = "SELECT name, ismenu, content, uri, statustext, session_var, session_var_in_text, session_var_in_uri, url_parm_name, security_grp FROM menuconfig_mcf WHERE parent = '$menu' AND active=1 ".$security_matrix." ORDER BY sortorder";
     
-    $rsMenu = mysqli_query( $cnInfoCentral, $query);
+    $rsMenu = mysqli_query( $cnChurchInfo, $query);
     $item_cnt = mysqli_num_rows($rsMenu);
     $ptr = 1;
     while ($aRow = mysqli_fetch_array($rsMenu)) {    

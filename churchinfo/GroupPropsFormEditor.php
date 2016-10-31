@@ -165,7 +165,7 @@ else
 				// Find the highest existing field number in the group's table to determine the next free one.
 				// This is essentially an auto-incrementing system where deleted numbers are not re-used.
 				$tableName = "groupprop_" . $iGroupID;
-				$fields = mysqli_query($cnInfoCentral, "SHOW COLUMNS FROM $sDATABASE.$tableName");
+				$fields = mysqli_query($cnChurchInfo, "SHOW COLUMNS FROM $sDATABASE.$tableName");
 				$last = mysqli_num_fields($fields) - 1;
 
 				// Set the new field number based on the highest existing.  Chop off the "c" at the beginning of the old one's name.

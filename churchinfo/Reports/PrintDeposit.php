@@ -94,11 +94,11 @@ if ($output == "pdf") {
 
 		// Constructor
 		function PDF_AccessReport() {
-			parent::FPDF("P", "mm", $this->paperFormat);
+			parent::__construct("P", "mm", $this->paperFormat);
 
 			$this->_Font        = "Courier";
 			$this->SetMargins(0,0);
-			$this->Open();
+	
 			$this->Set_Char_Size(10);
 			$this->AddPage();
 			$this->SetAutoPageBreak(false);
@@ -111,7 +111,7 @@ if ($output == "pdf") {
 	$pdf = new PDF_AccessReport();
 
 	// Read in report settings from database
-	$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+	$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 	if ($rsConfig) {
 		while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 			$pdf->$cfg_name = $cfg_value;

@@ -98,7 +98,7 @@ if (!$iPropertyID)
 
 function UpdateProperty($iRecordID,$sValue,$iPropertyID,$sAction)
 {
-	global $cnInfoCentral;
+	global $cnChurchInfo;
 
 	if ($sAction == "add")
 	{

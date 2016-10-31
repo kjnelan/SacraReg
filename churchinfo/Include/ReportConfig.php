@@ -80,6 +80,8 @@ class ChurchInfoReport extends FPDF {
    function StartLetterPage ($fam_ID, $fam_Name, $fam_Address1, $fam_Address2, $fam_City, $fam_State, $fam_Zip, $fam_Country, $letterhead="") {
 		global $sDefaultCountry;
 		$this->AddPage();
+		$this->incrementY = 4.0;
+		$this->leftX = 10.0;
 
 		if ($letterhead == "graphic" && is_readable($this->bDirLetterHead)) {
 			$this->Image($this->bDirLetterHead,12,15,185);

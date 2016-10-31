@@ -11,13 +11,13 @@ $sSQL .= ", aut_Account=CONCAT(\"*****\",SUBSTR(aut_Account,LENGTH(aut_Account)-
 $sSQL .= " WHERE aut_ID=$iVancoAutID";
 
 $bSuccess = false;
-if ($result = mysqli_query( $cnInfoCentral, $sSQL))
+if ($result = mysqli_query( $cnChurchInfo, $sSQL))
     $bSuccess = true;
 
 $errStr = "";
 
 if (! $bSuccess)
-	$errStr = gettext("Cannot execute query.") . "<p>$sSQL<p>" . mysqli_error($cnInfoCentral);
+	$errStr = gettext("Cannot execute query.") . "<p>$sSQL<p>" . mysqli_error($cnChurchInfo);
 
 header('Content-type: application/json');
 echo json_encode(array('Success'=>$bSuccess, 'ErrStr'=>$errStr));

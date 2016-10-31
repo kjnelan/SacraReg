@@ -22,11 +22,10 @@ $iCurrentFundraiser = $_GET["CurrentFundraiser"];
 class PDF_FRBidSheetsReport extends ChurchInfoReport {
 	// Constructor
 	function PDF_FRBidSheetsReport() {
-		parent::FPDF("P", "mm", $this->paperFormat);
+		parent::__construct("P", "mm", $this->paperFormat);
 		$this->leftX = 10;
 		$this->SetFont("Times",'',10);
 		$this->SetMargins(15,25);
-		$this->Open();
 		$this->SetAutoPageBreak(true, 25);
 	}
 	
@@ -62,7 +61,7 @@ $pdf = new PDF_FRBidSheetsReport();
 $pdf->SetTitle ($fr_title);
 
 // Read in report settings from database
-$rsConfig = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
 	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$pdf->$cfg_name = $cfg_value;

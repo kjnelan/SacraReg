@@ -25,7 +25,7 @@ $sSearchType = FilterInput($_GET["searchtype"],'string');
 //Are we looking for an individual? Most commonly from main search.
 if ($sSearchType=="person") {
 	$fetch = 'SELECT per_ID, per_FirstName, per_LastName, CONCAT_WS(" ",per_FirstName,per_LastName) AS fullname, per_fam_ID  FROM `person_per` WHERE per_FirstName LIKE \'%'.$sSearchTerm.'%\' OR per_LastName LIKE \'%'.$sSearchTerm.'%\'  OR CONCAT_WS(" ",per_FirstName,per_LastName) LIKE \'%'.$sSearchTerm.'%\' LIMIT 15';
-	$result=mysqli_query($cnInfoCentral, $fetch);
+	$result=mysqli_query($cnChurchInfo, $fetch);
 
 	$return = array();
 	while($row=mysqli_fetch_array($result)) {

@@ -25,19 +25,18 @@ $curY = 0;
 class PDF_FRCatalogReport extends ChurchInfoReport {
 	// Constructor
 	function PDF_FRCatalogReport() {
-		parent::FPDF("P", "mm", $this->paperFormat);
+		parent::__construct("P", "mm", $this->paperFormat);
 		$this->leftX = 10;
 		$this->SetFont("Times",'',10);
 		$this->SetMargins(10,20);
-		$this->Open();
 		$this->AddPage ();
 		$this->SetAutoPageBreak(true, 25);
 	}
 	
-	function AddPage ($orientation='', $format='') {
+	function AddPage () {
 		global $fr_title, $fr_description, $curY;
 
-		parent::AddPage($orientation, $format);
+		parent::AddPage();
 		
     	$this->SetFont("Times",'B',16);
     	$this->Write (8, $fr_title."\n");
@@ -64,7 +63,7 @@ $pdf = new PDF_FRCatalogReport();
 $pdf->SetTitle ($fr_title);
 
 // Read in report settings from database
-$rsConfig = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
 	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$pdf->$cfg_name = $cfg_value;

@@ -9,7 +9,7 @@ $iGroupID = FilterInput($_GET["GroupID"],'int');
 // Read values from config table into local variables
 // **************************************************
 $sSQL = "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'";
-$rsConfig = mysqli_query($cnInfoCentral, $sSQL);			// Can't use RunQuery -- not defined yet
+$rsConfig = mysqli_query($cnChurchInfo, $sSQL);			// Can't use RunQuery -- not defined yet
 if ($rsConfig) {
 	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$$cfg_name = $cfg_value;

@@ -79,7 +79,7 @@ if (isset($_POST["SQL"]))
 function ExportQueryResults()
 {
 
-	global $cnInfoCentral;
+	global $cnChurchInfo;
 	global $aRowClass;
 	global $rsQueryResults;
 	global $sSQL;
@@ -135,7 +135,7 @@ function ExportQueryResults()
 function RunFreeQuery()
 {
 
-	global $cnInfoCentral;
+	global $cnChurchInfo;
 	global $aRowClass;
 	global $rsQueryResults;
 	global $sSQL;

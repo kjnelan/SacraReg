@@ -32,9 +32,6 @@ if ($debug == TRUE) // Report all PHP errors (-1)
 else // Turn off error reporting
     error_reporting(0);
 
-// Establish the database connection (mysql_ library)
-$cnInfoCentral = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE);
-
 // Establish the database connection (mysqli_ library)
 $cnChurchInfo = mysqli_connect($sSERVERNAME,$sUSER,$sPASSWORD,$sDATABASE);
 
@@ -90,10 +87,10 @@ function Redirect($sRelativeURL)
 
 function RunQuery($sSQL, $bStopOnError = true)
 {
-    global $cnInfoCentral;
+    global $cnChurchInfo;
     global $debug;
 
-    if ($result = mysqli_query( $cnInfoCentral, $sSQL))
+    if ($result = mysqli_query( $cnChurchInfo, $sSQL))
         return $result;
     elseif ($bStopOnError)
     {

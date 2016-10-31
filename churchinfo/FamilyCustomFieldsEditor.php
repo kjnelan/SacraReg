@@ -158,7 +158,7 @@ else
                 // determine the next free one.
                 // This is essentially an auto-incrementing system where 
                 // deleted numbers are not re-used.
-                $fields = mysqli_query( $cnInfoCentral, "SHOW COLUMNS FROM $sDATABASE.family_custom");
+                $fields = mysqli_query( $cnChurchInfo, "SHOW COLUMNS FROM $sDATABASE.family_custom");
                 $last = mysqli_num_fields($fields) - 1;
 
                 // Set the new field number based on the highest existing.  

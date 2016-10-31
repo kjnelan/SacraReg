@@ -123,8 +123,8 @@ class PDF_Directory extends ChurchInfoReport {
 
     // Constructor
     function PDF_Directory($nc=1, $paper='letter', $fs=10, $ls=4) {
-//        parent::FPDF("P", "mm", $this->paperFormat);
-	parent::FPDF("P", "mm", $paper);
+//        parent::__construct("P", "mm", $this->paperFormat);
+	parent::__construct("P", "mm", $paper);
 	$this->_Char_Size = $fs;
 	$this->_LS = $ls;
 
@@ -599,7 +599,7 @@ if ($numCustomFields > 0) {
 }
 
 // Read in report settings from database
-$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
     while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
         $pdf->$cfg_name = $cfg_value;
@@ -641,7 +641,7 @@ if (array_key_exists ('cartdir', $_POST))
     $sWhereExt .= "AND per_ID IN (" . ConvertCartToString($_SESSION['aPeopleCart']) . ")";
 }
 
-$mysqlinfo = mysqli_get_server_info($cnInfoCentral);
+$mysqlinfo = mysqli_get_server_info($cnChurchInfo);
 $mysqltmp = explode(".", $mysqlinfo);
 $mysqlversion = $mysqltmp[0];
 if(count($mysqltmp[1] > 1)) 
@@ -823,7 +823,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
 
 if($mysqlversion == 3 && $mysqlsubversion >= 22){
     $sSQL = "DROP TABLE IF EXISTS tmp;";
-    mysqli_query($cnInfoCentral, $sSQL);
+    mysqli_query($cnChurchInfo, $sSQL);
 }
 header('Pragma: public');  // Needed for IE when using a shared SSL certificate
     

@@ -438,7 +438,7 @@ if (isset($_POST["FamilySubmit"]) || isset($_POST["FamilySubmitAndAdd"]))
 								$aClassification[$iCount])";
 					RunQuery($sSQL);
 					$sSQL = "INSERT INTO person_custom (per_ID) VALUES (" 
-								. mysqli_insert_id($cnInfoCentral) . ")";
+								. mysqli_insert_id($cnChurchInfo) . ")";
 					RunQuery($sSQL);
 					RunQuery("UNLOCK TABLES");
 				}

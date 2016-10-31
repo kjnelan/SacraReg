@@ -186,10 +186,10 @@ if (($output == "pdf") or ($output == "email")) {
 
 		// Constructor
 		function PDF_TaxReport() {
-			parent::FPDF("P", "mm", $this->paperFormat);
+			parent::__construct("P", "mm", $this->paperFormat);
 			$this->SetFont("Times",'',10);
 			$this->SetMargins(20,20);
-			$this->Open();
+	
 			$this->SetAutoPageBreak(false);
 		}
 
@@ -285,7 +285,7 @@ if (($output == "pdf") or ($output == "email")) {
 	$pdf = new PDF_TaxReport();
 	
 	// Read in report settings from database
-	$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+	$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
    if ($rsConfig) {
 		while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 			$pdf->$cfg_name = $cfg_value;
@@ -381,7 +381,7 @@ if (($output == "pdf") or ($output == "email")) {
                 RunQuery($sSQL);
 				$pdf = new PDF_TaxReport();
 				// ReRead in report settings from database to re init.. ALAN TODO this seems overkill.. new filename API?
-				$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+				$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 				if ($rsConfig) {
 					while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 						$pdf->$cfg_name = $cfg_value;

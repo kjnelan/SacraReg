@@ -56,12 +56,12 @@ class PDF_FundRaiserReport extends ChurchInfoReport {
 	
 	// Constructor
 	function PDF_FundRaiserReport() {
-		parent::FPDF('P', 'mm', $this->paperFormat);
+		parent::__construct('P', 'mm', $this->paperFormat);
 		$this->_Column      = 0;
 		$this->_CurLine     = 2;
 		$this->_Font        = 'arial';
 		$this->SetMargins(0,0);
-		$this->Open();
+
 		$this->Set_Char_Size(12);
 		$this->AddPage();
 		$this->SetAutoPageBreak(false);
@@ -90,7 +90,7 @@ class PDF_FundRaiserReport extends ChurchInfoReport {
 }
 
 // Read in report settings from database
-$rsConfig = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
 	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$pdf->$cfg_name = $cfg_value;

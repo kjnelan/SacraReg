@@ -173,11 +173,11 @@ class PDF_FamilyPledgeSummaryReport extends ChurchInfoReport {
 
 	// Constructor
 	function PDF_FamilyPledgeSummaryReport() {
-		parent::FPDF("P", "mm", $this->paperFormat);
+		parent::__construct("P", "mm", $this->paperFormat);
 
 		$this->SetFont('Times','', 10);
 		$this->SetMargins(20,20);
-		$this->Open();
+
 		$this->SetAutoPageBreak(false);
 		$this->incrementY = 0;
 	}
@@ -218,7 +218,7 @@ $pdf->WriteAtCell ($famOweX, $y, $famOweWid, "Owe");
 $y += $lineInc;
 
 // Read in report settings from database
-$rsConfig = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
 	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$pdf->$cfg_name = $cfg_value;

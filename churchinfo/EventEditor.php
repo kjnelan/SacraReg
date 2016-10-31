@@ -352,7 +352,7 @@ else if ($sAction = gettext('Edit') && !empty($sOpp))
                      `inactive` = '".$iEventStatus."',  
                      `event_typename` = '".$sTypeName."'";  
             RunQuery($sSQL);
-            $iEventID = mysqli_insert_id($cnInfoCentral);
+            $iEventID = mysqli_insert_id($cnChurchInfo);
             for($c=0; $c<$iNumCounts; $c++)
             {
               $cCnt = ltrim(rtrim($aCountName[$c]));

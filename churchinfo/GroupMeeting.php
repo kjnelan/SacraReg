@@ -54,10 +54,10 @@ if (isset($_POST["Submit"]))
 		$sSQL = "SELECT * FROM person_per, person2group2role_p2g2r WHERE per_ID = p2g2r_per_ID AND p2g2r_grp_ID = " . $iGroupID;
 		$rsGroupMembers = RunQuery($sSQL);
 
-		mysqli_select_db ($cnInfoCentral, $sWEBCALENDARDB);
+		mysqli_select_db ($cnChurchInfo, $sWEBCALENDARDB);
 
 		$q = "SELECT MAX(cal_id) AS calID FROM webcal_entry";
-		$rsEventID = mysqli_query($cnInfoCentral, $q);
+		$rsEventID = mysqli_query($cnChurchInfo, $q);
 		extract(mysqli_fetch_array($rsEventID));
 
 		$calID = $calID + 1;
@@ -97,7 +97,7 @@ if (isset($_POST["Submit"]))
 										"'P'," .
 										"'" . $tName . "'," .
 										"'" . $tDescription . "')";
-		mysqli_query($cnInfoCentral, $q);
+		mysqli_query($cnChurchInfo, $q);
 
 		$q = "INSERT INTO webcal_entry_user (cal_id,
 		                                     cal_login,
@@ -105,7 +105,7 @@ if (isset($_POST["Submit"]))
 									VALUES (" . $calID . "," .
 									        "'__public__'," .
 											"'A')";
-		mysqli_query($cnInfoCentral, $q);
+		mysqli_query($cnChurchInfo, $q);
 
 		$q = "INSERT INTO webcal_site_extras (cal_id,
 		                                      cal_name,
@@ -119,25 +119,25 @@ if (isset($_POST["Submit"]))
 											"0," .
 											"1," .
 											"'" . ($nNotifyAhead * 60 * 24) . "')";
-		mysqli_query($cnInfoCentral, $q);
+		mysqli_query($cnChurchInfo, $q);
 
-		mysqli_select_db ($cnInfoCentral, $sDATABASE);
+		mysqli_select_db ($cnChurchInfo, $sDATABASE);
 		while ($aRow = mysqli_fetch_array($rsGroupMembers))
 		{
 			extract($aRow);
-			mysqli_select_db ($cnInfoCentral, $sWEBCALENDARDB);
+			mysqli_select_db ($cnChurchInfo, $sWEBCALENDARDB);
 			$q = "INSERT INTO webcal_entry_ext_user (cal_id,
 			                                         cal_fullname,
 													 cal_email)
 											VALUES (" . $calID . "," .
 											        "'" . $per_FirstName . " " . $per_LastName . "'," .
 													"'" . $per_Email . "')";
-			mysqli_query($cnInfoCentral, $q);
+			mysqli_query($cnChurchInfo, $q);
 
-			mysqli_select_db ($cnInfoCentral, $sDATABASE);
+			mysqli_select_db ($cnChurchInfo, $sDATABASE);
 		}
 
-		mysqli_select_db ($cnInfoCentral, $sDATABASE);
+		mysqli_select_db ($cnChurchInfo, $sDATABASE);
 
 		Redirect ($linkBack);
 	}

@@ -81,11 +81,11 @@ class PDF_Attendance extends ChurchInfoReport {
 
     // Constructor
     function PDF_Attendance() {
-		parent::FPDF("P", "mm", $this->paperFormat);
+		parent::__construct("P", "mm", $this->paperFormat);
 
 		$this->incrementY = 6;
 		$this->SetMargins(0,0);
-		$this->Open();
+
 		$this->SetFont("Times",'',14);
 		$this->SetAutoPageBreak(false);
 		$this->AddPage ();
@@ -318,7 +318,7 @@ $epd = 3;
 $pdf = new PDF_Attendance();
 
 // Read in report settings from database
-$rsConfig = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
 	while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
 		$pdf->$cfg_name = $cfg_value;

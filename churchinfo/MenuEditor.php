@@ -18,7 +18,7 @@ require "Include/Config.php";
 require "Include/Functions.php";
 
 function DelChildren($menu) {
-	global $cnInfoCentral;
+	global $cnChurchInfo;
 	
 	$sSQL = "SELECT mid, name, ismenu, content, uri, statustext, session_var, session_var_in_text, session_var_in_uri, url_parm_name, security_grp, active FROM menuconfig_mcf WHERE parent = '$menu' ORDER BY sortorder";
 	

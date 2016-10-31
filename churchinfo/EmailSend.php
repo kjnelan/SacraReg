@@ -287,7 +287,7 @@ function SendEmail($sSubject, $sMessage, $attachName, $hasAttach, $sRecipient)
 
 // Create log table if it does not already exist
 $bTableExists = FALSE;
-if(mysqli_num_rows(mysqli_query($GLOBALS["___mysqli_ston"], "SHOW TABLES LIKE 'email_job_log_$iUserID'")) == 1 ) {
+if(mysqli_num_rows(mysqli_query($cnChurchInfo, "SHOW TABLES LIKE 'email_job_log_$iUserID'")) == 1 ) {
     $bTableExists = TRUE;
 }
 

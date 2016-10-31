@@ -40,10 +40,10 @@ class PDF_FundRaiserReport extends ChurchInfoReport {
 
 	// Constructor
 	function PDF_FundRaiserStatement() {
-		parent::FPDF("P", "mm", $this->paperFormat);
+		parent::__construct("P", "mm", $this->paperFormat);
 		$this->SetFont("Times",'',10);
 		$this->SetMargins(20,20);
-		$this->Open();
+
 		$this->SetAutoPageBreak(false);
 	}
 

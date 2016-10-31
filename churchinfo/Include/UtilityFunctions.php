@@ -145,10 +145,10 @@ function MakeFYString ($iFYID)
 // By default stop on error, unless a second (optional) argument is passed as false.
 function RunQuery($sSQL, $bStopOnError = true)
 {
-    global $cnInfoCentral;
+    global $cnChurchInfo;
     global $debug;
 
-    if ($result = mysqli_query( $cnInfoCentral, $sSQL))
+    if ($result = mysqli_query( $cnChurchInfo, $sSQL))
         return $result;
     elseif ($bStopOnError)
     {
@@ -185,15 +185,15 @@ function RunQueryI($sSQL, $bStopOnError = true)
 
 function EscapeString ($str)
 {
-    global $cnInfoCentral;
-    return (mysqli_real_escape_string($cnInfoCentral, $str));    
+    global $cnChurchInfo;
+    return (mysqli_real_escape_string($cnChurchInfo, $str));    
 }
 
 function MySQLError ()
 {
-    global $cnInfoCentral;
-    if (is_object($cnInfoCentral)) 
-		return (mysqli_error ($cnInfoCentral));
+    global $cnChurchInfo;
+    if (is_object($cnChurchInfo)) 
+		return (mysqli_error ($cnChurchInfo));
 	else
 		return (mysqli_connect_error());
 }
@@ -265,7 +265,7 @@ function FilterInput($sInput,$type = 'string',$size = 1)
 //
 function AddToGroup($iPersonID, $iGroupID, $iRoleID)
 {
-    global $cnInfoCentral;
+    global $cnChurchInfo;
 
     // Was a RoleID passed in?
     if ($iRoleID == 0) {
@@ -865,7 +865,7 @@ function FormatAddressLine($Address, $City, $State)
 //
 function displayCustomField($type, $data, $special)
 {
-    global $cnInfoCentral;
+    global $cnChurchInfo;
 
     switch ($type)
     {
@@ -947,7 +947,7 @@ function displayCustomField($type, $data, $special)
 //
 function formCustomField($type, $fieldname, $data, $special, $bFirstPassFlag)
 {
-    global $cnInfoCentral;
+    global $cnChurchInfo;
 
     switch ($type)
     {

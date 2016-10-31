@@ -33,11 +33,11 @@ function Start_Menu($menu) {
 	GetMenu($menu, 0);
 }
 function GetMenu($menu, $plvl) {
-	global $cnInfoCentral;
+	global $cnChurchInfo;
 	
 	$query = "SELECT mid, name, ismenu, content, uri, statustext, session_var, session_var_in_text, session_var_in_uri, url_parm_name, security_grp, active FROM menuconfig_mcf WHERE parent = '$menu' ORDER BY sortorder";
 	
-	$rsMenu = mysqli_query( $cnInfoCentral, $query);
+	$rsMenu = mysqli_query( $cnChurchInfo, $query);
 	$item_cnt = mysqli_num_rows($rsMenu);
 	$idx = 1;
 	$ptr = 1;

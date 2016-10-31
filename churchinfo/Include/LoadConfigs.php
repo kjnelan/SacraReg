@@ -31,15 +31,11 @@
 *
 ******************************************************************************/
 
-// Establish the database connection (mysql_ library)
-$cnInfoCentral = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
-        or die ('Cannot connect to the mysql server because: ' . mysqli_connect_error());
-
 // Establish the database connection (mysqli_ library)
 $cnChurchInfo = mysqli_connect($sSERVERNAME,$sUSER,$sPASSWORD,$sDATABASE);
-        
+
 $sql = "SHOW TABLES FROM `$sDATABASE`";
-$tableRes = mysqli_query ($cnInfoCentral, $sql);
+$tableRes = mysqli_query ($cnChurchInfo, $sql);
 $tablecheck = mysqli_num_rows($tableRes);
 
 if (!$tablecheck) {
@@ -55,17 +51,17 @@ if (strlen($sRootPath) < 2) $sRootPath = '';
 // Some webhosts make it difficult to use DOCUMENT_ROOT.  Define our own!
 $sDocumentRoot = dirname(dirname(__FILE__));
 
-$version = mysqli_fetch_row(mysqli_query($cnInfoCentral, "SELECT version()"));
+$version = mysqli_fetch_row(mysqli_query($cnChurchInfo, "SELECT version()"));
 
 if (substr($version[0],0,3) >= "4.1") {
-    mysqli_query($cnInfoCentral, "SET NAMES 'utf8'");
+    mysqli_query($cnChurchInfo, "SET NAMES 'utf8'");
 }
 
 // Read values from config table into local variables
 // **************************************************
 $sSQL = "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value "
       . "FROM config_cfg WHERE cfg_section='General'";
-$rsConfig = mysqli_query($cnInfoCentral, $sSQL);         // Can't use RunQuery -- not defined yet
+$rsConfig = mysqli_query($cnChurchInfo, $sSQL);         // Can't use RunQuery -- not defined yet
 if ($rsConfig) {
     while (list($cfg_name, $value) = mysqli_fetch_row($rsConfig)) {
         $$cfg_name = $value;
@@ -77,7 +73,7 @@ if (isset($_SESSION['iUserID'])) {      // Not set on Default.php
     // **************************************************
     $sSQL = "SELECT ucfg_name, ucfg_value AS value "
           . "FROM userconfig_ucfg WHERE ucfg_per_ID='".$_SESSION['iUserID']."'";
-    $rsConfig = mysqli_query($cnInfoCentral, $sSQL);     // Can't use RunQuery -- not defined yet
+    $rsConfig = mysqli_query($cnChurchInfo, $sSQL);     // Can't use RunQuery -- not defined yet
     if ($rsConfig) {
         while (list($ucfg_name, $value) = mysqli_fetch_row($rsConfig)) {
             $$ucfg_name = $value;

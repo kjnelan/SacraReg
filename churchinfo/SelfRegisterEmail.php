@@ -2,7 +2,7 @@
 require 'Include/PHPMailer-5.2.14/PHPMailerAutoload.php';
 
 // read the report settings to pick up sChurchName
-$rsConfig = mysqli_query($cnInfoCentral, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
+$rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
 if ($rsConfig) {
     while (list($cfg_name, $cfg_value) = mysqli_fetch_row($rsConfig)) {
         $$cfg_name = $cfg_value;

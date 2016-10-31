@@ -61,7 +61,7 @@ $sSQL .= " WHERE aut_ID=$iVancoAutID";
 $resultArr = array ();
 
 $bSuccess = false;
-if ($result = mysqli_query( $cnInfoCentral, $sSQL))
+if ($result = mysqli_query( $cnChurchInfo, $sSQL))
     $bSuccess = true;
 
 if (! $bSuccess) {

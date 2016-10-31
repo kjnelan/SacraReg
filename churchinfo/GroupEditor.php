@@ -119,7 +119,7 @@ if (isset($_POST["GroupSubmit"]))
 		if ($bGetKeyBack)
 		{
 			//Get the key back
-			$iGroupID = mysqli_insert_id($cnInfoCentral);
+			$iGroupID = mysqli_insert_id($cnChurchInfo);
 
 			if (($cloneGroupRole) && ($seedGroupID>0)) {
 				$sSQL = "SELECT list_lst.* FROM list_lst, group_grp WHERE group_grp.grp_RoleListID = list_lst.lst_ID AND group_grp.grp_id = $seedGroupID ORDER BY list_lst.lst_OptionID";

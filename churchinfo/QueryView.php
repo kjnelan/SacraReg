@@ -203,7 +203,7 @@ function DisplayRecordCount()
 //Runs the parameterized SQL and display the results
 function DoQuery()
 {
-	global $cnInfoCentral;
+	global $cnChurchInfo;
 	global $aRowClass;
 	global $rsQueryResults;
 	global $qry_SQL;
@@ -312,7 +312,7 @@ function DisplayParameterForm()
 	global $rsParameters;
 	global $iQueryID;
 	global $aErrorText;
-	global $cnInfoCentral;
+	global $cnChurchInfo;
 
     //Start the form and the table
     echo '<form method="post" action="QueryView.php?QueryID=' . $iQueryID . '">';

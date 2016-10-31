@@ -120,7 +120,7 @@ class PDF_Label extends ChurchInfoReport
 			$Tformat = $this->_Avery_Labels[$format];
 		}
 
-		parent::FPDF('P', $unit, $Tformat['paper-size']);
+		parent::__construct('P', $unit, $Tformat['paper-size']);
 		$this->SetMargins(0,0);
 		$this->SetAutoPageBreak(false);
 
