@@ -139,7 +139,7 @@ if ($iUserID > 0)
 
     if ($bPasswordMatch && $usr_Password != $sPasswordHashSha256) {
     	// Need to make sure this field can handle the additional length before updating the password
-    	$sSQL = "ALTER IGNORE TABLE user_usr MODIFY `usr_Password` text NOT NULL default ''";
+    	$sSQL = "ALTER TABLE user_usr MODIFY `usr_Password` text NOT NULL";
     	RunQuery($sSQL, TRUE); // TRUE means stop on error
     	
         $sSQL = "UPDATE user_usr SET usr_Password='".$sPasswordHashSha256."' ".

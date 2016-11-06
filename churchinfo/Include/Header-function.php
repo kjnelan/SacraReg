@@ -266,7 +266,7 @@ function GetSecuritySettings() {
     $aSecurityList[] = "bAddEvent";
     $aSecurityList[] = "bSeePrivacyData";
     
-    $sSQL = "SELECT DISTINCT ucfg_name FROM userconfig_ucfg WHERE ucfg_per_id = 0 AND ucfg_cat = 'SECURITY' ORDER by ucfg_id";
+    $sSQL = "SELECT ucfg_name FROM userconfig_ucfg WHERE ucfg_per_id = 0 AND ucfg_cat = 'SECURITY' ORDER by ucfg_id";
     $rsSecGrpList = RunQuery($sSQL);
             
     while ($aRow = mysqli_fetch_array($rsSecGrpList))
