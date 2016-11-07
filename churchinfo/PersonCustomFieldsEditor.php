@@ -143,12 +143,14 @@ else
 			{
 				// Find the highest existing field number in the table to determine the next free one.
 				// This is essentially an auto-incrementing system where deleted numbers are not re-used.
-				$fields = mysqli_query($cnChurchInfo, "SHOW COLUMNS FROM $sDATABASE.person_custom");
-				$last = mysqli_num_fields($fields) - 1;
+				$fieldRes = mysqli_query($cnChurchInfo, "SHOW COLUMNS FROM $sDATABASE.person_custom");
+				$last = mysqli_num_rows($fieldRes) - 1;
 
 				// Set the new field number based on the highest existing.  Chop off the "c" at the beginning of the old one's name.
 				// The "c#" naming scheme is necessary because mysql 3.23 doesn't allow numeric-only field (table column) names.
-				$newFieldNum = substr(mysqli_fetch_field_direct($fields,  $last)->name, 1) + 1;
+				mysqli_data_seek ($fieldRes, $last);
+				$lastField = mysqli_fetch_row ($fieldRes);
+				$newFieldNum = substr($lastField[0], 1) + 1;
 
 				if ($newFieldSide == 0)
 					$newFieldSide = 'left';

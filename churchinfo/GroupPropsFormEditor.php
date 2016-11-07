@@ -165,13 +165,15 @@ else
 				// Find the highest existing field number in the group's table to determine the next free one.
 				// This is essentially an auto-incrementing system where deleted numbers are not re-used.
 				$tableName = "groupprop_" . $iGroupID;
-				$fields = mysqli_query($cnChurchInfo, "SHOW COLUMNS FROM $sDATABASE.$tableName");
-				$last = mysqli_num_fields($fields) - 1;
+				$fieldRes = mysqli_query($cnChurchInfo, "SHOW COLUMNS FROM $sDATABASE.$tableName");
+				$last = mysqli_num_rows($fieldRes) - 1;
+                mysqli_data_seek ($fieldRes, $last);
+				$lastField = mysqli_fetch_row ($fieldRes);
 
 				// Set the new field number based on the highest existing.  Chop off the "c" at the beginning of the old one's name.
 				// The "c#" naming scheme is necessary because mysql 3.23 doesn't allow numeric-only field (table column) names.
-				$newFieldNum = substr(mysqli_fetch_field_direct($fields,  $last)->name, 1) + 1;
-
+				$newFieldNum = substr($lastField[0], 1) + 1;
+				
 				// If we're inserting a new custom-list type field, create a new list and get its ID
 				if ($newFieldType == 12)
 				{
