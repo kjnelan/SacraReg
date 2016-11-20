@@ -31,7 +31,7 @@ CREATE TABLE `autopayment_aut` (
   `aut_BankName` varchar(50) default NULL,
   `aut_Route` varchar(30) default NULL,
   `aut_Account` varchar(30) default NULL,
-  `aut_DateLastEdited` datetime default CURRENT_TIMESTAMP,
+  `aut_DateLastEdited` datetime,
   `aut_EditedBy` smallint(5) unsigned default '0',
   `aut_Serial` mediumint(9) NOT NULL default '1',
   `aut_CreditCardVanco` varchar(50) default NULL,
@@ -350,8 +350,8 @@ CREATE TABLE `events_event` (
   `event_title` varchar(255) NOT NULL default '',
   `event_desc` varchar(255) default NULL,
   `event_text` text,
-  `event_start` datetime NOT NULL default CURRENT_TIMESTAMP,
-  `event_end` datetime NOT NULL default CURRENT_TIMESTAMP,
+  `event_start` datetime NOT NULL,
+  `event_end` datetime NOT NULL,
   `inactive` int(1) NOT NULL default '0',
   `event_typename` varchar(40) NOT NULL default '',
   PRIMARY KEY  (`event_id`),
@@ -467,8 +467,8 @@ CREATE TABLE `family_fam` (
   `fam_CellPhone` varchar(30) default NULL,
   `fam_Email` varchar(100) default NULL,
   `fam_WeddingDate` date default NULL,
-  `fam_DateEntered` datetime NOT NULL default CURRENT_TIMESTAMP,
-  `fam_DateLastEdited` datetime default CURRENT_TIMESTAMP,
+  `fam_DateEntered` datetime NOT NULL,
+  `fam_DateLastEdited` datetime,
   `fam_EnteredBy` smallint(5) unsigned NOT NULL default '0',
   `fam_EditedBy` smallint(5) unsigned default '0',
   `fam_scanCheck` text,
@@ -543,7 +543,7 @@ CREATE TABLE `group_grp` (
 
 CREATE TABLE `istlookup_lu` (
   `lu_fam_ID` mediumint(9) NOT NULL default '0',
-  `lu_LookupDateTime` datetime NOT NULL default CURRENT_TIMESTAMP,
+  `lu_LookupDateTime` datetime NOT NULL,
   `lu_DeliveryLine1` varchar(255) default NULL,
   `lu_DeliveryLine2` varchar(255) default NULL,
   `lu_City` varchar(50) default NULL,
@@ -760,8 +760,8 @@ CREATE TABLE `note_nte` (
   `nte_fam_ID` mediumint(8) unsigned NOT NULL default '0',
   `nte_Private` mediumint(8) unsigned NOT NULL default '0',
   `nte_Text` text,
-  `nte_DateEntered` datetime NOT NULL default CURRENT_TIMESTAMP,
-  `nte_DateLastEdited` datetime default CURRENT_TIMESTAMP,
+  `nte_DateEntered` datetime NOT NULL,
+  `nte_DateLastEdited` datetime,
   `nte_EnteredBy` mediumint(8) unsigned NOT NULL default '0',
   `nte_EditedBy` mediumint(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (`nte_ID`)
@@ -880,8 +880,8 @@ CREATE TABLE `person_per` (
   `per_cls_ID` tinyint(3) unsigned NOT NULL default '0',
   `per_fam_ID` smallint(5) unsigned NOT NULL default '0',
   `per_Envelope` smallint(5) unsigned default NULL,
-  `per_DateLastEdited` datetime default CURRENT_TIMESTAMP,
-  `per_DateEntered` datetime NOT NULL default CURRENT_TIMESTAMP,
+  `per_DateLastEdited` datetime,
+  `per_DateEntered` datetime NOT NULL,
   `per_EnteredBy` smallint(5) unsigned NOT NULL default '0',
   `per_EditedBy` smallint(5) unsigned default '0',
   `per_FriendDate` date default NULL,
@@ -1309,7 +1309,7 @@ INSERT INTO `user_usr` (`usr_per_ID`, `usr_Password`, `usr_NeedPasswordChange`, 
 `usr_CalNoSchool5`, `usr_CalNoSchool6`, `usr_CalNoSchool7`, `usr_CalNoSchool8`, `usr_SearchFamily`, 
 `usr_Canvasser`) 
 VALUES 
-(1, '1a7ac1b904382aaf0ac67b4f00e7b93f', 1, CURRENT_TIMESTAMP, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 580, 9, 10, 'Style.css', 0, 0, '0000-00-00', 10, 0, 'Admin', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0);
+(1, '1a7ac1b904382aaf0ac67b4f00e7b93f', 1, NOW(), 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 580, 9, 10, 'Style.css', 0, 0, '0000-00-00', 10, 0, 'Admin', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
