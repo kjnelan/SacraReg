@@ -136,9 +136,6 @@ if (isset($_POST["UploadCSV"]))
     else
     {
     	$csvTempFile = "import.csv";
-        $system_temp = ini_get("session.save_path");
-        if (strlen ($system_temp)>0)
-	        $csvTempFile = $system_temp . "/" . $csvTempFile;
         move_uploaded_file($_FILES['CSVfile']['tmp_name'], $csvTempFile);
 
         // create the file pointer
@@ -309,9 +306,6 @@ if (isset($_POST["DoImport"]))
 	$bHasFamCustom = false;
 	
     $csvTempFile = "import.csv";
-    $system_temp = ini_get("session.save_path");
-    if (strlen ($system_temp)>0)
-        $csvTempFile = $system_temp . "/" . $csvTempFile;
     
     $Families = array();
 
