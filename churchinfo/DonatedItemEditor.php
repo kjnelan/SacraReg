@@ -80,7 +80,7 @@ if (isset($_POST["DonatedItemSubmit"]) || isset($_POST["DonatedItemSubmitAndAdd"
 		 html_entity_decode($sTitle) . "', di_description = '" . html_entity_decode($sDescription) . "', di_sellprice = '" . $nSellPrice . "', di_estprice = '" . $nEstPrice . "', di_materialvalue = '" . $nMaterialValue . "', di_minimum = '" . $nMinimumPrice . "', di_picture = '" . 
 		 EscapeString($sPictureURL) . "', di_EnteredBy=" . $_SESSION['iUserID'] . ", di_EnteredDate = '" . date("YmdHis") . "'";
 		$sSQL .= " WHERE di_ID = " . $iDonatedItemID;
-		echo "<br><br><br><br><br><br>".$sSQL;
+//		echo "<br><br><br><br><br><br>".$sSQL;
 		$bGetKeyBack = false;
 	}
 
