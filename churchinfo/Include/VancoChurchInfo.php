@@ -307,12 +307,14 @@ function CreatePaymentMethod()
                     alert("ErrorThrown calling back to register payment method: " + errorThrown);
                     alert("Error calling back to register payment method: " + textStatus);
                     alert("Data returned calling back to register payment method: " + JSON.stringify(postbackdata));
-                }
+                },
+                timeout: 3000
             });
         },
         error: function (jqXHR, textStatus, errorThrown, vancodata) {
             alert("Error calling Vanco: " + errorThrown);
-        }
+        },
+        timeout: 3000
     });
 }
 </script>
