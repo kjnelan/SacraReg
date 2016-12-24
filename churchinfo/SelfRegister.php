@@ -21,6 +21,12 @@ include "Include/Config.php";
 
 require "SelfRegisterEmail.php";
 
+$noBannerArg = "";
+if (array_key_exists ("NoBanner", $_SESSION)) {
+	$bNoBanner = true;
+	$noBannerArg = "?NoBanner=1";
+}
+
 $bCaptchaPassed = false;
 
 if ((array_key_exists ('CaptchaPassed', $_SESSION) && $_SESSION['CaptchaPassed'] == 'true') ||
@@ -44,7 +50,7 @@ $reg_id = 0;
 $errStr = "";
 
 if (isset($_POST["Cancel"])) { // bail out without saving
-	header('Location: SelfRegisterHome.php');
+	header('Location: SelfRegisterHome.php'.$noBannerArg);
 	exit();
 }else if (isset($_POST["Submit"])) { // trying to save, use data from the form
 	if (array_key_exists ("RegID", $_SESSION)) // editing an existing record
@@ -250,7 +256,10 @@ if (  (! isset($_POST["Submit"])) && $reg_id == 0) {
 
 <form method="post" action="SelfRegister.php" name="SelfRegister">
 
-<?php echo $sHeader; ?>
+<?php 
+if (! $bNoBanner)
+	echo $sHeader; 
+?>
 
 <table cellpadding="1" align="center">
 		

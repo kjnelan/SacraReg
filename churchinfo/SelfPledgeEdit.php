@@ -24,6 +24,10 @@ if ($_GET["PledgeOrPayment"]=="Pledge") {
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
+$bNoBanner = array_key_exists ("NoBanner", $_GET);
+if (array_key_exists ("NoBanner", $_SESSION))
+	$bNoBanner = true;
+
 error_reporting(-1);
 
 // Connecting, selecting database
@@ -224,7 +228,8 @@ if (isset($_POST["Cancel"])) {
 				RunQuery($sSQL);
 			}
 			// show the result and provide a link back to the self-service home page
-			echo $sHeader;
+			if (! $bNoBanner)
+				echo $sHeader; 
 			echo "<h1>$reg_firstname $reg_lastname</h1>";
 			echo gettext ("Process payment result:<br>");
 			
@@ -268,7 +273,10 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 
 <?php require "Include/CalendarJava.php";?>
 
-<?php echo $sHeader; ?>
+<?php 
+if (! $bNoBanner)
+	echo $sHeader; 
+?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>

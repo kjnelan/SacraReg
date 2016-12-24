@@ -2,6 +2,10 @@
 
 include "Include/Config.php";
 
+$bNoBanner = array_key_exists ("NoBanner", $_GET);
+if (array_key_exists ("NoBanner", $_SESSION))
+	$bNoBanner = true;
+
 // Connecting, selecting database
 $link = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
     or die('Could not connect: ' . mysqli_error());
@@ -18,7 +22,9 @@ if ($result->num_rows > 0) {
 
 $sSQL = "UPDATE register_reg SET reg_confirmed=1 WHERE reg_randomtag=\"$reg_randomtag\"";
 
-echo $sHeader;
+if (! $bNoBanner)
+	echo $sHeader; 
+
 echo "<br>";
 
 if ($link->query ($sSQL) && $link->affected_rows==1) {

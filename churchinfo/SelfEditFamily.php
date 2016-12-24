@@ -137,7 +137,10 @@ if (  (! isset($_POST["Submit"])) && $fam_ID == 0) {
 
 <?php require "Include/CalendarJava.php";?>
 
-<?php echo $sHeader; ?>
+<?php 
+if (! $bNoBanner)
+	echo $sHeader; 
+?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>

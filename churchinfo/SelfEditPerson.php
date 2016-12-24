@@ -13,6 +13,10 @@
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
+$bNoBanner = array_key_exists ("NoBanner", $_GET);
+if (array_key_exists ("NoBanner", $_SESSION))
+	$bNoBanner = true;
+
 error_reporting(-1);
 
 // Connecting, selecting database
@@ -127,7 +131,10 @@ if (  (! isset($_POST["Submit"])) && $per_ID == 0) {
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
 
-<?php echo $sHeader; ?>
+<?php 
+if (! $bNoBanner)
+	echo $sHeader; 
+?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>

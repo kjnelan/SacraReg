@@ -16,6 +16,10 @@ include "Include/UtilityFunctions.php";
 
 require "SelfRegisterEmail.php";
 
+$bNoBanner = array_key_exists ("NoBanner", $_GET);
+if (array_key_exists ("NoBanner", $_SESSION))
+	$bNoBanner = true;
+
 error_reporting(-1);
 
 $errMsg = "";
@@ -65,7 +69,10 @@ if (isset($_POST["Login"])) { // use data from the form to send a reset password
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
 
-<?php echo $sHeader; ?>
+<?php 
+if (! $bNoBanner)
+	echo $sHeader; 
+?>
 
 <h1>Reset your password</h1>
 <p>Enter your email or user name to receive a link that will reset your password.</p>

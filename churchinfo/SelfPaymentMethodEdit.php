@@ -14,6 +14,10 @@
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
+$bNoBanner = array_key_exists ("NoBanner", $_GET);
+if (array_key_exists ("NoBanner", $_SESSION))
+	$bNoBanner = true;
+
 error_reporting(-1);
 
 // Connecting, selecting database
@@ -201,7 +205,10 @@ include "Include/VancoChurchInfo.php";
 
 <?php require "Include/CalendarJava.php";?>
 
-<?php echo $sHeader; ?>
+<?php 
+if (! $bNoBanner)
+	echo $sHeader; 
+?>
 
 <h1>
 <?php echo "$reg_firstname $reg_lastname"; ?>

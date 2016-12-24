@@ -14,6 +14,12 @@
 include "Include/Config.php";
 include "Include/UtilityFunctions.php";
 
+$bNoBanner = array_key_exists ("NoBanner", $_GET);
+if (array_key_exists ("NoBanner", $_SESSION)) {
+	$bNoBanner = true;
+	$_SESSION['NoBanner'] = $bNoBanner;
+}
+
 error_reporting(-1);
 
 // Connecting, selecting database
@@ -48,6 +54,7 @@ if (isset($_POST["Forgot"])) {
         $_SESSION['sURLPath'] = $startURL;
         $_SESSION['iUserID'] = $reg_perid;
         $_SESSION['LoginType'] = "SelfService";
+		$_SESSION['NoBanner'] = $bNoBanner;
 	} else {
 		$query = "SELECT * FROM register_reg WHERE reg_password='$sPasswordHashSha256' AND reg_username='$reg_username'";
 		$result = $link->query($query) or die('Query failed: ' . $link->error());
@@ -98,12 +105,15 @@ if (  (! isset($_POST["Login"])) && $reg_id == 0) {
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <link rel="stylesheet" type="text/css" href="Include/RegStyle.css">
 
-<?php echo $sHeader; ?>
+<?php 
+if (! $bNoBanner)
+	echo $sHeader; 
+?>
 
 <?php 
 if ($reg_id == 0) {
 ?>
-<form method="post" action="SelfRegisterHome.php" name="SelfRegisterHome">
+<form method="post" action="SelfRegisterHome.php<?php if ($bNoBanner)echo "?NoBanner=1"?>" name="SelfRegisterHome">
 
 <table cellpadding="1" align="center">	
 	<tr>
