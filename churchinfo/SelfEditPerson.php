@@ -44,15 +44,15 @@ if (array_key_exists ("RegID", $_SESSION)) { // Make sure we have a valid login
 	extract ($line); // get $reg_firstname, $reg_lastname, $reg_famid
 	
 	if ($per_ID > 0) { // editing a specific person.  get the record and make sure it is the same family as the current user
-		$sSQL = "SELECT * FROM person_per WHERE per_id=$per_ID";
+		$sSQL = "SELECT * FROM person_per WHERE per_ID=$per_ID";
 		$result = $link->query($sSQL);
 		$line = $result->fetch_array(MYSQLI_ASSOC);
-		extract ($line); // get $reg_firstname, $reg_lastname
-		if ($per_fam_ID != $reg_famid) {
+		if ($line['per_fam_ID'] != $reg_famid) {
 			session_destroy ();
 			header('Location: SelfRegisterHome.php');
 			exit();			
 		}
+		extract ($line);
 		
 		$sSQL = "SELECT * FROM family_fam WHERE fam_id=$reg_famid";
 		$result = $link->query($sSQL);
@@ -167,7 +167,7 @@ if (! $bNoBanner)
 <?php echo "Update personal information"; ?>
 </h2>
 
-<form method="post" action="SelfEditPerson.php" name="SelfEditPerson">
+<form method="post" action="SelfEditPerson.php?per_ID=<?php echo $per_ID; ?>" name="SelfEditPerson">
 
 <table cellpadding="1" align="center">
 	<tr>

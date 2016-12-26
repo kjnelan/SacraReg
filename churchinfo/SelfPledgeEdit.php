@@ -24,6 +24,8 @@ if ($_GET["PledgeOrPayment"]=="Pledge") {
 include "Include/Config.php";
 require "Include/UtilityFunctions.php";
 
+$bEnableElectronicDonation = ($sElectronicTransactionProcessor == "Vanco");
+
 $bNoBanner = array_key_exists ("NoBanner", $_GET);
 if (array_key_exists ("NoBanner", $_SESSION))
 	$bNoBanner = true;
@@ -261,7 +263,12 @@ if (  (! isset($_POST["Submit"])) && $plg_plgID == 0) {
 	$plg_date = date ("Y-m-d");
 	$plg_amount = 0.0;
 	$plg_schedule = "Monthly";
-	$plg_method = "BANKDRAFT";
+	
+	if ($bEnableElectronicDonation)
+		$plg_method = "BANKDRAFT";
+	else
+		$plg_method = "CHECK";
+	
 	$plg_comment = "";
 }
 ?>
@@ -310,8 +317,10 @@ if (! $bNoBanner)
 		<td class="RegLabelColumn"><?php echo gettext("Payment Method");?></td>
 		<td class="RegTextColumn">
 			<select class="RegEnterText" id="Method" name="Method">
+<?php if ($bEnableElectronicDonation) { ?>
 				<option value="BANKDRAFT">Bank Account ACH (preferred) <?php if ($plg_method=='BANKDRAFT') echo 'Selected'; ?></option>
 			    <option value="CREDITCARD" <?php if ($plg_method=='CREDITCARD') echo 'Selected'; ?>>Credit Card</option>
+<?php } ?>
 			    <option value="Check" <?php if ($plg_method=='CHECK') echo 'Selected'; ?>>Check</option>
 			    <option value="Cash" <?php if ($plg_method=='CASH') echo 'Selected'; ?>>Cash</option>
 			</select>
