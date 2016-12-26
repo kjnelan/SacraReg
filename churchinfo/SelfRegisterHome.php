@@ -14,6 +14,8 @@
 include "Include/Config.php";
 include "Include/UtilityFunctions.php";
 
+$bEnableElectronicDonation = ($sElectronicTransactionProcessor == "Vanco");
+
 $bNoBanner = array_key_exists ("NoBanner", $_GET);
 if (array_key_exists ("NoBanner", $_SESSION)) {
 	$bNoBanner = true;
@@ -189,16 +191,19 @@ $rsAutoPayments = $link->query($sSQL);
 <?php  if ($reg_famid > 0) { // only give pledge and payment buttons if matched to a family ?>
 
 <td><a class="regHomeButton" href="SelfPledgeEdit.php?PledgeOrPayment=Pledge">New Pledge</a></td>
+
+<?php if ($bEnableElectronicDonation) { ?>
+
 <td><a class="regHomeButton" href="SelfPaymentMethodEdit.php?AutID=0" >New Payment Method</a></td>
 <td><a class="regHomeButton" href="SelfRepeatingPaymentEdit.php" >Setup Repeating Payment</a></td>
-
 <?php if ($rsAutoPayments->num_rows == 0) 
 	echo "<td>Please create at least one payment method to enable immediate donation option.</td>";
 else
 	echo "<td><a class=\"regHomeButton\" href=\"SelfPledgeEdit.php?PledgeOrPayment=Payment\">Donate Now</a></td>"
 ?>
+<?php } //if ($bEnableElectronicDonation) { ?>
 
-<?php  } ?>
+<?php } // if ($reg_famid > 0)?>
 
 <td><a class="regHomeButton" href="SelfRegisterLogout.php" >Log Out</a></td>
 </tr>

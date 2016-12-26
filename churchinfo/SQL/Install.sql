@@ -170,7 +170,7 @@ INSERT INTO `config_cfg` (`cfg_id`, `cfg_name`, `cfg_value`, `cfg_type`, `cfg_de
 -- Save 68, 69 for MRBS if installed
 -- Save 70, 71 for WebCalendar if installed
 (72, 'bEnableNonDeductible', '0', 'boolean', '0', 'Enable non-deductible payments', 'General', NULL),
-(73, 'sElectronicTransactionProcessor', 'Vanco', 'text', 'Vanco', 'Electronic Transaction Processor', 'General', NULL),
+(73, 'sElectronicTransactionProcessor', 'None', 'text', 'None', 'Electronic Transaction Processor (None or Vanco)', 'General', NULL),
 (74, 'sSelfServiceFunds', '"Pledge Receipts"', 'text', '"Pledge Receipts"', 'Donation funds to present through self-service', 'General', NULL),
 (75, 'sSelfServiceAdminEmails', '', 'text', '', 'Comma-separated list of emails to distribute self-service notifications', 'General', NULL),
 (76, 'sBroadcastFunds', '', 'text', '', 'Comma-separated list of funds to broadcast progress through the embedded web page', 'General', NULL),
