@@ -16,8 +16,9 @@ require "Include/UtilityFunctions.php";
 $bNoBanner = array_key_exists ("NoBanner", $_GET);
 if (array_key_exists ("NoBanner", $_SESSION))
 	$bNoBanner = true;
-
-error_reporting(-1);
+	
+$per_ID = FilterInput($_GET["per_ID"],'int'); // per_ID is passed as an argument.   
+// per_ID could be 0 to create, current user editing self, or current user editing a family member
 
 // Connecting, selecting database
 $link = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
@@ -29,8 +30,8 @@ $errStr = "";
 
 if (array_key_exists ("RegID", $_SESSION)) { // Make sure we have a valid login 
 	$reg_id = intval ($_SESSION["RegID"]);
-		
-	$sSQL = "SELECT * FROM  register_reg JOIN person_per on reg_perid=per_ID WHERE reg_id=$reg_id";
+
+	$sSQL = "SELECT * FROM  register_reg WHERE reg_id=$reg_id";
 	$result = $link->query($sSQL);
 
 	if ($result->num_rows != 1) {
@@ -38,9 +39,36 @@ if (array_key_exists ("RegID", $_SESSION)) { // Make sure we have a valid login
 		header('Location: SelfRegisterHome.php');
 		exit();
 	}
-			
+
 	$line = $result->fetch_array(MYSQLI_ASSOC);
-	extract ($line); // get $reg_firstname, $reg_lastname, per_* etc.
+	extract ($line); // get $reg_firstname, $reg_lastname, $reg_famid
+	
+	if ($per_ID > 0) { // editing a specific person.  get the record and make sure it is the same family as the current user
+		$sSQL = "SELECT * FROM person_per WHERE per_id=$per_ID";
+		$result = $link->query($sSQL);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
+		extract ($line); // get $reg_firstname, $reg_lastname
+		if ($per_fam_ID != $reg_famid) {
+			session_destroy ();
+			header('Location: SelfRegisterHome.php');
+			exit();			
+		}
+		
+		$sSQL = "SELECT * FROM family_fam WHERE fam_id=$reg_famid";
+		$result = $link->query($sSQL);
+		$line = $result->fetch_array(MYSQLI_ASSOC);
+		extract ($line); // get $fam_Name, etc.
+		
+	} else { // creating a person
+		$per_FirstName = "";
+		$per_MiddleName = "";
+		$per_LastName = "";
+		$per_BirthYear = "";
+		$per_BirthMonth = "";
+		$per_BirthDay = "";
+		$per_Email = "";
+		$per_CellPhone = "";		
+	}
 } else {
 	header('Location: SelfRegisterHome.php');
 	exit();
@@ -92,6 +120,7 @@ if (isset($_POST["Cancel"])) {
 			"per_BirthDay = \"$per_BirthDay\",".
 			"per_Email = \"$per_Email\",".
 			"per_CellPhone = \"$per_CellPhone\",".
+			"per_fam_id=$reg_famid,".
 			"per_EditedBy=$reg_perid,".
 			"per_DateLastEdited=NOW()";
 		
@@ -112,18 +141,6 @@ if (isset($_POST["Cancel"])) {
 		exit();
 	}
 }
-
-// initialize everything if the form did not provide values OR the database record did not provide values
-if (  (! isset($_POST["Submit"])) && $per_ID == 0) {
-	$per_FirstName = "";
-	$per_MiddleName = "";
-	$per_LastName = "";
-	$per_BirthYear = "";
-	$per_BirthMonth = "";
-	$per_BirthDay = "";
-	$per_Email = "";
-	$per_CellPhone = "";
-}
 ?>
 
 <!DOCTYPE html>
@@ -137,7 +154,13 @@ if (! $bNoBanner)
 ?>
 
 <h1>
-<?php echo "$reg_firstname $reg_lastname"; ?>
+<?php 
+	if ($per_ID == 0) { // creating a new record
+		echo gettext ("Adding a person to the $fam_Name Family"); 		
+	} else {
+		echo "$per_FirstName $per_LastName"; 		
+	}
+?>
 </h1>
 
 <h2>

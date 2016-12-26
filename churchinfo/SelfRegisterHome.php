@@ -20,8 +20,6 @@ if (array_key_exists ("NoBanner", $_SESSION)) {
 	$_SESSION['NoBanner'] = $bNoBanner;
 }
 
-error_reporting(-1);
-
 // Connecting, selecting database
 $link = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
     or die('Could not connect: ' . mysqli_error());
@@ -79,13 +77,13 @@ if (array_key_exists ("RegID", $_SESSION)) {
 		$line = $result->fetch_array(MYSQLI_ASSOC);
 		extract ($line);
 		
-		$query = "SELECT * FROM family_fam WHERE fam_id='$reg_famid'";
+		$query = "SELECT * FROM family_fam WHERE fam_ID='$reg_famid'";
 		$result = $link->query($query) or die('Query failed: ' . $link->error());
 		$line = $result->fetch_array(MYSQLI_ASSOC);
 		if ($result->num_rows == 1)
 			extract ($line);
 			
-		$query = "SELECT * FROM person_per WHERE per_id='$reg_perid'";
+		$query = "SELECT * FROM person_per WHERE per_ID='$reg_perid'";
 		$result = $link->query($query) or die('Query failed: ' . $link->error());
 		$line = $result->fetch_array(MYSQLI_ASSOC);
 		if ($result->num_rows == 1)
@@ -163,6 +161,10 @@ $sSQL = "SELECT plg_plgID, plg_FYID, plg_date, plg_amount, plg_schedule, plg_met
 		 WHERE plg_famID =$reg_famid AND (plg_fyid=$currentFYID OR plg_fyid=$nextFYID) ORDER BY pledge_plg.plg_date";
 $rsPledges = $link->query($sSQL);
 
+// Get all the people in this family
+$sSQL = "SELECT per_ID, per_FirstName, per_LastName, per_BirthYear FROM person_per WHERE per_fam_id=$reg_famid ORDER BY per_BirthYear";
+$rsFamilyPeople = $link->query($sSQL);
+
 //Get the automatic payments for this family
 $sSQL = "SELECT *, a.per_FirstName AS AutoEnteredFirstName, 
                    a.Per_LastName AS AutoEnteredLastName, 
@@ -205,24 +207,51 @@ else
 
 <?php  if ($reg_perid > 0) { // only give person information if matched to a person ?>
 
-<h2><?php echo gettext("Personal"); ?></h2>
-<?php echo gettext("Name: $per_FirstName $per_LastName<br>"); ?>
-<?php echo gettext("Birth date: Year $per_BirthYear, Month $per_BirthMonth, Day $per_BirthDay<br>"); ?>
-<?php echo gettext("Email: $per_Email<br>"); ?>
-<?php echo gettext("Cell Phone: $per_CellPhone<br>"); ?>
-<a href="SelfEditPerson.php"><?php echo gettext("Edit personal information"); ?></a>
-
-<?php  } ?>
-
-<?php  if ($reg_famid > 0) { // only family information if matched to a family ?>
-
-<h2><?php echo gettext("Family"); ?></h2>
-<?php echo gettext("Address: $fam_Address1 $fam_Address2 $fam_City, $fam_State $fam_Zip<br>"); ?>
-<?php echo gettext("Home Phone: $fam_HomePhone<br>"); ?>
-<?php echo gettext("Family Email: $fam_Email<br>"); ?>
-<a href="SelfEditFamily.php"><?php echo gettext("Edit family information"); ?></a>
-
-<?php  } ?>
+	<h2><?php echo gettext("Personal"); ?></h2>
+	<?php echo gettext("Name: $per_FirstName $per_LastName<br>"); ?>
+	<?php echo gettext("Birth date: Year $per_BirthYear, Month $per_BirthMonth, Day $per_BirthDay<br>"); ?>
+	<?php echo gettext("Email: $per_Email<br>"); ?>
+	<?php echo gettext("Cell Phone: $per_CellPhone<br>"); ?>
+	
+	<a href="SelfEditPerson.php?per_ID=<?php echo $reg_perid;?>"><?php echo gettext("Edit personal information"); ?></a>
+	
+	<?php  if ($reg_famid > 0) { // only family information if matched to a family ?>
+	
+		<h2><?php echo gettext("Family"); ?></h2>
+		<?php echo gettext("Address: $fam_Address1 $fam_Address2 $fam_City, $fam_State $fam_Zip<br>"); ?>
+		<?php echo gettext("Home Phone: $fam_HomePhone<br>"); ?>
+		<?php echo gettext("Family Email: $fam_Email<br>"); ?>
+		
+		<?php if ($bSelfCreate) { // If self-create is enabled set up editing links for this family ?> 
+			<table>
+			<?php
+			while ($aFamilyPerson = $rsFamilyPeople->fetch_array(MYSQLI_ASSOC)) {
+				echo ("<tr>");
+				echo ("<td>".$aFamilyPerson["per_FirstName"] . " " . $aFamilyPerson["per_LastName"]."</td>");
+				echo ("<td><a href=\"SelfEditPerson.php?per_ID=".$aFamilyPerson["per_ID"]."\">". gettext("Edit")."</a></td>");
+				echo ("</tr>");
+			}
+			?>
+			</table>
+			<a href="SelfEditPerson.php?per_ID=0"><?php echo gettext("Add a person to this family"); ?></a><br>
+		
+		<?php  } else { // else $bSelfCreate: self-create not enabled, just list the family members ?>		
+			<?php echo gettext("Family Members: ");
+			$bDidOne = false;
+			while ($aFamilyPerson = $rsFamilyPeople->fetch_array(MYSQLI_ASSOC)) {
+				if ($bDidOne)
+					echo (", ");
+				echo ($aFamilyPerson["per_FirstName"] . " " . $aFamilyPerson["per_LastName"]);
+				$bDidOne = true;
+			}
+			echo ("<br>");
+			?>	
+		<?php  } // else $bSelfCreate ?>
+		
+		<a href="SelfEditFamily.php"><?php echo gettext("Edit family information"); ?></a>
+	
+	<?php } // if ($reg_famid > 0) { // only family information if matched to a family ?>
+<?php } // if ($reg_perid > 0) { // only family information if matched to a family ?>
 
 <h2><?php echo gettext("Online Registration"); ?></h2>
 <?php echo gettext("Address: $reg_address1 $reg_address2 $reg_city, $reg_state $reg_zip<br>"); ?>

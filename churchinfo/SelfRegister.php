@@ -131,7 +131,8 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 				    $linefam['fam_state'] == $fam_state)
 					break; // break out and leave per_fam_id as set above
 			}
-		} else { // no matching people, create a family and person record
+		} else if ($bSelfCreate) { // no matching people, create a family and person record if this feature is enabled
+			$sSQL = "INSERT INTO `config_cfg` SET `cfg_id`=77, `cfg_name`='bSelfCreate', `cfg_value`='0', `cfg_type`='boolean', `cfg_default`='0', `cfg_tooltip`='Create person and family records through the self-service interface', `cfg_section`='General', `cfg_category`=NULL";
 			$sCreateFamilySQL = "INSERT INTO family_fam SET 
 				fam_Name=\"$reg_famname\",
 				fam_Address1=\"$reg_address1\",
