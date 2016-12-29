@@ -263,9 +263,41 @@ if (! $bNoBanner)
 ?>
 
 <table cellpadding="1" align="center">
-		
+
 	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("First name");?></td>
+		<td><h2 style="display:table-cell;">Registration</h2></td>
+	</tr>
+
+	<tr>
+		<td class="RegLabelColumn"><?php echo gettext("User Name");?><font color="red">*</font></td>
+		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="UserName" name="UserName" value="<?php echo $reg_username; ?>"></td>
+	</tr>
+	
+	<tr>
+	<?php if ($reg_id == 0) { ?>
+		<td class="RegLabelColumn"><?php echo gettext("Password");?><font color="red">*</font></td>
+		<td class="RegTextColumn"><input type="password" class="RegEnterText" id="Password" name="Password" value="<?php echo $reg_password; ?>"></td>
+	<?php  }?>
+	</tr>
+	
+	<tr>
+	<?php if ($reg_id == 0) { ?>
+		<td class="RegLabelColumn"><?php echo gettext("Re-Enter Password");?><font color="red">*</font></td>
+		<td class="RegTextColumn"><input type="password" class="RegEnterText" id="ReEnterPassword" name="ReEnterPassword" value="<?php echo $reg_reenterpassword; ?>">
+	<?php  }?>
+
+		<input type="hidden" id="RandomTag" name="RandomTag" value="<?php echo $reg_randomtag; ?>" >
+		<input type="hidden" id="Confirmed" name="Confirmed" value="<?php echo $reg_confirmed; ?>" >
+
+		</td>
+	</tr>
+
+	<tr>
+		<td><h2 style="display:table-cell;">Name/Address</h2></td>
+	</tr>
+
+	<tr>
+		<td class="RegLabelColumn"><?php echo gettext("First name");?><font color="red">*</font></td>
 		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="FirstName" name="FirstName" value="<?php echo $reg_firstname; ?>"></td>
 	</tr>
 
@@ -275,7 +307,7 @@ if (! $bNoBanner)
 	</tr>
 
 	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("Last name");?></td>
+		<td class="RegLabelColumn"><?php echo gettext("Last name");?><font color="red">*</font></td>
 		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="LastName" name="LastName" value="<?php echo $reg_lastname; ?>"></td>
 	</tr>
 
@@ -315,41 +347,22 @@ if (! $bNoBanner)
 	</tr>
 
 	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("Phone");?></td>
+		<td colspan="2"><h2 style="display:table-cell;">Contact Information</h2></td>
+	</tr>
+
+	<tr>
+		<td class="RegLabelColumn"><?php echo gettext("Phone");?><font color="red">*</font></td>
 		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="Phone" name="Phone" value="<?php echo $reg_phone; ?>"></td>
 	</tr>
 
 	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("Email");?></td>
+		<td class="RegLabelColumn"><?php echo gettext("Email");?><font color="red">*</font></td>
 		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="Email" name="Email" value="<?php echo $reg_email; ?>"></td>
 	</tr>
 	
-	<tr>
-		<td class="RegLabelColumn"><?php echo gettext("User Name");?></td>
-		<td class="RegTextColumn"><input type="text" class="RegEnterText" id="UserName" name="UserName" value="<?php echo $reg_username; ?>"></td>
-	</tr>
-	
-	<tr>
-	<?php if ($reg_id == 0) { ?>
-		<td class="RegLabelColumn"><?php echo gettext("Password");?></td>
-		<td class="RegTextColumn"><input type="password" class="RegEnterText" id="Password" name="Password" value="<?php echo $reg_password; ?>"></td>
-	<?php  }?>
-	</tr>
-	
-	<tr>
-	<?php if ($reg_id == 0) { ?>
-		<td class="RegLabelColumn"><?php echo gettext("Re-Enter Password");?></td>
-		<td class="RegTextColumn"><input type="password" class="RegEnterText" id="ReEnterPassword" name="ReEnterPassword" value="<?php echo $reg_reenterpassword; ?>">
-	<?php  }?>
-
-		<input type="hidden" id="RandomTag" name="RandomTag" value="<?php echo $reg_randomtag; ?>" >
-		<input type="hidden" id="Confirmed" name="Confirmed" value="<?php echo $reg_confirmed; ?>" >
-
-		</td>
-	</tr>
 <?php if (!	$bCaptchaPassed) { ?>
 	<tr>
-		<td></td><td class="RegTextColumn" align="center"><img src="<?php echo $builder->inline(); ?>" /><br>Please enter string from CAPTCHA picture above<br><input type="text" class="RegEnterText" name="CaptchaEntered" value=""></td>
+		<td></td><td class="RegTextColumn" align="center"><img src="<?php echo $builder->inline(); ?>" /><br><?php echo gettext ("Please enter string from CAPTCHA picture above");?><font color="red">*</font><br><input type="text" class="RegEnterText" name="CaptchaEntered" value=""></td>
 	</tr>
 <?php } ?>
 
