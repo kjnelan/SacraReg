@@ -19,8 +19,8 @@ $bEnableElectronicDonation = ($sElectronicTransactionProcessor == "Vanco");
 $bNoBanner = array_key_exists ("NoBanner", $_GET);
 if (array_key_exists ("NoBanner", $_SESSION)) {
 	$bNoBanner = true;
-	$_SESSION['NoBanner'] = $bNoBanner;
 }
+$_SESSION['NoBanner'] = $bNoBanner;
 
 // Connecting, selecting database
 $link = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
