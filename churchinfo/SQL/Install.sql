@@ -1255,7 +1255,7 @@ INSERT INTO `userconfig_ucfg` (`ucfg_per_id`, `ucfg_id`, `ucfg_name`, `ucfg_valu
 
 CREATE TABLE `user_usr` (
   `usr_per_ID` mediumint(9) unsigned NOT NULL default '0',
-  `usr_Password` text NOT NULL default '',
+  `usr_Password` text NOT NULL,
   `usr_NeedPasswordChange` tinyint(3) unsigned NOT NULL default '1',
   `usr_LastLogin` datetime NOT NULL,
   `usr_LoginCount` smallint(5) unsigned NOT NULL default '0',
