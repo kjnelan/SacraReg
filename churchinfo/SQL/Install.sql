@@ -398,7 +398,7 @@ CREATE TABLE `event_types` (
   `type_defrecurtype` enum('none','weekly','monthly','yearly') NOT NULL default 'none',
   `type_defrecurDOW` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL default 'Sunday',
   `type_defrecurDOM` char(2) NOT NULL default '0',
-  `type_defrecurDOY` date NOT NULL default '0000-00-00',
+  `type_defrecurDOY` date NOT NULL,
   `type_active` int(1) NOT NULL default '1',
   PRIMARY KEY  (`type_id`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci  AUTO_INCREMENT=3 ;
@@ -408,8 +408,8 @@ CREATE TABLE `event_types` (
 -- 
 
 INSERT INTO `event_types` (`type_id`, `type_name`, `type_defstarttime`, `type_defrecurtype`, `type_defrecurDOW`, `type_defrecurDOM`, `type_defrecurDOY`, `type_active`) VALUES 
-(1, 'Church Service', '10:30:00', 'weekly', 'Sunday', '', '0000-00-00', 1),
-(2, 'Sunday School', '09:30:00', 'weekly', 'Sunday', '', '0000-00-00', 1);
+(1, 'Church Service', '10:30:00', 'weekly', 'Sunday', '', '2016-01-01', 1),
+(2, 'Sunday School', '09:30:00', 'weekly', 'Sunday', '', '2016-01-01', 1);
 
 -- --------------------------------------------------------
 
@@ -1255,7 +1255,7 @@ INSERT INTO `userconfig_ucfg` (`ucfg_per_id`, `ucfg_id`, `ucfg_name`, `ucfg_valu
 
 CREATE TABLE `user_usr` (
   `usr_per_ID` mediumint(9) unsigned NOT NULL default '0',
-  `usr_Password` text NOT NULL default '',
+  `usr_Password` text NOT NULL,
   `usr_NeedPasswordChange` tinyint(3) unsigned NOT NULL default '1',
   `usr_LastLogin` datetime NOT NULL,
   `usr_LoginCount` smallint(5) unsigned NOT NULL default '0',
@@ -1310,7 +1310,7 @@ INSERT INTO `user_usr` (`usr_per_ID`, `usr_Password`, `usr_NeedPasswordChange`, 
 `usr_CalNoSchool5`, `usr_CalNoSchool6`, `usr_CalNoSchool7`, `usr_CalNoSchool8`, `usr_SearchFamily`, 
 `usr_Canvasser`) 
 VALUES 
-(1, '1a7ac1b904382aaf0ac67b4f00e7b93f', 1, NOW(), 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 580, 9, 10, 'Style.css', 0, 0, '0000-00-00', 10, 0, 'Admin', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0);
+(1, '1a7ac1b904382aaf0ac67b4f00e7b93f', 1, NOW(), 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 580, 9, 10, 'Style.css', 0, 0, '2015-01-01', 10, 0, 'Admin', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
