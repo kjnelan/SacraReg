@@ -398,7 +398,7 @@ CREATE TABLE `event_types` (
   `type_defrecurtype` enum('none','weekly','monthly','yearly') NOT NULL default 'none',
   `type_defrecurDOW` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL default 'Sunday',
   `type_defrecurDOM` char(2) NOT NULL default '0',
-  `type_defrecurDOY` date NOT NULL default '0000-00-00',
+  `type_defrecurDOY` date NOT NULL,
   `type_active` int(1) NOT NULL default '1',
   PRIMARY KEY  (`type_id`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci  AUTO_INCREMENT=3 ;
