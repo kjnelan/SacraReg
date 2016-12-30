@@ -54,7 +54,7 @@ if (isset($_POST["Submit"]))
 	$Password = $_POST['Password'];
 	$ConfirmPassword = $_POST['ConfirmPassword'];
 	
-    $captcha = &new captcha_x ();
+    $captcha = new captcha_x ();
 
     if ( ! $captcha->validate ( $_POST['captcha'])) {
         print "<h1>Incorrect verification code.</h1>";
@@ -71,7 +71,7 @@ if (isset($_POST["Submit"]))
 		$sSQL .= "ac_address1, ac_address2, ac_city, ac_state, ac_zip, ac_phone, ac_email)";
 		$sSQL .= "VALUES ('$UserName', '$Password', '$remoteAddr', '$lastName', '$firstName', '$Organization', ";
 		$sSQL .= "'$Address1', '$Address2', '$City', '$State', '$Zip', '$Phone', '$Email')"; 
-		$resIns = mysqli_query($cnInfoCentral, $sSQL);
+		$resIns = mysqli_query($cnTempDB, $sSQL);
 		//Get the key back
 		$sSQL = "SELECT MAX(ac_id) AS iNewID FROM AdminContact";
 		$rsLastEntry = mysqli_query($cnTempDB, $sSQL);

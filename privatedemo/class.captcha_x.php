@@ -135,7 +135,7 @@ class captcha_x {
         $max_x = $width - 1;
         $max_y = $height - 1;
         
-        $color = split ( ',', $color);
+        $color = explode ( ',', $color);
         
         $color = imagecolorallocate ( $this->image, $color[0], $color[1], $color[2]);
         
@@ -158,7 +158,7 @@ class captcha_x {
     function _create_img_base () {
         extract ( $this->INI);
         
-        $bg_color = split ( ',', $bg_color_1);
+        $bg_color = explode ( ',', $bg_color_1);
         
         $img = imagecreate ( $width, $height);
         imagecolorallocate ( $img, $bg_color[0], $bg_color[1], $bg_color[2]);
@@ -175,7 +175,7 @@ class captcha_x {
     function _get_random_letters () {
         extract ( $this->INI);
         
-        $letters = split ( ',', $letters);
+        $letters = explode ( ',', $letters);
         $letters_max = (count ( $letters) - 1);
         
         for ( $i = 0; $i < $letters_no; ++$i) {
@@ -223,19 +223,19 @@ $putEnvStr = "GDFONTPATH=./fonts";
             putenv ( $putEnvStr );
         }
 
-        list ( $padding_top, $padding_right, $padding_bottom, $padding_left) = split ( ',', $padding);
+        list ( $padding_top, $padding_right, $padding_bottom, $padding_left) = explode ( ',', $padding);
         $box_width       = ( $width - ( $padding_left + $padding_right)) / $letters_no;
         $box_height      = $height - ( $padding_top + $padding_bottom); 
         
-        $font_size       = split ( ',', $font_size);
+        $font_size       = explode ( ',', $font_size);
         $font_size_count = ( count ( $font_size) - 1);
         
-        $fonts           = split ( ',', $fonts);
+        $fonts           = explode ( ',', $fonts);
         $fonts_count     = ( count ( $fonts) - 1);
         
         $fg_colors_count = ( count ( $fg_colors) - 1);
         foreach ( $fg_colors as $fg_color) {
-            $a[] = split ( ',', $fg_color);
+            $a[] = explode ( ',', $fg_color);
         }
         $fg_colors = $a;
          
