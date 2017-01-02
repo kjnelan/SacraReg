@@ -66,7 +66,7 @@ function ClearEmailLog()
             " ejl_id mediumint(9) unsigned NOT NULL auto_increment, ".
             " ejl_time varchar(20) NOT NULL DEFAULT '', ".
             " ejl_usec varchar(6) NOT NULL DEFAULT '', ".
-            " ejl_text text NOT NULL DEFAULT '', PRIMARY KEY (ejl_id) ".
+            " ejl_text text NULL, PRIMARY KEY (ejl_id) ".
             ") ENGINE=MyISAM";
     RunQuery($sSQL);
 
