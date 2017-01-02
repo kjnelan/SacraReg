@@ -41,11 +41,11 @@ while (list ($dbdir, $dbid, $acid) = mysqli_fetch_row($rsDBP)) {
 		$cmdStr = "rm -rf $dbdir";
 		system ($cmdStr);
 		$sSQL = "UPDATE DBPool SET dbp_assignedto=NULL WHERE dbp_id=$dbid";
-		mysqli_query($cnInfoCentral], $sSQL);
+		mysqli_query($cnTempDB, $sSQL);
 	}
 	if (isset ($_POST["ReceivedEmail$dbid"])) {
 		$sSQL = "UPDATE AdminContact SET ac_received_email=1 WHERE ac_id=$acid";
-		mysqli_query($cnInfoCentral, $sSQL);
+		mysqli_query($cnTempDB, $sSQL);
 	}
 }
 
@@ -55,13 +55,13 @@ if (isset ($_POST["UpdateMailingList"])) {
 	$emailArr = array();
 	
 	$sSQL = "SELECT ac_id,ac_email FROM AdminContact";
-	$rsDBP = mysqli_query($GLOBALS["___mysqli_ston"], $sSQL);
+	$rsDBP = mysqli_query($cnTempDB, $sSQL);
 	
 	while ($emailArr[] = mysqli_fetch_row($rsDBP))
 	;
 
 	// switch databases to the mailing list one to poke in all these email addresses
-	$cnTempDB = mysqli_connect($sPhpMailSERVERNAME, $sPhpMailUSER, $sPhpMailPASSWORD, $sPhpMailDATABASE))
+	$cnTempDB = mysqli_connect($sPhpMailSERVERNAME, $sPhpMailUSER, $sPhpMailPASSWORD, $sPhpMailDATABASE)
 	        or die ('Cannot connect to the mysql server because: ' . MySQLError ());
 	        
 	// always rebuild list 1 to match all the people who have registered for private demos.

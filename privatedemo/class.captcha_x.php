@@ -44,6 +44,7 @@
  * @package CAPTCHA X
  * @license GPL   
  */
+
 class captcha_x {
     
     /**
