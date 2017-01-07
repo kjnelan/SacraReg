@@ -165,6 +165,24 @@ $sSQL = "CREATE TABLE `register_reg` (
 	if (!RunQuery($sSQL, FALSE))
 	    break;
 	
+	$sSQL = "INSERT INTO `query_qry` (`qry_ID`, `qry_SQL`, `qry_Name`, `qry_Description`, `qry_Count`) VALUES (33, 
+		'SELECT per.per_ID as AddToCart, 
+		        CONCAT(per.per_FirstName,\' \',per.per_LastName) AS Name, 
+		        Count(att.person_id) as Times_Attended, Max(evnt.event_start) as Last_attended 
+		        FROM event_attend as att 
+		        INNER JOIN events_event as evnt ON att.event_id = evnt.event_id 
+		        INNER JOIN person_per as per ON att.person_id = per.per_id 
+		        WHERE evnt.event_start >= \'~fromdate~\' AND evnt.event_start <= \'~todate~\' 
+		        GROUP BY per.per_ID, CONCAT(per.per_FirstName,\' \',per.per_LastName) 
+		        ORDER BY Last_attended, per.per_LastName, per.per_FirstName', 
+		'Event Attendance Report', 'Summary of individual attendance data for a particular time period', 1)";
+    RunQuery($sSQL, FALSE); // False means do not stop on error
+	
+	$sSQL = "INSERT INTO `queryparameters_qrp` (`qrp_ID`, `qrp_qry_ID`, `qrp_Type`, `qrp_OptionSQL`, `qrp_Name`, `qrp_Description`, `qrp_Alias`, `qrp_Default`, `qrp_Required`, `qrp_InputBoxSize`, `qrp_Validation`, `qrp_NumericMax`, `qrp_NumericMin`, `qrp_AlphaMinLength`, `qrp_AlphaMaxLength`) VALUES 
+		(34, 33, 2, 'SELECT distinct event_start as Value, event_start as Display FROM events_event ORDER BY event_start', 'Starting Date', 'First event to report', 'fromdate', '1', 1, 0, '', 0, 0, 0, 0),
+		(35, 33, 2, 'SELECT distinct event_start as Value, event_start as Display FROM events_event ORDER BY event_start', 'Ending Date', 'Last event to report', 'todate', '1', 1, 0, '', 0, 0, 0, 0)";
+    RunQuery($sSQL, FALSE); // False means do not stop on error
+
 	$sSQL = "INSERT INTO `version_ver` (`ver_version`, `ver_date`) VALUES ('".$sVersion."',NOW())";
     RunQuery($sSQL, FALSE); // False means do not stop on error
 	    break;
