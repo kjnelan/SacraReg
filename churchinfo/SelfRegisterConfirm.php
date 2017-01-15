@@ -32,7 +32,6 @@ $line = $result->fetch_array(MYSQLI_ASSOC);
 extract ($line);
 
 if ($reg_perid == 0 && $bSelfCreate) { // not matched to a person, create person and family records
-	$sSQL = "INSERT INTO `config_cfg` SET `cfg_id`=77, `cfg_name`='bSelfCreate', `cfg_value`='0', `cfg_type`='boolean', `cfg_default`='0', `cfg_tooltip`='Create person and family records through the self-service interface', `cfg_section`='General', `cfg_category`=NULL";
 	$sCreateFamilySQL = "INSERT INTO family_fam SET 
 		fam_Name=\"$reg_famname\",
 		fam_Address1=\"$reg_address1\",
@@ -72,7 +71,7 @@ if ($reg_perid == 0 && $bSelfCreate) { // not matched to a person, create person
 	$reg_perid = $per_id;
 }
 
-$sSQL = "UPDATE register_reg SET reg_confirmed=1, reg_perid=$reg_perid, reg_famid=$reg_famid WHERE reg_randomtag=\"$reg_randomtag\"";
+$sSQL = "UPDATE register_reg SET reg_confirmed=1, reg_perid=$reg_perid, reg_famid=$reg_famid, reg_randomtag='' WHERE reg_randomtag=\"$reg_randomtag\"";
 
 if (! $bNoBanner)
 	echo $sHeader; 
