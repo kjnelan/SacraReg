@@ -131,43 +131,6 @@ if (isset($_POST["Cancel"])) { // bail out without saving
 				    $linefam['fam_state'] == $fam_state)
 					break; // break out and leave per_fam_id as set above
 			}
-		} else if ($bSelfCreate) { // no matching people, create a family and person record if this feature is enabled
-			$sSQL = "INSERT INTO `config_cfg` SET `cfg_id`=77, `cfg_name`='bSelfCreate', `cfg_value`='0', `cfg_type`='boolean', `cfg_default`='0', `cfg_tooltip`='Create person and family records through the self-service interface', `cfg_section`='General', `cfg_category`=NULL";
-			$sCreateFamilySQL = "INSERT INTO family_fam SET 
-				fam_Name=\"$reg_famname\",
-				fam_Address1=\"$reg_address1\",
-				fam_Address2=\"$reg_address2\",
-				fam_City=\"$reg_city\",
-				fam_state=\"$reg_state\",
-				fam_Zip=\"$reg_zip\",
-				fam_Country=\"$reg_country\",
-				fam_HomePhone=\"$reg_phone\",
-				fam_Email=\"$reg_email\",
-				fam_DateEntered=NOW(),
-				fam_DateLastEdited=NOW()";
-			$result = $link->query($sCreateFamilySQL);
-			
-			$sSQL = "SELECT LAST_INSERT_ID();";
-			$result = $link->query($sSQL);
-			$line = $result->fetch_array(MYSQLI_ASSOC);
-			$per_fam_id = $line["LAST_INSERT_ID()"];
-
-			$sCreatePersonSQL = "INSERT INTO person_per SET
-				per_FirstName=\"$reg_firstname\",
-				per_LastName=\"$reg_lastname\",
-				per_CellPhone=\"$reg_phone\",
-				per_Email=\"$reg_email\",
-				per_fmr_ID=1,
-				per_fam_ID=$per_fam_id,
-				per_DateLastEdited=NOW(),
-				per_DateEntered=NOW(),
-				per_FriendDate=NOW()";
-			$result = $link->query($sCreatePersonSQL);
-			
-			$sSQL = "SELECT LAST_INSERT_ID();";
-			$result = $link->query($sSQL);
-			$line = $result->fetch_array(MYSQLI_ASSOC);
-			$per_id = $line["LAST_INSERT_ID()"];
 		}
 		
 		$setValueSQL = "SET " .

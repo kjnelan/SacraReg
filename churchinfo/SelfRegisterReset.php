@@ -11,7 +11,9 @@
  *
  ******************************************************************************/
 
+include "Include/UtilityFunctions.php";
 include "Include/Config.php";
+include "SelfRegisterEmail.php";
 
 $bNoBanner = array_key_exists ("NoBanner", $_GET);
 if (array_key_exists ("NoBanner", $_SESSION))
@@ -25,6 +27,16 @@ $link = mysqli_connect($sSERVERNAME, $sUSER, $sPASSWORD, $sDATABASE)
 
 $reg_randomtag = $link->real_escape_string($_GET['reg_randomtag']);
 
+$sSQL = "SELECT * FROM register_reg WHERE reg_randomtag=\"$reg_randomtag\"";
+$result = $link->query ($sSQL);
+if ($result->num_rows != 1) {
+	printf ("Unable to reset password.");
+	mysqli_close($link);
+	exit;
+}
+$line = $result->fetch_array(MYSQLI_ASSOC);
+extract ($line);
+
 if (isset($_POST["Submit"])) {
 	$reg_password = $link->real_escape_string($_POST["Password"]);
 	$reg_reenterpassword = $link->real_escape_string($_POST["ReEnterPassword"]);
@@ -35,8 +47,18 @@ if (isset($_POST["Submit"])) {
 
 	if ($errStr == "") {
 		$sPasswordHashSha256 = hash ("sha256", $reg_password);
-		$sSQL = "UPDATE register_reg SET reg_confirmed=1, reg_password = '$sPasswordHashSha256' WHERE reg_randomtag='".$reg_randomtag."'";
+		$sSQL = "UPDATE register_reg SET reg_password = '$sPasswordHashSha256' WHERE reg_randomtag='".$reg_randomtag."'";
+			
 		$result = $link->query($sSQL);
+
+		if (! $reg_confirmed) {
+			SendConfirmMessage ($reg_id);
+			
+			printf ("Password has been updated, confirmation email has been re-sent.  Please use the link in the confirmation email to confirm your registration.");
+			mysqli_close($link);
+			exit;
+		}
+			
 		header('Location: SelfRegisterHome.php');
 		exit();
 	}

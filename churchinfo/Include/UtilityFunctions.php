@@ -88,6 +88,7 @@ function Redirect($sRelativeURL)
 function URL_Origin()
 {
 	global $_SERVER;
+	$use_forwarded_host = true;
 	
     $ssl      = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' );
     $sp       = strtolower( $_SERVER['SERVER_PROTOCOL'] );

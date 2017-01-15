@@ -124,30 +124,36 @@ function SendAMessage ($reg_id, $bodyContents, $to_email, $to_name, $email_subje
     global $sSMTPUser;
     global $sSMTPPass;
     global $sSMTPHost;
+    global $sSendType;
 
 	$mail = new PHPMailer;
-	$mail->isSMTP();
-
-	$delimeter = strpos($sSMTPHost, ':');
-    if ($delimeter === FALSE) {
-        $sSMTPPort = 25;                // Default port number
-    } else {
-        $sSMTPPort = intval(substr($sSMTPHost, $delimeter+1));
-        $sSMTPHost = substr($sSMTPHost, 0, $delimeter);   
-    }
-    if (is_int($sSMTPPort))
-        $mail->Port = $sSMTPPort;
-    else
-        $mail->Port = 25;
 	
-	//Enable SMTP debugging	// 0 = off (for production use)	// 1 = client messages	// 2 = client and server messages
-	$mail->SMTPDebug = 0; // 2
-	$mail->Debugoutput = 'html';
-	$mail->Host = $sSMTPHost;
-	$mail->SMTPAuth = $sSMTPAuth;
-	$mail->SMTPAutoTLS = true;
-	$mail->Username = $sSMTPUser;
-	$mail->Password = $sSMTPPass;
+    if (strtolower($sSendType)=='smtp') {
+		$mail->isSMTP();
+	
+		$delimeter = strpos($sSMTPHost, ':');
+	    if ($delimeter === FALSE) {
+	        $sSMTPPort = 25;                // Default port number
+	    } else {
+	        $sSMTPPort = intval(substr($sSMTPHost, $delimeter+1));
+	        $sSMTPHost = substr($sSMTPHost, 0, $delimeter);   
+	    }
+	    if (is_int($sSMTPPort))
+	        $mail->Port = $sSMTPPort;
+	    else
+	        $mail->Port = 25;
+		
+		//Enable SMTP debugging	// 0 = off (for production use)	// 1 = client messages	// 2 = client and server messages
+		$mail->SMTPDebug = 0; // 2
+		$mail->Debugoutput = 'html';
+		$mail->Host = $sSMTPHost;
+		$mail->SMTPAuth = $sSMTPAuth;
+		$mail->SMTPAutoTLS = true;
+		$mail->Username = $sSMTPUser;
+		$mail->Password = $sSMTPPass;
+    } else {
+        $mail->IsSendmail();                // tell the class to use Sendmail
+    }
 	$mail->setFrom($sToEmailAddress, $sFromName);
 	$mail->addReplyTo($sToEmailAddress, $sFromName);
 	
