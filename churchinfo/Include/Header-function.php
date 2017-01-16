@@ -375,7 +375,7 @@ global $MenuFirst, $sPageTitle, $sURLPath;
 
     <?php
     if (!$bDefectiveBrowser)
-        echo "<div style=\"position:fixed; top:0; left:0; width: 100%;\">";
+        echo "<div style=\"position:fixed; top:0; left:0; width: 100%; z-index: +1;\">";
 
     if ($sHeader) {
         // Optional Header Code (Entered on General Settings page - sHeader)
