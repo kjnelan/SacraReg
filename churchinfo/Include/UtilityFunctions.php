@@ -108,7 +108,7 @@ function CurrentFY()
     $yearNow = date ("Y");
     $monthNow = date ("m");
     $FYID = $yearNow - 1996;
-    if ($monthNow >= $iFYMonth)
+    if (($iFYMonth <> 1) && ($monthNow >= $iFYMonth))
         $FYID += 1;
     return ($FYID);
 }
@@ -120,7 +120,7 @@ function PrintFYIDSelect ($iFYID, $selectName)
 
     echo "<option value=\"0\">" . gettext("Select Fiscal Year") . "</option>";
 
-    for ($fy = 1; $fy < CurrentFY() + 2; $fy++) {
+    for ($fy = 0; $fy < CurrentFY() + 2; $fy++) {
         echo "<option value=\"" . $fy . "\"";
         if ($iFYID == $fy)
             echo " selected";
@@ -137,6 +137,7 @@ function MakeFYString ($iFYID)
     $monthNow = date ("m");
 
     if ($iFYMonth == 1)
+        # return (1996 + $iFYID . "/FYID=". $iFYID);
         return (1996 + $iFYID);
     else
         return (1995 + $iFYID . "/" . substr (1996 + $iFYID, 2, 2));
