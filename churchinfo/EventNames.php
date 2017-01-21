@@ -74,6 +74,10 @@ if (isset ($_POST['Action'])) {
 	  $eDOM = $_POST["newEvtRecurDOM"];
 	  $eDOW = $_POST["newEvtRecurDOW"];
 	  $eDOY = $_POST["newEvtRecurDOY"];
+	  if ($eDOY == "")
+	      $eDOY = "NULL";
+	  else
+	      $eDOY = "'$eDOY'";
 	  $eRecur=$_POST["newEvtTypeRecur"];
 	  $eCntLst = $_POST["newEvtTypeCntLst"];
 	  $eCntArray = explode(",",$eCntLst);
@@ -81,7 +85,7 @@ if (isset ($_POST['Action'])) {
 	  $eCntNum = count($eCntArray);
 	  $theID=$_POST["theID"];
 	
-	  $sSQL = "UPDATE event_types SET type_name='$eName', type_defstarttime='$eTime',type_defrecurtype='$eRecur', type_defrecurDOW='$eDOW',type_defrecurDOM='$eDOM',type_defrecurDOY='$eDOY' WHERE type_id='$theID'";
+	  $sSQL = "UPDATE event_types SET type_name='$eName', type_defstarttime='$eTime',type_defrecurtype='$eRecur', type_defrecurDOW='$eDOW',type_defrecurDOM='$eDOM',type_defrecurDOY=$eDOY WHERE type_id='$theID'";
 	
 	  RunQuery($sSQL);
 	  
