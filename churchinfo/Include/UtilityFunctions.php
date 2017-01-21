@@ -1376,10 +1376,12 @@ function sqlCustomField(&$sSQL, $type, $data, $col_Name, $special)
         case 1:
             switch ($data) {
                 case "false":
-                    $data = "'false'";
+                case "FALSE":
+                	$data = "'false'";
                     break;
                 case "true":
-                    $data = "'true'";
+                case "TRUE":
+                	$data = "'true'";
                     break;
                 default:
                     $data = "NULL";

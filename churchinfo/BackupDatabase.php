@@ -2,13 +2,13 @@
 /*******************************************************************************
  *
  *  filename    : BackupDatabase.php
- *  last change : 2003-04-03
+ *  last change : 2017-01-16
  *  description : Creates a backup file of the database.
  *
- *  http://www.infocentral.org/
- *  Copyright 2003 Chris Gebhardt
+ *  http://www.churchdb.org/
+ *  Copyright 2017 Chris Gebhardt, Michael Wilt
  *
- *  InfoCentral is free software; you can redistribute it and/or modify
+ *  ChurchInfo is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -35,10 +35,10 @@ if (isset($sGZIPname)) $hasGZIP = true;
 if (isset($sZIPname)) $hasZIP = true;
 if (isset($sPGPname)) $hasPGP = true;
 
-$iArchiveType = $_POST["archiveType"];
-$bEncryptBackup = $_POST["encryptBackup"];
-$sPassword1 = $_POST["pw1"];
-$sPassword2 = $_POST["pw2"];
+$iArchiveType = FilterInput ($_POST["archiveType"]);
+$bEncryptBackup = FilterInput ($_POST["encryptBackup"], 'int');
+$sPassword1 = FilterInput ($_POST["pw1"]);
+$sPassword2 = FilterInput ($_POST["pw2"]);
 $bNoErrors = true;
 
 if (isset($_POST["doBackup"]))
@@ -59,7 +59,7 @@ if (isset($_POST["doBackup"]))
 
 	if ($bNoErrors)
 	{
-		$saveTo = "SQL/InfoCentral-Backup-" . date("Ymd-Gis") . ".sql";
+		$saveTo = "SQL/ChurchInfo-Backup-" . date("Ymd-Gis") . ".sql";
 		$backupCommand = "mysqldump -u $sUSER --password=$sPASSWORD --host=$sSERVERNAME $sDATABASE > $saveTo";
 		exec($backupCommand, $returnString, $returnStatus);
 
@@ -117,13 +117,13 @@ require "Include/Header.php";
 
 ?>
 
-<h3><?php echo gettext("This tool will assist you in manually backing up the InfoCentral database."); ?></h3>
+<h3><?php echo gettext("This tool will assist you in manually backing up the ChurchInfo database."); ?></h3>
 <BR>
 <h3><u><?php echo gettext("TIPS:"); ?></u></h3>
 <ul>
 <li><?php echo gettext("You should make a manual backup at least once a week unless you already have a regular backup procedule for your systems."); ?></li><br>
 <li><?php echo gettext("After you download the backup file, you should make two copies. Put one of them in a fire-proof safe on-site and the other in a safe location off-site."); ?></li><br>
-<li><?php echo gettext("If you are concerned about confidentiality of data stored in the InfoCentral database, you should encrypt the backup data if it will be stored somewhere potentially accessible to others"); ?></li><br>
+<li><?php echo gettext("If you are concerned about confidentiality of data stored in the ChurchInfo database, you should encrypt the backup data if it will be stored somewhere potentially accessible to others"); ?></li><br>
 <li><?php echo gettext("For added backup security, you can e-mail the backup to yourself at an e-mail account hosted off-site or to a trusted friend.  Be sure to use encryption if you do this, however."); ?></li>
 </ul>
 <BR><BR>
