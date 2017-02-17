@@ -57,9 +57,9 @@ if (isset($_POST["AddEvent"]))
 
     // Insert into the funds table
     $sSQL = "INSERT INTO `events_event`
-             (`event_id` , `event_type` , `event_title`, `event_desc`, `event_text`, `event_start`, `event_end`, `inactive`)
+             (`event_type` , `event_title`, `event_desc`, `event_text`, `event_start`, `event_end`, `inactive`)
              VALUES
-             ('', '".$newEventType."', '".$newEventTitle."', '".$newEventDesc."', '".$newEventText."', '".$newEventStart."', '".$newEventEnd."', '".$newEventStatus."');";
+             ('".$newEventType."', '".$newEventTitle."', '".$newEventDesc."', '".$newEventText."', '".$newEventStart."', '".$newEventEnd."', '".$newEventStatus."');";
     RunQuery($sSQL);
 
     // $bNewNameError = false;

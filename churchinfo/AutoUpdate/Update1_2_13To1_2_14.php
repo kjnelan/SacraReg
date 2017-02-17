@@ -91,19 +91,20 @@ for (; ; ) {    // This is not a loop but a section of code to be
 // TRUE to FALSE now that backup copies of all tables are available
 
     // Add picture field for donated items
-    $sSQL = "ALTER IGNORE TABLE donateditem_di ADD `di_picture` text NULL";
-    RunQuery($sSQL, FALSE); // False means do not stop on error
+    $sSQL = "ALTER TABLE donateditem_di ADD `di_picture` text NULL";
+    if (!RunQuery($sSQL, FALSE))// False means do not stop on error
+    	break; 
 
     // Add electronic payment processor defaulting to Vanco, also supporting AuthorizeNet
     $sSQL = "INSERT IGNORE INTO `config_cfg` (`cfg_id`, `cfg_name`, `cfg_value`, `cfg_type`, `cfg_default`, `cfg_tooltip`, `cfg_section`, `cfg_category`) VALUES (73, 'sElectronicTransactionProcessor', 'Vanco', 'text', 'Vanco', 'Electronic Transaction Processor', 'General', NULL)";
 	if (!RunQuery($sSQL, FALSE))
 	    break;
         
-    $sSQL = "ALTER IGNORE TABLE autopayment_aut ADD `aut_CreditCardVanco` text NULL";
+    $sSQL = "ALTER TABLE autopayment_aut ADD `aut_CreditCardVanco` text NULL";
 	if (!RunQuery($sSQL, FALSE))
 	    break;
         
-    $sSQL = "ALTER IGNORE TABLE autopayment_aut ADD `aut_AccountVanco` text NULL";
+    $sSQL = "ALTER TABLE autopayment_aut ADD `aut_AccountVanco` text NULL";
 	if (!RunQuery($sSQL, FALSE))
 	    break;
 
