@@ -91,6 +91,8 @@ if(!$bVersionTableExists) {
     exit;
 }
 
+require 'AutoUpdate/FixDates.php'; // This updates the schema if necessary to fix datetime values of 0000-00-00 00:00:00
+
 // This code will automatically update from 1.2.14 to 1.3.0
 if (strncmp($ver_version, "1.2.14", 6) == 0) {
 
