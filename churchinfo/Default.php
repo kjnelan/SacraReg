@@ -139,11 +139,14 @@ if ($iUserID > 0)
 
     if ($bPasswordMatch && $usr_Password != $sPasswordHashSha256) {
     	// in case this is an upgrade to a newer server- need to do this before attempting the next few steps
-		$sSQL = "SET SESSION sql_mode = '';".
-				"UPDATE user_usr SET usr_LastLogin='1970-01-01 00:00:00' WHERE usr_LastLogin='0000-00-00 00:00:00';".
-				"UPDATE user_usr SET usr_ShowSince='1970-01-01' WHERE usr_ShowSince='0000-00-00';".
-				"ALTER TABLE `user_usr` CHANGE `usr_LastLogin` `usr_LastLogin` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00', CHANGE `usr_showSince` `usr_showSince` DATE NOT NULL DEFAULT '1970-01-01';";
-    	    	RunQuery($sSQL, TRUE); // TRUE means stop on error
+		$sSQL = "SET SESSION sql_mode = '';";
+    	RunQuery($sSQL, TRUE); // TRUE means stop on error
+		$sSQL = "UPDATE user_usr SET usr_LastLogin='1970-01-01 00:00:00' WHERE usr_LastLogin='0000-00-00 00:00:00';";
+		RunQuery($sSQL, TRUE); // TRUE means stop on error
+		$sSQL = "UPDATE user_usr SET usr_ShowSince='1970-01-01' WHERE usr_ShowSince='0000-00-00';";
+		RunQuery($sSQL, TRUE); // TRUE means stop on error
+		$sSQL = "ALTER TABLE `user_usr` CHANGE `usr_LastLogin` `usr_LastLogin` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00', CHANGE `usr_showSince` `usr_showSince` DATE NOT NULL DEFAULT '1970-01-01';";
+    	RunQuery($sSQL, TRUE); // TRUE means stop on error
     	
     	// Need to make sure this field can handle the additional length before updating the password
     	$sSQL = "ALTER TABLE user_usr MODIFY `usr_Password` text NOT NULL";
