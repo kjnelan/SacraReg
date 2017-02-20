@@ -107,6 +107,9 @@ function MakeSalutationUtility ($famID) {
   }
 
   $numNotChildren = $numMembers - $numChildren;
+  
+  $firstTitle = "";
+  $secondTitle = "";
 
 	if ($numNotChildren == 1) {
      extract ($aNotChildren[0]);
@@ -114,16 +117,20 @@ function MakeSalutationUtility ($famID) {
 	} else if ($numNotChildren == 2) {
 		$firstMember = mysqli_fetch_array($rsMembers);
      extract ($aNotChildren[0]);
+     if ($per_Title != "")
+	     $firstTitle = $per_Title . " ";
 		$firstFirstName = $per_FirstName;
 		$firstLastName = $per_LastName;
 		$secondMember = mysqli_fetch_array($rsMembers);
      extract ($aNotChildren[1]);
+     if ($per_Title != "")
+	     $secondTitle = $per_Title . " ";
 		$secondFirstName = $per_FirstName;
 		$secondLastName = $per_LastName;
 		if ($firstLastName == $secondLastName) {
-			return ($firstFirstName . " & " . $secondFirstName . " " . $firstLastName);
+			return ($firstTitle . $firstFirstName . " & " . $secondTitle . $secondFirstName . " " . $firstLastName);
 		} else {
-			return ($firstFirstName . " " . $firstLastName . " & " . $secondFirstName . " " . $secondLastName);
+			return ($firstTitle . $firstFirstName . " " . $firstLastName . " & " . $secondTitle . $secondFirstName . " " . $secondLastName);
 		}
 	} else {
 		return ($fam_Name . " Family");
