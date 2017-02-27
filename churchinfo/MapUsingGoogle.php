@@ -37,7 +37,7 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 
 ?>
 
-   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?<?php echo $sGoogleMapKey ? "key=$sGoogleMapKey&" : ""; ?>sensor=false"></script>
+   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?<?php echo $sGoogleMapKey ? "key=$sGoogleMapKey&" : ""; ?>sensor=false"></script>
    <div>
     <div id="map" style="width: 800px; height: 600px; float:left;"></div>
 
@@ -53,12 +53,12 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 
     var map = new google.maps.Map(document.getElementById("map"), myOptions);   
 
-    var shadow = new google.maps.MarkerImage('http://google-maps-icons.googlecode.com/files/shadow.png',
+    var shadow = new google.maps.MarkerImage('https://google-maps-icons.googlecode.com/files/shadow.png',
                                  new google.maps.Size(51, 37),
                                  null,
                                  new google.maps.Point(18, 37));
 	var churchMark = new google.maps.Marker({
-                                                icon: "http://google-maps-icons.googlecode.com/files/church2.png",
+                                                icon: "https://google-maps-icons.googlecode.com/files/church2.png",
                                                 shadow: shadow,
                                                 position: new google.maps.LatLng(<?php echo $nChurchLatitude . ", " . $nChurchLongitude; ?>), 
                                                 map: map});
@@ -107,11 +107,11 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 		if ($fam_longitude != 0 && $fam_latitude != 0) {
 ?>
 
-                     var image = new google.maps.MarkerImage('http://www.google.com/intl/en_us/mapfiles/ms/micons/<?php echo (array_key_exists ($per_cls_ID, $markerIcons) ? $markerIcons[$per_cls_ID] : 0); ?>.png',
+                     var image = new google.maps.MarkerImage('https://www.google.com/intl/en_us/mapfiles/ms/micons/<?php echo (array_key_exists ($per_cls_ID, $markerIcons) ? $markerIcons[$per_cls_ID] : 0); ?>.png',
                                  new google.maps.Size(32, 32),
                                  new google.maps.Point(0,0),
                                  new google.maps.Point(0, 32));
-                     var shadow = new google.maps.MarkerImage('http://maps.google.com/mapfiles/shadow50.png',
+                     var shadow = new google.maps.MarkerImage('https://maps.google.com/mapfiles/shadow50.png',
                                  new google.maps.Size(37, 34),
                                  new google.maps.Point(0,0),
                                  new google.maps.Point(-4, 34));
@@ -149,7 +149,7 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 	    extract ($aIcons);
             ?>
       <tr>
-           <td><img style="vertical-align:middle;" src='http://www.google.com/intl/en_us/mapfiles/ms/micons/<?php echo $markerIcons[$lst_OptionID]; ?>.png'/></td>
+           <td><img style="vertical-align:middle;" src='https://www.google.com/intl/en_us/mapfiles/ms/micons/<?php echo $markerIcons[$lst_OptionID]; ?>.png'/></td>
            <td><?php echo $lst_OptionName; ?></td>
      </tr>
 <?php
