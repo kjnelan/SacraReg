@@ -189,14 +189,16 @@ $pdf->AddPage ();
 
 $leftX = 10;
 $famNameX = 10;
-$famMethodX = 90;
-$famFundX = 120;
-$famPledgeX = 150;
-$famPayX = 170;
+$famEnteredByX = 75;
+$famMethodX = 105;
+$famFundX = 135;
+$famPledgeX = 160;
+$famPayX = 175;
 $famOweX = 190;
 
 $famNameWid = $famMethodX - $famNameX;
-$famMethodWid = $famFundX - $famMethodX;
+$famMethodWid = $famEnteredByX - $famMethodX;
+$famEnteredByWid = $famFundX - $famEnteredByX;
 $famFundWid = $famPledgeX - $famFundX;
 $famPledgeWid = $famPayX - $famPledgeX;
 $famPayWid = $famOweX - $famPayX;
@@ -210,6 +212,7 @@ $pdf->WriteAt ($leftX, $y, "Pledge Summary By Family");
 $y += $lineInc;
 
 $pdf->WriteAtCell ($famNameX, $y, $famNameWid, "Name");
+$pdf->WriteAtCell ($famEnteredByX, $y, $famEnteredByWid, "Entered By");
 $pdf->WriteAtCell ($famMethodX, $y, $famMethodWid, "Method");
 $pdf->WriteAtCell ($famFundX, $y, $famFundWid, "Fund");
 $pdf->WriteAtCell ($famPledgeX, $y, $famPledgeWid, "Pledge");
@@ -268,12 +271,14 @@ while ($aFam = mysqli_fetch_array($rsFamilies)) {
 	}
 
 	// Get pledges only
-	$sSQL = "SELECT *, b.fun_Name AS fundName FROM pledge_plg 
+	$sSQL = "SELECT *, CONCAT(per_FirstName, ' ', per_LastName) AS EnteredByName, b.fun_Name AS fundName FROM pledge_plg 
 			 LEFT JOIN donationfund_fun b ON plg_fundID = b.fun_ID
+			 LEFT JOIN person_per ON per_ID = plg_EditedBy
 			 WHERE plg_FamID = " . $fam_ID . " AND plg_FYID = " . $iFYID . $sSQLFundCriteria . " AND plg_PledgeOrPayment = 'Pledge' ORDER BY plg_date";
 	$rsPledges = RunQuery($sSQL);
 
 	$totalAmountPledges = 0;
+	$plg_EnteredByName = "";
 
 	if (mysqli_num_rows($rsPledges) == 0) {
 	} else {
@@ -287,6 +292,7 @@ while ($aFam = mysqli_fetch_array($rsFamilies)) {
 
 			$fundPledgeTotal[$fundName] += $plg_amount;
 			$fundPledgeMethod[$fundName] = $plg_method;
+			$fundPledgeEnteredBy[$fundName] = $EnteredByName;
 			$totalAmount += $plg_amount;
 			$cnt += 1;
 		}
@@ -326,6 +332,7 @@ while ($aFam = mysqli_fetch_array($rsFamilies)) {
 					$amountDue = 0;
 
 				$pdf->WriteAtCell ($famNameX, $y, $famNameWid, $pdf->MakeSalutation ($fam_ID));
+				$pdf->WriteAtCell ($famEnteredByX, $y, $famEnteredByWid, $fundPledgeEnteredBy[$fun_name]);
 				$pdf->WriteAtCell ($famPledgeX, $y, $famPledgeWid, $fundPledgeTotal[$fun_name]);
 				$pdf->WriteAtCell ($famMethodX, $y, $famMethodWid, $fundPledgeMethod[$fun_name]);
 				$pdf->WriteAtCell ($famFundX, $y, $famFundWid, $fun_name);
