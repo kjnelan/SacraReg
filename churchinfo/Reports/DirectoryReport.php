@@ -93,8 +93,7 @@ class PDF_Directory extends ChurchInfoReport {
         //Select Arial bold 15
         $this->SetFont($this->_Font,'B',15);
 
-        if (is_readable($this->bDirLetterHead))
-            $this->Image($this->bDirLetterHead,10,5,190);
+        $this->Image($this->bDirLetterHead,10,5,190);
 
         //Line break
         $this->Ln(5);
@@ -628,7 +627,7 @@ if (!empty($_POST["GroupID"]))
     $sWhereExt .= "AND per_ID = p2g2r_per_ID AND p2g2r_grp_ID in (" . $sGroupsList . ")";
 
     // This is used by per-role queries to remove duplicate rows from people assigned multiple groups.
-    $sGroupBy = " GROUP BY per_ID";
+    $sGroupBy = " GROUP BY per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate";
 } else { 
 	$sGroupTable = "person_per";
 	$sGroupsList = "";
@@ -650,9 +649,9 @@ if(count($mysqltmp[1] > 1))
 if($mysqlversion >= 4){
     // This query is similar to that of the CSV export with family roll-up.
     // Here we want to gather all unique families, and those that are not attached to a family.
-    $sSQL = "(SELECT *, 0 AS memberCount, per_LastName AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID = 0 $sWhereExt $sClassQualifier )
-        UNION (SELECT *, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY per_fam_ID HAVING memberCount = 1)
-        UNION (SELECT *, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY per_fam_ID HAVING memberCount > 1)
+    $sSQL = "SELECT per_fam_ID, fam_ID, per_ID, fam_Name, 0 AS memberCount, per_LastName AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID = 0 $sWhereExt $sClassQualifier
+        UNION SELECT per_fam_ID, fam_ID, 0 as per_ID, fam_Name, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY fam_ID, per_fam_ID HAVING memberCount = 1
+        UNION SELECT per_fam_ID, fam_ID, 0 as per_ID, fam_Name, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY fam_ID, per_fam_ID HAVING memberCount > 1
         ORDER BY SortMe";
 }else if($mysqlversion == 3 && $mysqlsubversion >= 22){
     // If UNION not supported use this query with temporary table.  Prior to version 3.22 no IF EXISTS statement.
@@ -684,23 +683,23 @@ while ($aRow = mysqli_fetch_array($rsRecords))
     $pdf->sSortBy = $SortMe;
     
     $isFamily = false;
-
-    if ($memberCount > 1) // Here we have a family record.
+    
+    if ($memberCount > 1) // Here we have a family record with more than one person.
     {
         $iFamilyID = $per_fam_ID;
         $isFamily = true;
 
         $pdf->sRecordName = "";
-        $pdf->sLastName = $per_LastName;
+        $pdf->sLastName = $fam_Name;
         $OutStr .= $pdf->sGetFamilyString($aRow);
         $bNoRecordName = true;
 
         // Find the Head of Household
-        $sSQL = "SELECT * FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
             WHERE per_fam_ID = " . $iFamilyID . " 
             AND per_fmr_ID in ($sDirRoleHeads) $sWhereExt $sClassQualifier $sGroupBy";
-        $rsPerson = RunQuery($sSQL);
-
+        $rsPerson = RunQuery($sSQL);        
+        
         if (mysqli_num_rows($rsPerson) > 0)
         {
             $aHead = mysqli_fetch_array($rsPerson);
@@ -709,7 +708,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         }
 
         // Find the Spouse of Household
-        $sSQL = "SELECT * FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
             WHERE per_fam_ID = " . $iFamilyID . " 
             AND per_fmr_ID in ($sDirRoleSpouses) $sWhereExt $sClassQualifier $sGroupBy";
         $rsPerson = RunQuery($sSQL);
@@ -726,7 +725,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
             $pdf->sRecordName = $fam_Name;
 
         // Find the other members of a family
-        $sSQL = "SELECT * FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID
+        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID
             WHERE per_fam_ID = " . $iFamilyID . " AND !(per_fmr_ID in ($sDirRoleHeads))
             AND !(per_fmr_ID in ($sDirRoleSpouses))  $sWhereExt $sClassQualifier $sGroupBy ORDER BY per_BirthYear,per_FirstName";
         $rsPerson = RunQuery($sSQL);
@@ -736,9 +735,27 @@ while ($aRow = mysqli_fetch_array($rsRecords))
            $OutStr .= $pdf->sGetMemberString($aRow);
            $OutStr .= $pdf->sGetCustomString($rsCustomFields, $aRow);
         }
-    }
-    else
-    {
+        $sSQL = "SELECT fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
+            FROM family_fam 
+            WHERE fam_ID = $fam_ID";
+
+	    $rsPerson = RunQuery($sSQL);
+	    extract(mysqli_fetch_array($rsPerson));
+    } else {// get person stuff for an individual or the one person in this family
+    	if ($fam_ID > 0)
+	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
+    	        FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        	    WHERE per_fam_ID = $fam_ID $sWhereExt $sGroupBy";	        
+	    else if ($per_ID > 0)
+	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
+    	        FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        	    WHERE per_ID = $per_ID $sWhereExt $sGroupBy";
+	    else
+	    	printf ("No per_ID or fam_ID");
+
+	    $rsPerson = RunQuery($sSQL);
+	    extract(mysqli_fetch_array($rsPerson));
+	    
         if (strlen($per_LastName))
             $pdf->sLastName = $per_LastName;
         else
@@ -746,63 +763,57 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         $pdf->sRecordName = $pdf->sLastName . ", " . $per_FirstName;
         if (strlen ($per_Suffix))
 			$pdf->sRecordName .= " " . $per_Suffix;
-
+			
         if ($bDirBirthday && $per_BirthMonth && $per_BirthDay)
             $pdf->sRecordName .= sprintf(" (%d/%d)", $per_BirthMonth, $per_BirthDay);
-
-        SelectWhichAddress($sAddress1, $sAddress2, $per_Address1, $per_Address2, $fam_Address1, $fam_Address2, false);
-        $sAddress2 = SelectWhichInfo($per_Address2, $fam_Address2, false);
-        $sCity = SelectWhichInfo($per_City, $fam_City, false);
-        $sCountry = SelectWhichInfo($per_Country, $fam_Country, false);
-        $sState = SelectWhichInfo($per_State, $fam_State, false);
-        $sZip = SelectWhichInfo($per_Zip, $fam_Zip, false);
-        $sHomePhone = SelectWhichInfo($per_HomePhone, $fam_HomePhone, false);
-        $sWorkPhone = SelectWhichInfo($per_WorkPhone, $fam_WorkPhone, false);
-        $sCellPhone = SelectWhichInfo($per_CellPhone, $fam_CellPhone, false);
-        $sEmail = SelectWhichInfo($per_Email, $fam_Email, false);
-
-        if ($bDirAddress)
-        {
-//            if (strlen($sAddress1)) { $OutStr .= $sAddress1 . "\n";  }
-//            if (strlen($sAddress2)) { $OutStr .= $sAddress2 . "\n";  }
-            if (strlen($sAddress1)) { $OutStr .= $sAddress1;  }
-            if (strlen($sAddress2)) { $OutStr .= "   ".$sAddress2;  }
-            $OutStr .= "\n";
-            if (strlen($sCity)) { $OutStr .= $sCity . ", " . $sState . " " . $sZip . "\n";  }
-            if (strlen($sCountry) && ($sCountry != $sDefaultCountry)) { $OutStr .= $sCountry . "\n";  }
-        }
-        if (($bDirFamilyPhone || $bDirPersonalPhone) && strlen($sHomePhone)) {
-            $TempStr = ExpandPhoneNumber($sHomePhone, $sDefaultCountry, $bWierd);
-            $OutStr .= "   " . gettext("Phone") . ": " . $TempStr . "\n";
-        }
-        if (($bDirFamilyWork || $bDirPersonalWork) && strlen($sWorkPhone)) {
-            $TempStr = ExpandPhoneNumber($sWorkPhone, $sDefaultCountry, $bWierd);
-            $OutStr .= "   " . gettext("Work") . ": " . $TempStr . "\n";
-        }
-        if (($bDirFamilyCell || $bDirPersonalCell) && strlen($sCellPhone)) {
-            $TempStr = ExpandPhoneNumber($sCellPhone, $sDefaultCountry, $bWierd);
-            $OutStr .= "   " . gettext("Cell") . ": " . $TempStr . "\n";
-        }
-        if (($bDirFamilyEmail || $bDirPersonalEmail) && strlen($sEmail))
-            $OutStr .= "   " . gettext("Email") . ": " . $sEmail . "\n";
-        if ($bDirPersonalWorkEmail && strlen($per_WorkEmail))
-            $OutStr .= "   " . gettext("Work/Other Email") . ": " . $per_WorkEmail .= "\n";
-            
-         // Custom Fields   
-        $OutStr .= $pdf->sGetCustomString($rsCustomFields, $aRow);
-        
     }
+	    
+    SelectWhichAddress($sAddress1, $sAddress2, $per_Address1, $per_Address2, $fam_Address1, $fam_Address2, false);
+    $sAddress2 = SelectWhichInfo($per_Address2, $fam_Address2, false);
+    $sCity = SelectWhichInfo($per_City, $fam_City, false);
+    $sCountry = SelectWhichInfo($per_Country, $fam_Country, false);
+    $sState = SelectWhichInfo($per_State, $fam_State, false);
+    $sZip = SelectWhichInfo($per_Zip, $fam_Zip, false);
+    $sHomePhone = SelectWhichInfo($per_HomePhone, $fam_HomePhone, false);
+    $sWorkPhone = SelectWhichInfo($per_WorkPhone, $fam_WorkPhone, false);
+    $sCellPhone = SelectWhichInfo($per_CellPhone, $fam_CellPhone, false);
+    $sEmail = SelectWhichInfo($per_Email, $fam_Email, false);
 
+    if ($bDirAddress) {
+        if (strlen($sAddress1)) { $OutStr .= $sAddress1;  }
+        if (strlen($sAddress2)) { $OutStr .= "   ".$sAddress2;  }
+        $OutStr .= "\n";
+        if (strlen($sCity)) { $OutStr .= $sCity . ", " . $sState . " " . $sZip . "\n";  }
+        if (strlen($sCountry) && ($sCountry != $sDefaultCountry)) { $OutStr .= $sCountry . "\n";  }
+    }
+    if (($bDirFamilyPhone || $bDirPersonalPhone) && strlen($sHomePhone)) {
+        $TempStr = ExpandPhoneNumber($sHomePhone, $sDefaultCountry, $bWierd);
+        $OutStr .= "   " . gettext("Phone") . ": " . $TempStr . "\n";
+    }
+    if (($bDirFamilyWork || $bDirPersonalWork) && strlen($sWorkPhone)) {
+        $TempStr = ExpandPhoneNumber($sWorkPhone, $sDefaultCountry, $bWierd);
+        $OutStr .= "   " . gettext("Work") . ": " . $TempStr . "\n";
+    }
+    if (($bDirFamilyCell || $bDirPersonalCell) && strlen($sCellPhone)) {
+        $TempStr = ExpandPhoneNumber($sCellPhone, $sDefaultCountry, $bWierd);
+        $OutStr .= "   " . gettext("Cell") . ": " . $TempStr . "\n";
+    }
+    if (($bDirFamilyEmail || $bDirPersonalEmail) && strlen($sEmail))
+        $OutStr .= "   " . gettext("Email") . ": " . $sEmail . "\n";
+    if ($bDirPersonalWorkEmail && strlen($per_WorkEmail))
+        $OutStr .= "   " . gettext("Work/Other Email") . ": " . $per_WorkEmail .= "\n";
+            
+    // Custom Fields   
+    $OutStr .= $pdf->sGetCustomString($rsCustomFields, $aRow);
+        
     // Count the number of lines in the output string
     if (strlen($OutStr))
         $numlines = $pdf->NbLines($pdf->_ColWidth,$OutStr) ; 
     else
         $numlines = 0;
 
-    if ($numlines > 0)
-    {
-        if (strtoupper($sLastLetter) != strtoupper(substr($pdf->sSortBy,0,1)))
-        {
+    if ($numlines > 0) {
+        if (strtoupper($sLastLetter) != strtoupper(substr($pdf->sSortBy,0,1))) {
             $pdf->Check_Lines($numlines+2, 0, 0);
             $sLastLetter = strtoupper(substr($pdf->sSortBy,0,1));
             $pdf->Add_Header($sLastLetter);
@@ -810,8 +821,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         
         // if photo include pass the id, otherwise 0 equates to no family/pers
         $fid = 0; $pid = 0;
-        if ($bDirPhoto) 
-        {
+        if ($bDirPhoto) {
             if ($isFamily) 
                 $fid = $fam_ID; 
             else 
