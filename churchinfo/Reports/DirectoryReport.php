@@ -679,7 +679,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
 {
     $OutStr = "";
     extract($aRow);
-    
+
     $pdf->sSortBy = $SortMe;
     
     $isFamily = false;
@@ -703,6 +703,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         if (mysqli_num_rows($rsPerson) > 0)
         {
             $aHead = mysqli_fetch_array($rsPerson);
+            $per_Email = $aHead['per_Email']; // save the head of household email in case there is no family email
             $OutStr .= $pdf->sGetHeadString($rsCustomFields, $aHead);
             $bNoRecordName = false;
         }
@@ -767,7 +768,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         if ($bDirBirthday && $per_BirthMonth && $per_BirthDay)
             $pdf->sRecordName .= sprintf(" (%d/%d)", $per_BirthMonth, $per_BirthDay);
     }
-	    
+    
     SelectWhichAddress($sAddress1, $sAddress2, $per_Address1, $per_Address2, $fam_Address1, $fam_Address2, false);
     $sAddress2 = SelectWhichInfo($per_Address2, $fam_Address2, false);
     $sCity = SelectWhichInfo($per_City, $fam_City, false);
