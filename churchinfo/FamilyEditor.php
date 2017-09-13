@@ -170,6 +170,8 @@ if (isset($_POST["FamilySubmit"]) || isset($_POST["FamilySubmitAndAdd"]))
 			$iCanvasser = FilterInput($_POST["BraveCanvasser"]);
 		if (! $iCanvasser)
 			$iCanvasser = 0;
+	} else {
+		$iCanvasser = 0;
 	}
 
 	$iPropertyID = 0;
