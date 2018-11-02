@@ -37,6 +37,7 @@ $tScanString = "";
 $dep_Closed = false;
 $iAutID = 0;
 $iCurrentDeposit = 0;
+$iSelectedFund = 0;
 
 $nAmount = array (); // this will be the array for collecting values for each fund
 $sAmountError = array ();
@@ -178,15 +179,15 @@ if (isset($_POST["PledgeSubmit"]) or
 	}
 } else { // Form was not up previously, take data from existing records or make default values
 	if ($sGroupKey) {
-		$sSQL = "SELECT COUNT(plg_GroupKey), plg_PledgeOrPayment, plg_fundID, plg_Date, plg_FYID, plg_CheckNo, plg_Schedule, plg_method, plg_depID FROM pledge_plg WHERE plg_GroupKey='" . $sGroupKey . "' GROUP BY plg_GroupKey, plg_PledgeOrPayment, plg_fundID, plg_Date, plg_FYID, plg_CheckNo, plg_Schedule, plg_method, plg_depID";
-		$rsResults = RunQuery($sSQL);
-		list($numGroupKeys, $PledgeOrPayment, $fundId, $dDate, $iFYID, $iCheckNo, $iSchedule, $iMethod, $iCurrentDeposit) = mysqli_fetch_row($rsResults);
+		$sSQL = "SELECT COUNT(plg_GroupKey) FROM pledge_plg WHERE plg_GroupKey='" . $sGroupKey. "'";
+		$rsResults = RunQuery($sSQL);		
+		list($numGroupKeys) = mysqli_fetch_row($rsResults);
 		if ($numGroupKeys > 1) {
 			$iSelectedFund = 0;
 		} else {
 			$iSelectedFund = $fundId;
 		}
-		
+
 		$iTotalAmount = 0;
 		$sSQL = "SELECT DISTINCT plg_famID, plg_CheckNo, plg_date, plg_method, plg_FYID from pledge_plg where plg_GroupKey='" . $sGroupKey . "'";
 	 	//	don't know if we need plg_date or plg_method here...  leave it here for now
