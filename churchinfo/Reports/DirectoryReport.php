@@ -731,10 +731,10 @@ while ($aRow = mysqli_fetch_array($rsRecords))
             AND !(per_fmr_ID in ($sDirRoleSpouses))  $sWhereExt $sClassQualifier $sGroupBy ORDER BY per_BirthYear,per_FirstName";
         $rsPerson = RunQuery($sSQL);
 
-        while ($aRow = mysqli_fetch_array($rsPerson))
+        while ($aRowPerson = mysqli_fetch_array($rsPerson))
         {
-           $OutStr .= $pdf->sGetMemberString($aRow);
-           $OutStr .= $pdf->sGetCustomString($rsCustomFields, $aRow);
+           $OutStr .= $pdf->sGetMemberString($aRowPerson);
+           $OutStr .= $pdf->sGetCustomString($rsCustomFields, $aRowPerson);
         }
         $sSQL = "SELECT fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
             FROM family_fam 
