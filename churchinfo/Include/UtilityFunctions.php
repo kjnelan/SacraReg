@@ -10,11 +10,7 @@ function addslashes_deep($value)
     return $value;
 }
 
-// If Magic Quotes is turned off, do the same thing manually..
-if (empty($_SESSION['bHasMagicQuotes']))
-{
-    foreach ($_REQUEST as $key=>$value) $value = addslashes_deep($value);
-}
+foreach ($_REQUEST as $key=>$value) $value = addslashes_deep($value);
 
 // Constants
 $aPropTypes = array(
@@ -230,20 +226,14 @@ function FilterInput($sInput,$type = 'string',$size = 1)
             case 'string':
                 // or use htmlspecialchars( stripslashes( ))
                 $sInput = strip_tags(trim($sInput));
-                if (get_magic_quotes_gpc())
-                    $sInput = stripslashes($sInput);
                 $sInput = EscapeString ($sInput);
                 return $sInput;
             case 'htmltext':
                 $sInput = strip_tags(trim($sInput),'<a><b><i><u>');
-                if (get_magic_quotes_gpc())
-                    $sInput = stripslashes($sInput);
                 $sInput = EscapeString($sInput);
                 return $sInput;
             case 'char':
                 $sInput = substr(trim($sInput),0,$size);
-                if (get_magic_quotes_gpc())
-                    $sInput = stripslashes($sInput);
                 $sInput = EscapeString($sInput);
                 return $sInput;
             case 'int':
@@ -709,6 +699,8 @@ function CollapsePhoneNumber($sPhoneNumber,$sPhoneCountry)
 function ExpandPhoneNumber($sPhoneNumber,$sPhoneCountry,&$bWeird)
 {
     $bWeird = false;
+    if (!$sPhoneNumber)
+        return "";
     $length = strlen($sPhoneNumber);
 
     switch ($sPhoneCountry) {
@@ -1516,7 +1508,7 @@ function formatNumber($iNumber,$sMode = 'integer')
 
 // Format a BirthDate
 // Optionally, the separator may be specified.  Default is YEAR-MN-DY
-function FormatBirthDate($per_BirthYear, $per_BirthMonth, $per_BirthDay, $sSeparator = "-", $bFlags)
+function FormatBirthDate($per_BirthYear, $per_BirthMonth, $per_BirthDay, $sSeparator = "-", $bFlags=0)
 {
     if ($bFlags == 1 || $per_BirthYear == "" )  //Person Would Like their Age Hidden or BirthYear is not known.
     {

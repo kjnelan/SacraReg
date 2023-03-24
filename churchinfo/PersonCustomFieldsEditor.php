@@ -150,7 +150,7 @@ else
 				// The "c#" naming scheme is necessary because mysql 3.23 doesn't allow numeric-only field (table column) names.
 				mysqli_data_seek ($fieldRes, $last);
 				$lastField = mysqli_fetch_row ($fieldRes);
-				$newFieldNum = substr($lastField[0], 1) + 1;
+				$newFieldNum = intval(substr($lastField[0], 1)) + 1;
 
 				if ($newFieldSide == 0)
 					$newFieldSide = 'left';

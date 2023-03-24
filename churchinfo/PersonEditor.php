@@ -412,10 +412,23 @@ if (isset($_POST["PersonSubmit"]) || isset($_POST["PersonSubmitAndAdd"]))
 	if ($iPersonID > 0) {
 		//Editing....
 		//Get all the data on this record
-
+	    
 		$sSQL = "SELECT * FROM person_per LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_ID = " . $iPersonID;
 		$rsPerson = RunQuery($sSQL);
 		extract(mysqli_fetch_array($rsPerson));
+		
+		if (is_null($fam_Address1)) { // no family came in with the query
+    		$fam_Address1 = "";
+    		$fam_Address2 = "";
+    		$fam_City = "";
+    		$fam_State = "";
+    		$fam_Zip = "";
+    		$fam_Country = "";
+    		$fam_HomePhone = "";
+    		$fam_WorkPhone = "";
+    		$fam_CellPhone = "";
+    		$fam_Email = "";
+		}
 
 		$sTitle = $per_Title;
 		$sFirstName = $per_FirstName;
@@ -483,6 +496,9 @@ if (isset($_POST["PersonSubmit"]) || isset($_POST["PersonSubmitAndAdd"]))
 		$iGender = "";
 		$sAddress1 = "";
 		$sAddress2 = "";
+		$sCity = "";
+		$sState = "";
+		$sCountry = "";
 		//only load defaults for city, state, & country if we're not hiding addresses to avoid creating an address entry for this person
 		//This keeps the family address in place, if that's the way the option is set.		
 		if (!$bHidePersonAddress) {		
@@ -916,7 +932,7 @@ maxlength="10" size="8"></td>
 		<td <?php if ($numCustomFields > 0) echo "colspan=\"2\""; ?> align="center">
 			<input type="submit" class="icButton" <?php echo 'value="' . gettext("Save") . '"'; ?> name="PersonSubmit">
 			<?php if ($_SESSION['bAddRecords']) { echo "<input type=\"submit\" class=\"icButton\" value=\"" . gettext("Save and Add") . "\" name=\"PersonSubmitAndAdd\">"; } ?>
-			<input type="button" class="icButton" <?php echo 'value="' . gettext("Cancel") . '"'; ?> name="PersonCancel" onclick="javascript:document.location='<?php if (strlen($iPersonID) > 0) { echo "PersonView.php?PersonID=" . $iPersonID; } else {echo "SelectList.php?mode=person"; } ?>';">
+			<input type="button" class="icButton" <?php echo 'value="' . gettext("Cancel") . '"'; ?> name="PersonCancel" onclick="javascript:document.location='<?php if ($iPersonID > 0) { echo "PersonView.php?PersonID=" . $iPersonID; } else {echo "SelectList.php?mode=person"; } ?>';">
 		</td>
 	</tr>
 

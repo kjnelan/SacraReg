@@ -273,27 +273,27 @@ elseif ($next_link_text != "") {
 				$dst_max_h = 350;
 				if ($src_w > $dst_max_w) {
 					$thumb_w=$dst_max_w;
-					$thumb_h=$src_h*($dst_max_w/$src_w);
+					$thumb_h=round($src_h*($dst_max_w/$src_w));
 					if ($thumb_h > $dst_max_h) {
 						$thumb_h = $dst_max_h;
-						$thumb_w = $src_w*($dst_max_h/$src_h);
+						$thumb_w = round($src_w*($dst_max_h/$src_h));
 					}
 				}
 				elseif ($src_h > $dst_max_h) {
 					$thumb_h=$dst_max_h;
-					$thumb_w=$src_w*($dst_max_h/$src_h);
+					$thumb_w=round($src_w*($dst_max_h/$src_h));
 					if ($thumb_w > $dst_max_w) {
 						$thumb_w = $dst_max_w;
-						$thumb_h = $src_h*($dst_max_w/$src_w);
+						$thumb_h = round($src_h*($dst_max_w/$src_w));
 					}
 				}
 				else {
 					if ($src_w > $src_h) {
 						$thumb_w = $dst_max_w;
-						$thumb_h = $src_h*($dst_max_w/$src_w);
+						$thumb_h = round($src_h*($dst_max_w/$src_w));
 					} elseif ($src_w < $src_h) {
 						$thumb_h = $dst_max_h;
-						$thumb_w = $src_w*($dst_max_h/$src_h);
+						$thumb_w = round($src_w*($dst_max_h/$src_h));
 					} else {
 						if ($dst_max_w >= $dst_max_h) {
 							$thumb_w=$dst_max_h;
@@ -572,7 +572,7 @@ elseif ($next_link_text != "") {
 	<br>
 
 	<?php
-	if (strlen($fam_DateLastEdited) > 0)
+	if ($fam_DateLastEdited && strlen($fam_DateLastEdited) > 0)
 	{
 		echo gettext("Last edited:") . " " . FormatDate($fam_DateLastEdited,True) . " ". gettext("by") . " " . $EditedFirstName . " " . $EditedLastName;
 	}

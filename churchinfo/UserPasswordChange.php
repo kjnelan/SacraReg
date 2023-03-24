@@ -103,7 +103,8 @@ if (isset($_POST["Submit"]))
         // Build the array of bad passwords
         $aBadPasswords = explode(",", strtolower($sDisallowedPasswords));
         $aBadPasswords[] = strtolower($per_FirstName);
-        $aBadPasswords[] = strtolower($per_MiddleName);
+        if ($per_MiddleName)
+            $aBadPasswords[] = strtolower($per_MiddleName);
         $aBadPasswords[] = strtolower($per_LastName);
 
 	    // Note that there are several possible encodings for the password in the database

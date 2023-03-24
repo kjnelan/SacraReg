@@ -36,7 +36,7 @@ global $sPageTitle, $sURLPath;
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <link rel="stylesheet" type="text/css" href="<?php echo $sURLPath."/"; ?>Include/jquery/jquery-ui-1.8.18.custom.css">
-    <script type="text/javascript" src="<?php echo $sURLPath."/"; ?>Include/jquery/jquery-1.7.1.min.js"></script>	 
+    <script type="text/javascript" src="<?php echo $sURLPath."/"; ?>Include/jquery/jquery-3.6.4.min.js"></script>	 
     <script type="text/javascript" src="<?php echo $sURLPath."/"; ?>Include/jquery/jquery-ui-1.8.18.custom.min.js"></script>
 	<script type="text/javascript" src="<?php echo $sURLPath."/"; ?>Include/jquery/hoverIntent.js"></script> 
 	<script type="text/javascript" src="<?php echo $sURLPath."/"; ?>Include/jquery/superfish.js"></script> 

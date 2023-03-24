@@ -318,15 +318,12 @@ if ($numRows == 0) {
 	      $saveID = $aIDFields[$swapRow];
 	      $saveName = $aNameFields[$swapRow];
 	      $saveDesc = $aDescFields[$swapRow];
-	      $aIDFields[$newRow] = $saveID;
-	      $aNameFields[$newRow] = $saveName;
-	      $aDescFields[$newRow] = $saveDesc;
-      }
-
-      if (array_key_exists ($newRow, $aIDFields)) {
 	      $aIDFields[$swapRow] = $aIDFields[$newRow];
 	      $aNameFields[$swapRow] = $aNameFields[$newRow];
 	      $aDescFields[$swapRow] = $aDescFields[$newRow];
+	      $aIDFields[$newRow] = $saveID;
+	      $aNameFields[$newRow] = $saveName;
+	      $aDescFields[$newRow] = $saveDesc;
       }
    }
 } // end if GET  

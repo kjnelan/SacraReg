@@ -54,6 +54,7 @@ $dResults = RunQuery($dSQL);
 $last_id = 0;
 $next_id = 0;
 $capture_next = 0;
+$previous_id = 0;
 while($myrow = mysqli_fetch_row($dResults))
 {
 	$pid = $myrow[0];
@@ -74,6 +75,7 @@ if (($previous_id > 0)) {
     $previous_link_text = "<a class=\"SmallText\" href=\"PersonView.php?PersonID=$previous_id\">" . gettext("Previous Person") . "</a>";
 }
 
+$next_link_text = "";
 if (($next_id > 0)) {
     $next_link_text = "<a class=\"SmallText\" href=\"PersonView.php?PersonID=$next_id\">" . gettext("Next Person") . "</a>";
 }
@@ -223,7 +225,7 @@ if ($_SESSION['bAdmin'])
 		echo " | <a class=\"SmallText\" href=\"UserEditor.php?PersonID=" . $per_ID . "\">" . gettext("Edit User") . "</a>" ;
 }
 
-if ($next_link_text) {
+if ($next_link_text != "") {
 	echo " | $next_link_text";
 }
 echo " | <a class=\"SmallText\" href=\"SelectList.php?mode=person\">" .
@@ -831,7 +833,7 @@ if ($_SESSION['bAdmin'])
 		echo " | <a class=\"SmallText\" href=\"UserEditor.php?PersonID=" . $per_ID . "\">" . gettext("Edit User") . "</a>" ;
 }
 
-if ($next_link_text) {
+if ($next_link_text != "") {
 	echo " | $next_link_text";
 }
 echo " | <a class=\"SmallText\" href=\"SelectList.php?mode=person\">" .
@@ -846,7 +848,7 @@ gettext("List View") . "</a> ";
 	<?php echo gettext("Entered:"); ?> <?php echo FormatDate($per_DateEntered,true); ?> <?php echo gettext("by"); ?> <?php echo $EnteredFirstName . " " . $EnteredLastName; ?>
 <?php
 
-	if (strlen($per_DateLastEdited) > 0)
+if ($per_DateLastEdited && strlen($per_DateLastEdited) > 0)
 	{
 		?>
 			<br>

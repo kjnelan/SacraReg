@@ -30,7 +30,7 @@
  */
 /**
  * @link http://code.google.com/p/php-google-map-api/
- * @copyright 2010 Brad wedell
+ * @copyright 2010-2012 Brad wedell
  * @author Brad Wedell
  * @package GoogleMapAPI (version 3)
  * @version 3.0beta
@@ -40,14 +40,12 @@
  * http://code.google.com/p/php-google-map-api/wiki/ChangeLog3
 /*
 For database caching, you will want to use this schema:
-
 CREATE TABLE GEOCODES (
   address varchar(255) NOT NULL default '',
   lon float default NULL,
   lat float default NULL,
   PRIMARY KEY  (address)
 );
-
 */
 
 /**
@@ -63,14 +61,6 @@ class GoogleMapAPI {
      * @var string json $map_styles
      */
     var $map_styles = true; 	
-
-    /**
-     * API key - while not required, allows for monitoring and purchasing additional usage
-     * see https://developers.google.com/maps/documentation/javascript/tutorial#api_key 
-     *
-     * @var string $api_key
-     */
-    var $api_key = null; 	
 
     /**
      * PEAR::DB DSN for geocode caching. example:
@@ -349,6 +339,9 @@ class GoogleMapAPI {
      * @deprecated
      */
     var $directions = true;
+    
+      /* waypoints  */
+	  protected  $_waypoints_string = '';
 
     /**
      * determines if map markers bring up an info window
@@ -610,6 +603,33 @@ class GoogleMapAPI {
 	 var $_minify_js = true;
         
     /**
+     * If false, prevents the map from being dragged. Dragging is enabled by default.
+     * @var bool
+     * Added 02/10/2013 by Yao Wu
+     */
+    var $draggable = true;
+
+    /**
+     * The maximum zoom level which will be displayed on the map. If omitted, or set to null, the
+     * maximum zoom from the current map type is used instead.
+     * Added 02/10/2013 by Yao Wu
+     */
+    var $max_zoom = "null";
+
+    /**
+     * The minimum zoom level which will be displayed on the map. If omitted, or set to null, the
+     * minimum zoom from the current map type is used instead.
+     * Added 02/10/2013 by Yao Wu
+     */
+    var $min_zoom = "null";
+
+    /**
+     * API key, required by Google, https://developers.google.com/maps/documentation/javascript/get-api-key
+     * Added 2016-10-25
+     */
+    var $api_key = '';
+
+    /**
      * class constructor
      *
      * @param string $map_id the DOM element ID for the map
@@ -642,15 +662,6 @@ class GoogleMapAPI {
      */
     function setDSN($dsn) {
         $this->dsn = $dsn;   
-    }
-
-    /**
-     * sets the API key
-     *
-     * @param string $key 
-     */
-    function setAPIKey($key) {
-        $this->api_key = $key;   
     }
     
     /**
@@ -843,6 +854,37 @@ class GoogleMapAPI {
     }
     
     /**
+     * sets the max zoom
+     * Added 02/10/2013 by Yao Wu
+     */
+    function setMaxZoom($zoom) {
+        $this->max_zoom = (int) $zoom;
+    }
+
+    /**
+     * sets the min zoom
+     * Added 02/10/2013 by Yao Wu
+     */
+    function setMinZoom($zoom) {
+        $this->min_zoom = (int) $zoom;
+    }
+
+    /**
+     * sets the API key
+     */
+    function setApiKey($key) {
+        $this->api_key = $key;
+    }
+
+    /**
+     * set true or flase for draggable
+     * Added 02/10/2013 by Yao Wu
+     */
+    function disabledraggable() {
+        $this->draggable = "false";
+    }
+
+    /**
      * Add directions route to the map and adds text directions container with id=$dom_id
      *
      * @param string $start_address
@@ -871,6 +913,24 @@ class GoogleMapAPI {
 			} 
         }
     }
+    
+ 
+ function addWaypoints($lat, $lon, $stopover = TRUE)
+ {
+   if( ! empty($this->_waypoints_string) )  $this->_waypoints_string .= ",";
+     $tmp_stopover =  $stopover?'true':'false';
+     $this->_waypoints_string .= "{location: new google.maps.LatLng({$lat},{$lon}), stopover: {$tmp_stopover}}";
+ }
+
+  function addWaypointByAddress($address,$stopover = TRUE)
+  {
+     if( $tmp_geocode = $this->getGeocode($address))
+     {
+       $this->addWaypoints($tmp_geocode['lat'], $tmp_geocode['lon'], $stopover);
+     }
+ }
+            
+            
         
     /**
      * enables the type controls (map/satellite/hybrid)
@@ -1650,14 +1710,14 @@ class GoogleMapAPI {
         	";
         }
 		if(!empty($this->_elevation_polylines)||(!empty($this->_directions)&&$this->elevation_directions)){
-			$_headerJS .= "<script type='text/javascript' src='http://www.google.com/jsapi'></script>";
+			$_headerJS .= "<script type='text/javascript' src='//www.google.com/jsapi'></script>";
 			$_headerJS .= "
 			<script type='text/javascript'>
 				// Load the Visualization API and the piechart package.
 				google.load('visualization', '1', {packages: ['columnchart']});
 			</script>";
 		}
-        $scriptUrl = "http://maps.google.com/maps/api/js?".( $this->api_key ? "key=$this->api_key&" : "" )."sensor=".(($this->mobile==true)?"true":"false");
+        $scriptUrl = "https://maps.google.com/maps/api/js?" . ($this->api_key ? "key=".$this->api_key."&" : "") . "sensor=".(($this->mobile==true)?"true":"false");
         if( is_array( $this->api_options ) ) {
             foreach( $this->api_options as $key => $value ){
                 $scriptUrl .= '&'.$key.'='.$value;
@@ -1723,7 +1783,7 @@ class GoogleMapAPI {
         $_output .= " * Created with GoogleMapAPI" . $this->_version . "\n";
         $_output .= " * Author: Brad Wedell <brad AT mycnl DOT com>\n";
         $_output .= " * Link http://code.google.com/p/php-google-map-api/\n";
-        $_output .= " * Copyright 2010 Brad Wedell\n";
+        $_output .= " * Copyright 2010-2012 Brad Wedell\n";
         $_output .= " * Original Author: Monte Ohrt <monte AT ohrt DOT com>\n";
         $_output .= " * Original Copyright 2005-2006 New Digital Group\n";
         $_output .= " * Originial Link http://www.phpinsider.com/php/code/GoogleMapAPI/\n";
@@ -1878,6 +1938,9 @@ class GoogleMapAPI {
 				var mapOptions$_key = {
 					scrollwheel: ". ($this->scrollwheel?"true":"false") . ",
 					zoom: ".$this->zoom.",
+					draggable: ".$this->draggable.",
+					maxZoom: ".$this->max_zoom.",
+					minZoom: ".$this->min_zoom.",
 					mapTypeId: google.maps.MapTypeId.".$this->map_type.",
 					mapTypeControl: ".($this->type_controls?"true":"false").",
 					mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.".$this->type_controls_style."}
@@ -1894,11 +1957,16 @@ class GoogleMapAPI {
 			}   
 			
 			if($this->street_view_controls){
-				$_script .= "
-					mapOptions".$_key.".streetViewControl= true;
+                		$_script .= "
+					mapOptions".$_key.".streetViewControl = true;
 	
 				";
-			}
+            		} else {
+                		$_script .= "
+					mapOptions".$_key.".streetViewControl = false;
+	
+				";
+            		}
 			
 			
 			// Add any map styles if they are present
@@ -2224,6 +2292,7 @@ class GoogleMapAPI {
 					displayRenderer:new google.maps.DirectionsRenderer(),
 					directionService:new google.maps.DirectionsService(),
 					request:{
+            					waypoints: [{$this->_waypoints_string}],
 						origin: '".$directions["start"]."',
 						destination: '".$directions["dest"]."'
 						$directionsParams
@@ -2419,7 +2488,7 @@ class GoogleMapAPI {
 					elevation_data.marker = new google.maps.Marker({
 					  position: charts_array[elevation_data.selector].results[e.row].location,
 					  map: map,
-					  icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+					  icon: '//maps.google.com/mapfiles/ms/icons/green-dot.png'
 					});
 				}else{
 					elevation_data.marker.setPosition(charts_array[elevation_data.selector].results[e.row].location);
@@ -2579,7 +2648,7 @@ class GoogleMapAPI {
     function geoGetCoords($address,$depth=0) {
         switch($this->lookup_service) {
             case 'GOOGLE':
-                $_url = sprintf('http://%s/maps/api/geocode/json?sensor=%s&address=%s',$this->lookup_server['GOOGLE'], $this->mobile==true?"true":"false", rawurlencode($address));
+                $_url = sprintf('https://%s/maps/api/geocode/json?' . ($this->api_key ? "key=".$this->api_key."&" : "") . 'sensor=%s&address=%s',$this->lookup_server['GOOGLE'], $this->mobile==true?"true":"false", rawurlencode($address));
                 $_result = false;
                 if($_result = $this->fetchURL($_url)) {
                     $_result_parts = json_decode($_result);
@@ -2592,7 +2661,7 @@ class GoogleMapAPI {
                 break;
             case 'YAHOO':
             default:        
-                $_url = sprintf('http://%s/MapsService/V1/geocode?appid=%s&location=%s',$this->lookup_server['YAHOO'],$this->app_id,rawurlencode($address));
+                $_url = sprintf('https://%s/MapsService/V1/geocode?appid=%s&location=%s',$this->lookup_server['YAHOO'],$this->app_id,rawurlencode($address));
                 $_result = false;
                 if($_result = $this->fetchURL($_url)) {
                     preg_match('!<Latitude>(.*)</Latitude><Longitude>(.*)</Longitude>!U', $_result, $_match);
@@ -2615,7 +2684,7 @@ class GoogleMapAPI {
     function geoGetCoordsFull($address,$depth=0) {
         switch($this->lookup_service) {
             case 'GOOGLE':
-                $_url = sprintf('http://%s/maps/api/geocode/json?sensor=%s&address=%s',$this->lookup_server['GOOGLE'], $this->mobile==true?"true":"false", rawurlencode($address));
+                $_url = sprintf('https://%s/maps/api/geocode/json?' . ($this->api_key ? "key=".$this->api_key."&" : "") . 'sensor=%s&address=%s',$this->lookup_server['GOOGLE'], $this->mobile==true?"true":"false", rawurlencode($address));
                 $_result = false;
                 if($_result = $this->fetchURL($_url)) {
                     return json_decode($_result);
@@ -2623,7 +2692,7 @@ class GoogleMapAPI {
                 break;
             case 'YAHOO':
             default:        
-                $_url = 'http://%s/MapsService/V1/geocode';
+                $_url = 'https://%s/MapsService/V1/geocode';
                 $_url .= sprintf('?appid=%s&location=%s',$this->lookup_server['YAHOO'],$this->app_id,rawurlencode($address));
                 $_result = false;
                 if($_result = $this->fetchURL($_url)) {

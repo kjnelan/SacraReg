@@ -125,6 +125,7 @@ if (isset ($_POST['Action'])) {
 $sSQL = "SELECT * FROM event_types ORDER BY type_id";
 $rsOpps = RunQuery($sSQL);
 $numRows = mysqli_num_rows($rsOpps);
+$aCountList = [];
 
         // Create arrays of the event types
         for ($row = 1; $row <= $numRows; $row++)
@@ -164,21 +165,21 @@ $numRows = mysqli_num_rows($rsOpps);
                 $cSQL = "SELECT evctnm_countid, evctnm_countname FROM eventcountnames_evctnm WHERE evctnm_eventtypeid='$aTypeID[$row]' ORDER BY evctnm_countid";
                 $cOpps = RunQuery($cSQL);
                 $numCounts = mysqli_num_rows($cOpps);
-                $cCountName="";
+                $aCountID = [];
+                $aCountName = [];
                 if($numCounts)
                 {
-                  $cCountName="";
                   for($c = 1; $c <=$numCounts; $c++){
                     $cRow = mysqli_fetch_array($cOpps,  MYSQLI_BOTH);
                     extract($cRow);
-                    $cCountID[$c] = $evctnm_countid;
-                    $cCountName[$c] = $evctnm_countname;                
+                    $aCountID[$c] = $evctnm_countid;
+                    $aCountName[$c] = $evctnm_countname;
                   }
-                  $cCountList[$row] = implode(", ",$cCountName);
+                  $aCountList[$row] = implode(", ",$aCountName);
                  }
                  else
                  {
-                  $cCountList[$row]="";
+                  $aCountList[$row]="";
                  }                 
         }
 
@@ -268,7 +269,7 @@ if ($numRows > 0)
               <td class="TextColumn">
               <strong><?php echo gettext("ATTENDANCE COUNTS"); ?></strong><br>
               <?php echo gettext("Total,"); ?><span class="SmallText"><?php echo gettext("[Every event type includes a Total count]"); ?></span>
-              <input class="SmallText" type="Text" name="newEvtTypeCntLst" value="<?php echo $cCountList[$row]; ?>" Maxlength="50" id="nETCL" size="30"><br><span class="SmallText"><?php echo gettext("[enter a list of the attendance counts you want to include with this event. <br> Separate each count_name with a comma. e.g. Members, Visitors, Campus, Children]"); ?></span</td>
+              <input class="SmallText" type="Text" name="newEvtTypeCntLst" value="<?php echo $aCountList[$row]; ?>" Maxlength="50" id="nETCL" size="30"><br><span class="SmallText"><?php echo gettext("[enter a list of the attendance counts you want to include with this event. <br> Separate each count_name with a comma. e.g. Members, Visitors, Campus, Children]"); ?></span</td>
               <td colspan="2" align="center" valign="bottom">
               <input type="submit" Name="Action" <?php echo 'value="' . gettext("Save Changes") . '"'; ?> class="icButton">
               </td>
@@ -280,7 +281,7 @@ if ($numRows > 0)
               <td class="TextColumn"><?php echo $aTypeName[$row]; ?></td>
               <td class="TextColumn"><?php echo $recur[$row] ?></td>
               <td class="TextColumn"><?php echo $aDefStartTime[$row]; ?></td>
-              <td class="TextColumn"><?php echo $cCountList[$row] ?></td>
+              <td class="TextColumn"><?php echo $aCountList[$row] ?></td>
               <td class="TextColumn" align="center">
                   <form name="ProcessEventType" action="EventEditor.php" method="POST">
                   <input type="hidden" name="EN_tyid" value="<?php echo $aTypeID[$row]; ?>">

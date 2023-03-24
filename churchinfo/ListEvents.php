@@ -113,16 +113,18 @@ if($eType=="All"){
   $sSQL = "SELECT DISTINCT YEAR(events_event.event_start) FROM events_event WHERE events_event.event_type = '$eType' AND YEAR(events_event.event_start)";
 }  
 $rsOpps = RunQuery($sSQL);
+$numRows = 0;
 $aRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH);
-@extract($aRow); // @ needed to suppress error messages when no church events
-$rsOpps = RunQuery($sSQL);
-$numRows = mysqli_num_rows($rsOpps);
-for($r=1; $r<=$numRows; $r++){
-    $aRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH);
+if (! is_null ($aRow)) {
     extract($aRow);
-    $Yr[$r]=$aRow[0];
+    $rsOpps = RunQuery($sSQL);
+    $numRows = mysqli_num_rows($rsOpps);
+    for($r=1; $r<=$numRows; $r++){
+        $aRow = mysqli_fetch_array($rsOpps,  MYSQLI_BOTH);
+        extract($aRow);
+        $Yr[$r]=$aRow[0];
+    }
 }
-
 ?>
 
 <td align="center" width="50%"><strong><?php echo gettext("Display Events in Year") ?></strong><br>

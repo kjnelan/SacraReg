@@ -37,9 +37,9 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
 
 ?>
 
-   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?<?php echo $sGoogleMapKey ? "key=$sGoogleMapKey&" : ""; ?>sensor=false"></script>
    <div>
     <div id="map" style="width: 800px; height: 600px; float:left;"></div>
+   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?<?php echo $sGoogleMapKey ? "key=$sGoogleMapKey&" : ""; ?>sensor=false"></script>
 
 
     <script type="text/javascript">
@@ -58,7 +58,7 @@ if ($nChurchLatitude == 0 || $nChurchLongitude == 0) {
                                  null,
                                  new google.maps.Point(18, 37));
 	var churchMark = new google.maps.Marker({
-                                                icon: "https://google-maps-icons.googlecode.com/files/church2.png",
+                                                icon: "images/home.png",
                                                 shadow: shadow,
                                                 position: new google.maps.LatLng(<?php echo $nChurchLatitude . ", " . $nChurchLongitude; ?>), 
                                                 map: map});

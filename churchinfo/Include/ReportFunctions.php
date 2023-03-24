@@ -19,7 +19,7 @@ function LoadLib_FPDF()
 	global $sFPDF_PATH;
 
 	// Check if the Config.php given path is absolute
-	if ($sFPDF_PATH{0} == "/" || substr($sFPDF_PATH,1,2) == ":\\")
+	if ($sFPDF_PATH[0] == "/" || substr($sFPDF_PATH,1,2) == ":\\")
 		$sfpdfpath = $sFPDF_PATH;
 	else
 		$sfpdfpath = "../" . $sFPDF_PATH;
@@ -51,7 +51,7 @@ function LoadLib_JPGraph()
 	global $sJPGRAPH_PATH;
 
 	// Check if the Config.php given path is absolute
-	if ($sJPGRAPH_PATH{0} == "/" || substr($sJPGRAPH_PATH,1,2) == ":\\")
+	if ($sJPGRAPH_PATH[0] == "/" || substr($sJPGRAPH_PATH,1,2) == ":\\")
 		$sJPGRAPHpath = $sJPGRAPH_PATH . "/";
 	else
 		$sJPGRAPHpath = "../" . $sJPGRAPH_PATH . "/";

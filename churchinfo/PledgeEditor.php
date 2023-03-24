@@ -38,6 +38,10 @@ $dep_Closed = false;
 $iAutID = 0;
 $iCurrentDeposit = 0;
 $iSelectedFund = 0;
+$fundID = 0;
+$PledgeOrPayment = "";
+$iMethod = "";
+$dDate = "";
 
 $nAmount = array (); // this will be the array for collecting values for each fund
 $sAmountError = array ();
@@ -182,11 +186,7 @@ if (isset($_POST["PledgeSubmit"]) or
 		$sSQL = "SELECT COUNT(plg_GroupKey) FROM pledge_plg WHERE plg_GroupKey='" . $sGroupKey. "'";
 		$rsResults = RunQuery($sSQL);		
 		list($numGroupKeys) = mysqli_fetch_row($rsResults);
-		if ($numGroupKeys > 1) {
-			$iSelectedFund = 0;
-		} else {
-			$iSelectedFund = $fundId;
-		}
+		$iSelectedFund = 0;
 
 		$iTotalAmount = 0;
 		$sSQL = "SELECT DISTINCT plg_famID, plg_CheckNo, plg_date, plg_method, plg_FYID from pledge_plg where plg_GroupKey='" . $sGroupKey . "'";
@@ -257,6 +257,7 @@ if ($PledgeOrPayment == 'Pledge') { // Don't assign the deposit slip if this is 
 	}
 }
 
+$dep_Type = "";
 if ($iMethod == "CASH" or $iMethod == "CHECK")
 	$dep_Type = "Bank";
 elseif ($iMethod == "CREDITCARD")
@@ -677,7 +678,7 @@ $(document).ready(function() {
 
 			<tr>
 				<td <?php if ($PledgeOrPayment=='Pledge') echo "class=\"LabelColumn\""; else echo "class=\"PaymentLabelColumn\""; ?><?php addToolTip("Format: YYYY-MM-DD<br>or enter the date by clicking on the calendar icon to the right."); ?>><?php echo gettext("Date"); ?></td>
-<?php	if (!$dDate)	$dDate = $dep_Date ?>
+<?php	if ($dDate=="")	$dDate = $dep_Date ?>
 	
 				<td class="TextColumn"><input type="text" name="Date" value="<?php echo $dDate; ?>" maxlength="10" id="sel1" size="11">&nbsp;<input type="image" onclick="return showCalendar('sel1', 'y-mm-dd');" src="Images/calendar.gif"> <span class="SmallText"><?php echo gettext("[format: YYYY-MM-DD]"); ?></span><font color="red"><?php echo $sDateError ?></font></td>
 			</tr>

@@ -47,6 +47,7 @@ if (!$_SESSION['bAdmin'])
 }
 
 $iPersonID = -1;
+$usr_per_ID = -1;
 $vNewUser = false;
 $bShowPersonSelect = false;
 

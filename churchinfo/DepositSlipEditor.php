@@ -817,19 +817,19 @@ foreach ($depositArray as $order => $value) {
 <?php } ?>
 		<?php if ($dep_Closed) { ?>
 		<td>
-			<a href="PledgeEditor.php?GroupKey=<?php echo $plg_GroupKey . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">View</a>
+			<a href="PledgeEditor.php?PledgeOrPayment=Payment&GroupKey=<?php echo $plg_GroupKey . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">View</a>
 		</td>
 		<?php } else { ?>
 		<td>
-			<a href="PledgeEditor.php?GroupKey=<?php echo $plg_GroupKey . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">Edit</a>
+			<a href="PledgeEditor.php?PledgeOrPayment=Payment&GroupKey=<?php echo $plg_GroupKey . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">Edit</a>
 		</td>
 		<td>
-			<a href="PledgeDelete.php?GroupKey=<?php echo $plg_GroupKey . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">Delete</a>
+			<a href="PledgeDelete.php?PledgeOrPayment=Payment&GroupKey=<?php echo $plg_GroupKey . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">Delete</a>
 		</td>
 		<?php } ?>
 <?php if ($dep_Type == 'BankDraft' || $dep_Type == 'CreditCard') { ?>
 		<td>
-			<a href="PledgeDetails.php?PledgeID=<?php echo $plg_plgID . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">Details</a>
+			<a href="PledgeDetails.php?PledgeOrPayment=Payment&PledgeID=<?php echo $plg_plgID . "&linkBack=DepositSlipEditor.php?DepositSlipID=" . $iDepositSlipID;?>">Details</a>
 		</td>
 <?php } ?>
 	</tr>

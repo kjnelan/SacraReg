@@ -51,7 +51,7 @@ $URL[0] = 'https://mychurch.org/churchinfo/Default.php';
 // Set error reporting
 
 // Turn off all error reporting
-error_reporting(0);
+error_reporting(-1);
 
 // Turn on all error reporting
 // error_reporting(-1);
@@ -61,7 +61,7 @@ error_reporting(0);
 
 // For security it is good practice to avoid displaying error messages to users.
 // While debugging you may temporarily use ini_set('display_errors', 1)
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 
 // Rather than display errors on the screen it is more secure to
 // send error messages to a file.  Make sure that your web 
