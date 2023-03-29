@@ -20,7 +20,9 @@ if (!isset($_SESSION['iUserID']))
 
 // Handle URL via _GET first
 $sSearchTerm = FilterInput($_GET["term"],'string');
-$sSearchType = FilterInput($_GET["searchtype"],'string');
+$sSearchType = "";
+if (array_key_exists ("searchtype", $_GET))
+    $sSearchType = FilterInput($_GET["searchtype"],'string');
 
 //Are we looking for an individual? Most commonly from main search.
 if ($sSearchType=="person") {
@@ -47,6 +49,9 @@ $familyArray = getFamilyList($sDirRoleHead, $sDirRoleSpouse, null, $sSearchTerm)
 	}
 }
 
-echo json_encode($return);
+$return_string = json_encode ($return);
 
+header("Content-Type: application/json");
+echo $return_string;
+exit();
 ?>

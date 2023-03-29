@@ -2,12 +2,12 @@
 /*******************************************************************************
  *
  *  filename    : Help.php
- *  last change : 2012-11/05
+ *  last change : 2023-03-28
  *  description : Online help system (eventually should be XML based)
  *
  *  http://www.churchdb.org/
  *  Copyright 2001-2002 Phillip Hullquist, Deane Barker
- *  Copyright 2012 Michael Wilt
+ *  Copyright 2012-2023 Michael Wilt
  *
  *  ChurchInfo is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
