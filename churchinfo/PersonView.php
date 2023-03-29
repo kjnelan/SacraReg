@@ -444,7 +444,9 @@ gettext("List View") . "</a> ";
 					extract($Row);
 					if (($aSecurityType[$custom_FieldSec] == 'bAll') or ($_SESSION[$aSecurityType[$custom_FieldSec]]))
 					{
-						$currentData = trim($aCustomData[$custom_Field]);
+					    $currentData = "";
+					    if (array_key_exists ($custom_Field, $aCustomData) && (! is_null($aCustomData[$custom_Field])))
+					        $currentData = trim($aCustomData[$custom_Field]);
 						if ($type_ID == 11) $custom_Special = $sPhoneCountry;
 						echo "<tr><td class=\"TinyLabelColumn\">" . $custom_Name . "</td>";
 						echo "<td><div  class='TDscroll' id='customrow'>";
@@ -483,6 +485,7 @@ gettext("List View") . "</a> ";
 				while ($Row = mysqli_fetch_array($rsRightCustomFields)) {
 					extract($Row);
 					$currentData = trim($aCustomData[$custom_Field]);
+					$custom_Special = "";
 					if ($type_ID == 11) $custom_Special = $sPhoneCountry;
 					echo "<tr><td class=\"TinyLabelColumn\">" . $custom_Name . "</td>";
 					echo "<td><div  class='TDscroll' id='customrow'>";

@@ -906,7 +906,7 @@ maxlength="10" size="8"></td>
 					{
 						echo "<tr><td class=\"LabelColumn\">" . $custom_Name . "</td><td class=\"TextColumn\">";
 
-						if (array_key_exists ($custom_Field, $aCustomData))
+						if (array_key_exists ($custom_Field, $aCustomData) && !is_null($aCustomData[$custom_Field]))
 							$currentFieldData = trim($aCustomData[$custom_Field]);
 						else
 							$currentFieldData = "";

@@ -869,6 +869,8 @@ function displayCustomField($type, $data, $special)
                 return gettext("Yes");
             elseif ($data == 'false')
                 return gettext("No");
+            else
+                return gettext("Unknown");
             break;
 
         // Handler for date fields

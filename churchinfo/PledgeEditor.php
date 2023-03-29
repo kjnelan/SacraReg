@@ -147,8 +147,10 @@ if (isset($_POST["PledgeSubmit"]) or
 		$iSchedule='Once';
 	$_SESSION['iDefaultSchedule'] = $iSchedule;
 	
-	$iMethod = FilterInput($_POST["Method"]);
-	if (!$iMethod) {
+	$iMethod = "";
+	if (array_key_exists ("Method", $_POST))
+    	$iMethod = FilterInput($_POST["Method"]);
+	if ($iMethod=="") {
 		if ($sGroupKey) {
 			$sSQL = "SELECT DISTINCT plg_method FROM pledge_plg WHERE plg_GroupKey='" . $sGroupKey . "'";
 			$rsResults = RunQuery($sSQL);
@@ -648,11 +650,29 @@ require "Include/Header.php";
 			<tr>
 				<td <?php if ($PledgeOrPayment=='Pledge') echo "class=\"LabelColumn\""; else echo "class=\"PaymentLabelColumn\""; ?><?php addToolTip("Select the pledging family from the list."); ?>><?php echo gettext("Family"); ?></td>
 				<td class="TextColumn">
-
+                                             
 <script language="javascript" type="text/javascript">
 $(document).ready(function() {
 	$("#FamilyName").autocomplete({
-		source: "AjaxFunctions.php?f=famlist_s",
+		source: function (request, response)
+		{
+			$.ajax(
+			{
+				url:"AjaxFunctions.php?f=famlist_s",
+				dataType: "json",
+				data:
+				{
+					term: request.term
+				},
+				success: function (data)
+				{
+					response (data);
+				},
+                error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+				}
+			});
+		},
 		minLength: 3,
 		select: function(event,ui) {
 			$('[name=FamilyName]').val(ui.item.value);
@@ -660,6 +680,7 @@ $(document).ready(function() {
 		}
 	});
 });
+
 </script>
 					<input style='width:350px;' type="text" id="FamilyName" name="FamilyName" value='<?php echo $sFamilyName; ?>' />
 					<input type="hidden" name="FamilyID" value='<?php echo $iFamily; ?>'>
