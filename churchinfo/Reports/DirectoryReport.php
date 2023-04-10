@@ -672,6 +672,18 @@ while ($aRow = mysqli_fetch_array($rsRecords))
     $sSQL = "";
     $per_Email = "";
     $per_WorkEmail = "";
+    $per_Address1 = "";
+    $per_Address2 = "";
+    $per_City = "";
+    $per_Country = "";
+    $per_State = "";
+    $per_Zip = "";
+    $per_HomePhone = "";
+    $per_WorkPhone = "";
+    $per_CellPhone = "";
+    $per_BirthYear = "";
+    $per_fmr_ID = 0;
+
     if ($memberCount > 1) // Here we have a family record with more than one person.
     {
         $iFamilyID = $per_fam_ID;
@@ -683,7 +695,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         $bNoRecordName = true;
 
         // Find the Head of Household
-        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        $sSQL = "SELECT per_ID,per_fmr_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
             WHERE per_fam_ID = " . $iFamilyID . " 
             AND per_fmr_ID in ($sDirRoleHeads) $sWhereExt $sClassQualifier $sGroupBy";
         $rsPerson = RunQuery($sSQL);        
@@ -697,7 +709,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         }
 
         // Find the Spouse of Household
-        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        $sSQL = "SELECT per_ID,per_fmr_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
             WHERE per_fam_ID = " . $iFamilyID . " 
             AND per_fmr_ID in ($sDirRoleSpouses) $sWhereExt $sClassQualifier $sGroupBy";
         $rsPerson = RunQuery($sSQL);
@@ -714,7 +726,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
             $pdf->sRecordName = $fam_Name;
 
         // Find the other members of a family
-        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID
+        $sSQL = "SELECT per_ID,per_fmr_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_BirthYear,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID
             WHERE per_fam_ID = " . $iFamilyID . " AND !(per_fmr_ID in ($sDirRoleHeads))
             AND !(per_fmr_ID in ($sDirRoleSpouses))  $sWhereExt $sClassQualifier $sGroupBy ORDER BY per_BirthYear,per_FirstName";
         $rsPerson = RunQuery($sSQL);
@@ -729,11 +741,11 @@ while ($aRow = mysqli_fetch_array($rsRecords))
             WHERE fam_ID = $fam_ID";
     } else {// get person stuff for an individual or the one person in this family
     	if ($fam_ID > 0)
-	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
+	        $sSQL = "SELECT per_ID,per_fmr_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_BirthYear,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
     	        FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
         	    WHERE per_fam_ID = $fam_ID $sWhereExt $sGroupBy";	        
 	    else if ($per_ID > 0)
-	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
+	        $sSQL = "SELECT per_ID,per_fmr_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_BirthYear,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
     	        FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
         	    WHERE per_ID = $per_ID $sWhereExt $sGroupBy";
 	    else
