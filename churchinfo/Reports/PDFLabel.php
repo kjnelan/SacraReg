@@ -730,20 +730,20 @@ function GenerateLabels(&$pdf, $mode, $iBulkMailPresort, $bToParents, $bOnlyComp
         //
         $zipLabels = ZipBundleSort($sLabelList);
         if ($iBulkMailPresort == 2) {
-        while(list($i,$sLT)=each($zipLabels)){
+        foreach ($zipLabels as $i => $sLT) {
             $pdf->Add_PDF_Label(sprintf("%s\n%s\n%s\n%s, %s %s", 
                             $sLT['Note'],$sLT['Name'],$sLT['Address'],
                             $sLT['City'], $sLT['State'],$sLT['Zip']));
         } // end while
         } else {
-        while(list($i,$sLT)=each($zipLabels)){
+            foreach ($zipLabels as $i => $sLT){
             $pdf->Add_PDF_Label(sprintf("%s\n%s\n%s, %s %s", 
                             $sLT['Name'],$sLT['Address'],
                             $sLT['City'], $sLT['State'],$sLT['Zip']));
         } // end while
         } // end of if ($BulkMailPresort == 2)
     } else {
-        while(list($i,$sLT)=each($sLabelList)){
+        foreach ($sLabelList as $i => $sLT){
             $pdf->Add_PDF_Label(sprintf("%s\n%s\n%s, %s %s",
                             $sLT['Name'], $sLT['Address'],
                             $sLT['City'], $sLT['State'], $sLT['Zip']));
@@ -772,7 +772,6 @@ $sLabelType = FilterInput($_GET["labeltype"],'char',8);
 setcookie("labeltype", $sLabelType, time()+60*60*24*90, "/" );
 
 $pdf = new PDF_Label($sLabelType,$startcol,$startrow);
-$pdf->Open();
 
 $sFontInfo = FontFromName($_GET["labelfont"]);
 setcookie("labelfont", $_GET["labelfont"], time()+60*60*24*90, "/" );

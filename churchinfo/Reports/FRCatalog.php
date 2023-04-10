@@ -24,7 +24,7 @@ $curY = 0;
 
 class PDF_FRCatalogReport extends ChurchInfoReport {
 	// Constructor
-	function PDF_FRCatalogReport() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 		$this->leftX = 10;
 		$this->SetFont("Times",'',10);

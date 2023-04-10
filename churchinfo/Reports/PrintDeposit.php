@@ -93,9 +93,9 @@ if ($output == "pdf") {
 		}
 
 		// Constructor
-		function PDF_AccessReport() {
+		function __construct () {
 			parent::__construct("P", "mm", $this->paperFormat);
-
+            $this->SetFont("Courier", "", 10);
 			$this->_Font        = "Courier";
 			$this->SetMargins(0,0);
 	

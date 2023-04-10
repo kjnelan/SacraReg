@@ -21,9 +21,8 @@ require "../Include/class_fpdf_labels.php";
 class PDF_NameTags extends PDF_Label {
 
 	// Constructor
-	function PDF_NameTags($sLabelFormat) {
-   	parent::PDF_Label ($sLabelFormat);
-      $this->Open();
+    function __construct ($sLabelFormat) {
+        parent::__construct  ($sLabelFormat);
 	}
 }
 

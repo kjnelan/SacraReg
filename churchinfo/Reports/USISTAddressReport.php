@@ -97,7 +97,7 @@ class PDF_AddressReport extends ChurchInfoReport {
 	}
 
 	// Constructor
-	function PDF_AddressReport() {
+	function __construct () {
 		global $paperFormat;
 		parent::__construct('P', 'mm', $this->paperFormat);
 

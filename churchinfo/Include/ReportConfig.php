@@ -21,6 +21,7 @@
 // Load the FPDF library
 LoadLib_FPDF();
 
+#[AllowDynamicProperties]
 class ChurchInfoReport extends FPDF {
    //
    // Paper size for all PDF report documents
@@ -29,7 +30,7 @@ class ChurchInfoReport extends FPDF {
    // are read from the database.
 
    var $paperFormat = "Letter";
-
+   
    function StripPhone ($phone) {
       if (substr ($phone, 0, 3) == $this->sHomeAreaCode)
          $phone = substr ($phone, 3, strlen ($phone) - 3);
@@ -79,6 +80,7 @@ class ChurchInfoReport extends FPDF {
 
    function StartLetterPage ($fam_ID, $fam_Name, $fam_Address1, $fam_Address2, $fam_City, $fam_State, $fam_Zip, $fam_Country, $letterhead="") {
 		global $sDefaultCountry;
+		$this->SetFont('helvetica','',10);
 		$this->AddPage();
 		$this->incrementY = 4.0;
 		$this->leftX = 10.0;

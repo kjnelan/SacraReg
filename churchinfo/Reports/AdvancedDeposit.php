@@ -209,7 +209,7 @@ if ($output == "pdf") {
 	class PDF_TaxReport extends ChurchInfoReport {
 
 		// Constructor
-		function PDF_TaxReport() {
+	    function __construct () {
 			parent::__construct("P", "mm", $this->paperFormat);
 			$this->SetFont("Times",'',10);
 			$this->SetMargins(20,15);

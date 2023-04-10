@@ -55,7 +55,7 @@ class PDF_FundRaiserReport extends ChurchInfoReport {
 	}
 	
 	// Constructor
-	function PDF_FundRaiserReport() {
+	function __construct () {
 		parent::__construct('P', 'mm', $this->paperFormat);
 		$this->_Column      = 0;
 		$this->_CurLine     = 2;

@@ -64,7 +64,7 @@ if (isset($_POST["GroupSubmit"]))
 	if (!$bErrorFlag)
 	{
 		// Are we creating a new group?
-		if (strlen($iGroupID) < 1)
+		if ($iGroupID == 0)
 		{
 			//Get a new Role List ID
 			$sSQL = "SELECT MAX(lst_ID) FROM list_lst";
@@ -185,7 +185,7 @@ else
 {
 	//FirstPass
 	//Are we editing or adding?
-	if (strlen($iGroupID) > 0)
+	if ($iGroupID > 0)
 	{
 		//Editing....
 		//Get the information on this familyAge Groups for the drop down
@@ -200,6 +200,13 @@ else
 		$sName = $aRow["grp_Name"];
 		$sDescription = $aRow["grp_Description"];
 		$bHasSpecialProps = ($aRow["grp_hasSpecialProps"] == 'true');
+	} else {
+	    $iGroupType = 0;
+	    $iDefaultRole = 0;
+	    $iRoleListID = 0;
+	    $sName = "";
+	    $sDescription = "";
+	    $bHasSpecialProps = false;
 	}
 }
 

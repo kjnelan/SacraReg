@@ -121,7 +121,7 @@ class PDF_Directory extends ChurchInfoReport {
     }
 
     // Constructor
-    function PDF_Directory($nc=1, $paper='letter', $fs=10, $ls=4) {
+    function __construct ($nc=1, $paper='letter', $fs=10, $ls=4) {
 //        parent::__construct("P", "mm", $this->paperFormat);
 	parent::__construct("P", "mm", $paper);
 	$this->_Char_Size = $fs;
@@ -130,7 +130,6 @@ class PDF_Directory extends ChurchInfoReport {
         $this->_Column      = 0;
         $this->_Font        = "Times";
         $this->SetMargins(0,0);
-        $this->Open();
         $this->Set_Char_Size($this->_Char_Size);
         $this->SetAutoPageBreak(false);
 
@@ -270,32 +269,32 @@ class PDF_Directory extends ChurchInfoReport {
 
     function sGetCustomString($rsCustomFields, $aRow){
         $numCustomFields = mysqli_num_rows($rsCustomFields);
+        $OutStr = "";
         if ($numCustomFields > 0) {
             extract($aRow);
             $sSQL = "SELECT * FROM person_custom WHERE per_ID = " . $per_ID;
             $rsCustomData = RunQuery($sSQL);
-            $aCustomData = mysqli_fetch_array($rsCustomData,  MYSQLI_BOTH);
-            $numCustomData = mysqli_num_rows($rsCustomData);
-            mysqli_data_seek($rsCustomFields, 0);
-            $OutStr = ""; 
-            while ( $rowCustomField = mysqli_fetch_array($rsCustomFields,  MYSQLI_BOTH) ){
-                extract($rowCustomField);
-                $sCustom = "bCustom".$custom_Order;
-                if($this->_Custom[$custom_Order]){
-                	
-                	$currentFieldData = displayCustomField($type_ID, $aCustomData[$custom_Field], $custom_Special);
-                	
-//                    $currentFieldData = trim($aCustomData[$custom_Field]);
-                    if($currentFieldData != ""){
-                        $OutStr .= "   " . $custom_Name . ": " . $currentFieldData .= "\n";
+            if ($rsCustomData->num_rows > 0) {
+                $aCustomData = mysqli_fetch_array($rsCustomData,  MYSQLI_BOTH);
+                $numCustomData = mysqli_num_rows($rsCustomData);
+                mysqli_data_seek($rsCustomFields, 0);
+                $OutStr = ""; 
+                while ( $rowCustomField = mysqli_fetch_array($rsCustomFields,  MYSQLI_BOTH) ){
+                    extract($rowCustomField);
+                    $sCustom = "bCustom".$custom_Order;
+                    if($this->_Custom[$custom_Order]){
+                    	
+                    	$currentFieldData = displayCustomField($type_ID, $aCustomData[$custom_Field], $custom_Special);
+                    	
+    //                    $currentFieldData = trim($aCustomData[$custom_Field]);
+                        if($currentFieldData != ""){
+                            $OutStr .= "   " . $custom_Name . ": " . $currentFieldData .= "\n";
+                        }
                     }
                 }
             }
-            return $OutStr;
-        }else{
-            return "";
         }
-        
+        return $OutStr;
     }
 
     // This function formats the string for the family info
@@ -317,11 +316,19 @@ class PDF_Directory extends ChurchInfoReport {
         {
 //            if (strlen($fam_Address1)) { $sFamilyStr .= $fam_Address1 . "\n";  }
 //            if (strlen($fam_Address2)) { $sFamilyStr .= $fam_Address2 . "\n";  }
-	      if (strlen($fam_Address1)) { $sFamilyStr .= $fam_Address1;}
-	      if (strlen($fam_Address2)) { $sFamilyStr .= "  ".$fam_Address2;}
-	      $sFamilyStr .= "\n";
-            if (strlen($fam_City)) { $sFamilyStr .= $fam_City . ", " . $fam_State . " " . $fam_Zip . "\n";  }
-            if (strlen($fam_Country) && ($fam_Country != $sDefaultCountry )) { $sFamilyStr .= $fam_Country . "\n";  }
+            if ( (! is_null($fam_Address)) && strlen($fam_Address1)) {
+                $sFamilyStr .= $fam_Address1;
+            }
+            if ((! is_null($fam_Address2)) && strlen($fam_Address2)) { 
+                $sFamilyStr .= "  ".$fam_Address2;
+            }
+            $sFamilyStr .= "\n";
+            if ((! is_null ($fam_City)) && strlen($fam_City)) { 
+                $sFamilyStr .= $fam_City . ", " . $fam_State . " " . $fam_Zip . "\n";  
+            }
+            if ((! is_null ($fam_Country)) && strlen($fam_Country) && ($fam_Country != $sDefaultCountry )) { 
+                $sFamilyStr .= $fam_Country . "\n";  
+            }
         }
 
         if ($bDirFamilyPhone && strlen($fam_HomePhone))
@@ -392,21 +399,21 @@ class PDF_Directory extends ChurchInfoReport {
 
         $sCountry = SelectWhichInfo($per_Country,$fam_Country,false);
 
-        if ($bDirPersonalPhone && strlen($per_HomePhone)) {
+        if ($bDirPersonalPhone && (! is_null($per_HomePhone)) && strlen($per_HomePhone)) {
             $TempStr = ExpandPhoneNumber($per_HomePhone, $sCountry, $bWierd);
             $sHeadStr .= "   " . gettext("Phone") . ": " . $TempStr .= "\n";
         }
-        if ($bDirPersonalWork && strlen($per_WorkPhone)) {
+        if ($bDirPersonalWork && (! is_null($per_WorkPhone)) && strlen($per_WorkPhone)) {
             $TempStr = ExpandPhoneNumber($per_WorkPhone, $sCountry, $bWierd);
             $sHeadStr .= "   " . gettext("Work") . ": " . $TempStr .= "\n";
         }
-        if ($bDirPersonalCell && strlen($per_CellPhone)) {
+        if ($bDirPersonalCell && (! is_null($per_CellPhone)) && strlen($per_CellPhone)) {
             $TempStr = ExpandPhoneNumber($per_CellPhone, $sCountry, $bWierd);
             $sHeadStr .= "   " . gettext("Cell") . ": " . $TempStr .= "\n";
         }
-        if ($bDirPersonalEmail && strlen($per_Email))
+        if ($bDirPersonalEmail && (! is_null ($per_Email)) && strlen($per_Email))
             $sHeadStr .= "   " . gettext("Email") . ": " . $per_Email .= "\n";
-        if ($bDirPersonalWorkEmail && strlen($per_WorkEmail))
+        if ($bDirPersonalWorkEmail && (! is_null ($per_WorkEmail)) && strlen($per_WorkEmail))
             $sHeadStr .= "   " . gettext("Work/Other Email") . ": " . $per_WorkEmail .= "\n";
             
         $sHeadStr .= $this->sGetCustomString($rsCustomFields, $aHead);
@@ -455,21 +462,21 @@ class PDF_Directory extends ChurchInfoReport {
 
         $sCountry = SelectWhichInfo($per_Country,$fam_Country,false);
 
-        if ($bDirPersonalPhone && strlen($per_HomePhone)) {
+        if ($bDirPersonalPhone && (! is_null ($per_HomePhone)) &&  strlen($per_HomePhone)) {
             $TempStr = ExpandPhoneNumber($per_HomePhone, $sCountry, $bWierd);
             $sMemberStr .= "   " . gettext("Phone") . ": " . $TempStr .= "\n";
         }
-        if ($bDirPersonalWork && strlen($per_WorkPhone)) {
+        if ($bDirPersonalWork && (! is_null ($per_WorkPhone)) && strlen($per_WorkPhone)) {
             $TempStr = ExpandPhoneNumber($per_WorkPhone, $sCountry, $bWierd);
             $sMemberStr .= "   " . gettext("Work") . ": " . $TempStr .= "\n";
         }
-        if ($bDirPersonalCell && strlen($per_CellPhone)) {
+        if ($bDirPersonalCell && (! is_null ($per_CellPhone)) && strlen($per_CellPhone)) {
             $TempStr = ExpandPhoneNumber($per_CellPhone, $sCountry, $bWierd);
             $sMemberStr .= "   " . gettext("Cell") . ": " . $TempStr .= "\n";
         }
-        if ($bDirPersonalEmail && strlen($per_Email))
+        if ($bDirPersonalEmail && (! is_null ($per_Email)) && strlen($per_Email))
             $sMemberStr .= "   " . gettext("Email") . ": " . $per_Email .= "\n";
-        if ($bDirPersonalWorkEmail && strlen($per_WorkEmail))
+        if ($bDirPersonalWorkEmail && (! is_null ($per_WorkEmail)) && strlen($per_WorkEmail))
             $sMemberStr .= "   " . gettext("Work/Other Email") . ": " . $per_WorkEmail .= "\n";
 
         return $sMemberStr;
@@ -640,34 +647,12 @@ if (array_key_exists ('cartdir', $_POST))
     $sWhereExt .= "AND per_ID IN (" . ConvertCartToString($_SESSION['aPeopleCart']) . ")";
 }
 
-$mysqlinfo = mysqli_get_server_info($cnChurchInfo);
-$mysqltmp = explode(".", $mysqlinfo);
-$mysqlversion = $mysqltmp[0];
-if(count($mysqltmp[1] > 1)) 
-    $mysqlsubversion = $mysqltmp[1]; 
-    else $mysqlsubversion = 0;
-if($mysqlversion >= 4){
-    // This query is similar to that of the CSV export with family roll-up.
-    // Here we want to gather all unique families, and those that are not attached to a family.
-    $sSQL = "SELECT per_fam_ID, fam_ID, per_ID, fam_Name, 0 AS memberCount, per_LastName AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID = 0 $sWhereExt $sClassQualifier
-        UNION SELECT per_fam_ID, fam_ID, 0 as per_ID, fam_Name, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY fam_ID, per_fam_ID HAVING memberCount = 1
-        UNION SELECT per_fam_ID, fam_ID, 0 as per_ID, fam_Name, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY fam_ID, per_fam_ID HAVING memberCount > 1
-        ORDER BY SortMe";
-}else if($mysqlversion == 3 && $mysqlsubversion >= 22){
-    // If UNION not supported use this query with temporary table.  Prior to version 3.22 no IF EXISTS statement.
-    $sSQL = "DROP TABLE IF EXISTS tmp;";
-    $rsRecords = RunQuery ($sSQL);
-    $sSQL = "CREATE TABLE tmp TYPE = MyISAM SELECT *, 0 AS memberCount, per_LastName AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID = 0 $sWhereExt $sClassQualifier ;"; 
-    $rsRecords = RunQuery ($sSQL);
-    $sSQL = "INSERT INTO tmp SELECT *, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier GROUP BY per_fam_ID HAVING memberCount = 1;"; 
-    $rsRecords = RunQuery ($sSQL);
-    $sSQL = "INSERT INTO tmp SELECT *, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier GROUP BY per_fam_ID HAVING memberCount > 1;";
-    $rsRecords = RunQuery ($sSQL);
-    $sSQL = "SELECT DISTINCT * FROM tmp ORDER BY SortMe";
-
-}else{
-    die(gettext("This option requires at least version 3.22 of mysql!  Hit browser back button to return to ChurchInfo."));
-}
+// This query is similar to that of the CSV export with family roll-up.
+// Here we want to gather all unique families, and those that are not attached to a family.
+$sSQL = "SELECT per_fam_ID, fam_ID, per_ID, fam_Name, 0 AS memberCount, per_LastName AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID = 0 $sWhereExt $sClassQualifier
+    UNION SELECT per_fam_ID, fam_ID, 0 as per_ID, fam_Name, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY fam_ID, per_fam_ID HAVING memberCount = 1
+    UNION SELECT per_fam_ID, fam_ID, 0 as per_ID, fam_Name, COUNT(*) AS memberCount, fam_Name AS SortMe FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID WHERE per_fam_ID > 0 $sWhereExt $sClassQualifier  GROUP BY fam_ID, per_fam_ID HAVING memberCount > 1
+    ORDER BY SortMe";
 
 $rsRecords = RunQuery($sSQL);
 
@@ -683,7 +668,10 @@ while ($aRow = mysqli_fetch_array($rsRecords))
     $pdf->sSortBy = $SortMe;
     
     $isFamily = false;
-    
+
+    $sSQL = "";
+    $per_Email = "";
+    $per_WorkEmail = "";
     if ($memberCount > 1) // Here we have a family record with more than one person.
     {
         $iFamilyID = $per_fam_ID;
@@ -691,11 +679,11 @@ while ($aRow = mysqli_fetch_array($rsRecords))
 
         $pdf->sRecordName = "";
         $pdf->sLastName = $fam_Name;
-        $OutStr .= $pdf->sGetFamilyString($aRow);
+//        $OutStr .= $pdf->sGetFamilyString($aRow);
         $bNoRecordName = true;
 
         // Find the Head of Household
-        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
             WHERE per_fam_ID = " . $iFamilyID . " 
             AND per_fmr_ID in ($sDirRoleHeads) $sWhereExt $sClassQualifier $sGroupBy";
         $rsPerson = RunQuery($sSQL);        
@@ -709,7 +697,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         }
 
         // Find the Spouse of Household
-        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
+        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
             WHERE per_fam_ID = " . $iFamilyID . " 
             AND per_fmr_ID in ($sDirRoleSpouses) $sWhereExt $sClassQualifier $sGroupBy";
         $rsPerson = RunQuery($sSQL);
@@ -726,7 +714,7 @@ while ($aRow = mysqli_fetch_array($rsRecords))
             $pdf->sRecordName = $fam_Name;
 
         // Find the other members of a family
-        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID
+        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate from $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID
             WHERE per_fam_ID = " . $iFamilyID . " AND !(per_fmr_ID in ($sDirRoleHeads))
             AND !(per_fmr_ID in ($sDirRoleSpouses))  $sWhereExt $sClassQualifier $sGroupBy ORDER BY per_BirthYear,per_FirstName";
         $rsPerson = RunQuery($sSQL);
@@ -739,16 +727,13 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         $sSQL = "SELECT fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
             FROM family_fam 
             WHERE fam_ID = $fam_ID";
-
-	    $rsPerson = RunQuery($sSQL);
-	    extract(mysqli_fetch_array($rsPerson));
     } else {// get person stuff for an individual or the one person in this family
     	if ($fam_ID > 0)
-	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
+	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
     	        FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
         	    WHERE per_fam_ID = $fam_ID $sWhereExt $sGroupBy";	        
 	    else if ($per_ID > 0)
-	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
+	        $sSQL = "SELECT per_ID,per_LastName,per_FirstName,per_Suffix,per_cls_ID,per_BirthMonth,per_BirthDay,per_Country,per_HomePhone,per_WorkPhone,per_CellPhone,per_Email,per_WorkEmail,per_Address1,per_Address2,per_City,per_State,per_Zip,fam_ID,fam_Name,fam_Address1,fam_Address2,fam_City,fam_State,fam_Zip,fam_HomePhone,fam_Country,fam_WorkPhone,fam_CellPhone,fam_Email,fam_WeddingDate 
     	        FROM $sGroupTable LEFT JOIN family_fam ON per_fam_ID = fam_ID 
         	    WHERE per_ID = $per_ID $sWhereExt $sGroupBy";
 	    else
@@ -768,6 +753,8 @@ while ($aRow = mysqli_fetch_array($rsRecords))
         if ($bDirBirthday && $per_BirthMonth && $per_BirthDay)
             $pdf->sRecordName .= sprintf(" (%d/%d)", $per_BirthMonth, $per_BirthDay);
     }
+    $rsPerson = RunQuery($sSQL);
+    extract(mysqli_fetch_array($rsPerson));
     
     SelectWhichAddress($sAddress1, $sAddress2, $per_Address1, $per_Address2, $fam_Address1, $fam_Address2, false);
     $sAddress2 = SelectWhichInfo($per_Address2, $fam_Address2, false);
@@ -832,10 +819,6 @@ while ($aRow = mysqli_fetch_array($rsRecords))
     }
 }
 
-if($mysqlversion == 3 && $mysqlsubversion >= 22){
-    $sSQL = "DROP TABLE IF EXISTS tmp;";
-    mysqli_query($cnChurchInfo, $sSQL);
-}
 header('Pragma: public');  // Needed for IE when using a shared SSL certificate
     
 if ($iPDFOutputType == 1)

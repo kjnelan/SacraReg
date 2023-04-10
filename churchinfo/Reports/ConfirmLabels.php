@@ -21,9 +21,8 @@ require "../Include/class_fpdf_labels.php";
 class PDF_ConfirmLabels extends PDF_Label {
 
 	// Constructor
-	function PDF_ConfirmLabels($sLabelFormat) {
+    function __construct ($sLabelFormat) {
    	parent::PDF_Label ($sLabelFormat);
-      $this->Open();
 	}
 }
 

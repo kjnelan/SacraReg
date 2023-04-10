@@ -44,7 +44,7 @@ class PDF_AccessReport extends ChurchInfoReport {
 	}
 
 	// Constructor
-	function PDF_AccessReport() {
+	function __construct () {
 		global $paperFormat;
 		parent::__construct('P', 'mm', $this->paperFormat);
 

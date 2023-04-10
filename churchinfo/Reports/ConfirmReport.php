@@ -21,7 +21,7 @@ require "../Include/ReportConfig.php";
 class PDF_ConfirmReport extends ChurchInfoReport {
 
 	// Constructor
-	function PDF_ConfirmReport() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 		$this->leftX = 10;
 		$this->SetFont("Times",'',10);

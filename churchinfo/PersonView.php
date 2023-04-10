@@ -317,19 +317,19 @@ gettext("List View") . "</a> ";
 				}
 				elseif ($src_h > $dst_max_h) {
 					$thumb_h=$dst_max_h;
-					$thumb_w=$src_w*($dst_max_h/$src_h);
+					$thumb_w=round($src_w*($dst_max_h/$src_h));
 					if ($thumb_w > $dst_max_w) {
 						$thumb_w = $dst_max_w;
-						$thumb_h = $src_h*($dst_max_w/$src_w);
+						$thumb_h = round($src_h*($dst_max_w/$src_w));
 					}
 				}
 				else {
 					if ($src_w > $src_h) {
 						$thumb_w = $dst_max_w;
-						$thumb_h = $src_h*($dst_max_w/$src_w);
+						$thumb_h = round($src_h*($dst_max_w/$src_w));
 					} elseif ($src_w < $src_h) {
 						$thumb_h = $dst_max_h;
-						$thumb_w = $src_w*($dst_max_h/$src_h);
+						$thumb_w = round($src_w*($dst_max_h/$src_h));
 					} else {
 						if ($dst_max_w >= $dst_max_h) {
 							$thumb_w=$dst_max_h;

@@ -26,7 +26,7 @@ $dLastSunday = FilterInput($_GET["LastSunday"]);
 class PDF_ClassList extends ChurchInfoReport {
 
 	// Constructor
-	function PDF_ClassList() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 
 		$this->SetMargins(0,0);

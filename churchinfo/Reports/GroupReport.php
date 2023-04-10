@@ -82,7 +82,7 @@ class PDF_Directory extends ChurchInfoReport
 	}
 
 	// Constructor
-	function PDF_Directory() {
+	function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 
 		$this->_Column      = 0;

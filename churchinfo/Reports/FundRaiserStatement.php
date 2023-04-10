@@ -40,7 +40,7 @@ $rsPaddleNums = RunQuery($sSQL);
 class PDF_FundRaiserStatement extends ChurchInfoReport {
 
 	// Constructor
-	function PDF_FundRaiserStatement() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 		$this->SetFont("Times",'',10);
 		$this->SetMargins(20,20);

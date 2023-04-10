@@ -22,7 +22,7 @@ $curY = 0;
 
 class PDF_CertificatesReport extends ChurchInfoReport {
 	// Constructor
-	function PDF_CertificatesReport() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 		$this->leftX = 10;
 		$this->SetFont("Times",'',10);

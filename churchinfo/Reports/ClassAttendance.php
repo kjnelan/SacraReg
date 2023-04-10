@@ -80,7 +80,7 @@ class PDF_Attendance extends ChurchInfoReport {
 /////////////////////////////////////////////////////////////////////////////
 
     // Constructor
-    function PDF_Attendance() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 
 		$this->incrementY = 6;

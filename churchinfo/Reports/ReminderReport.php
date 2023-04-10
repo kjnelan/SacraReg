@@ -156,22 +156,25 @@ if (!empty($_POST["funds"])) {
 }
 
 // Make the string describing the fund filter
+$fundOnlyString = "";
 if ($fundCount > 0) {
     if ($fundCount == 1) {
-        if ($fund[0] == gettext ("All Funds"))
+        if ($fund[0] == 0)
             $fundOnlyString = gettext (" for all funds");
-        else
-            $fundOnlyString = gettext (" for fund ");
+            else
+                $fundOnlyString = gettext (" for fund ");
     } else
         $fundOnlyString = gettext ("for funds ");
-    for ($i = 0; $i < $fundCount; $i++) {
-        $sSQL = "SELECT fun_Name FROM donationfund_fun WHERE fun_ID=" . $fund[$i];
-        $rsOneFund = RunQuery($sSQL);
-        $aFundName = mysqli_fetch_array($rsOneFund);
-        $fundOnlyString .= $aFundName["fun_Name"];
-        if ($i < $fundCount - 1)
-            $fundOnlyString .= ", ";
-    }
+        if ($fundCount > 1 || $fund[0] != 0) {
+            for ($i = 0; $i < $fundCount; $i++) {
+                $sSQL = "SELECT fun_Name, fun_ID FROM donationfund_fun WHERE fun_ID=" . $fund[$i];
+                $rsOneFund = RunQuery($sSQL);
+                $aFund = mysqli_fetch_array($rsOneFund);
+                $fundOnlyString .= $aFund["fun_Name"];
+                if ($i < $fundCount - 1)
+                    $fundOnlyString .= ", ";
+            }
+        }
 }
 
 // Get the list of funds
@@ -183,12 +186,11 @@ $rsFunds = RunQuery($sSQL);
 class PDF_ReminderReport extends ChurchInfoReport {
 
     // Constructor
-    function PDF_ReminderReport() {
+    function __construct () {
         parent::__construct("P", "mm", $this->paperFormat);
 
         $this->SetFont('Times','', 10);
         $this->SetMargins(20,20);
-        $this->Open();
         $this->SetAutoPageBreak(false);
     }
 

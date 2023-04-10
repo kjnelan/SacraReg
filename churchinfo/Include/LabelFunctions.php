@@ -98,17 +98,21 @@ function LabelSelect($fieldname)
 
 function LabelGroupSelect($fieldname)
 {
+    $groupby = "fam";
+    if (array_key_exists ($fieldname, $_COOKIE))
+        $groupby = $_COOKIE[$fieldname];
+        
 	echo "<tr><td class=\"LabelColumn\">" . gettext("Label Grouping") . "</td>";
 	echo "<td class=\"TextColumn\">";
 	echo "<input name=\"$fieldname\" type=\"radio\" value=\"indiv\" ";
 
-	if (array_key_exists ($fieldname, $_COOKIE) and $_COOKIE[$fieldname] != "fam")
+	if ($groupby != "fam")
 		echo "checked";
 	
 	echo ">" . gettext("All Individuals") . "<br>";
 	echo "<input name=\"$fieldname\" type=\"radio\" value=\"fam\" ";
 
-	if (array_key_exists ($fieldname, $_COOKIE) and $_COOKIE[$fieldname] == "fam")
+	if ($groupby == "fam")
 		echo "checked";
 
 	echo ">" . gettext("Grouped by Family") . "<br></td></tr>";

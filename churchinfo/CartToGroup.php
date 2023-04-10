@@ -38,8 +38,8 @@ if (isset($_POST["Submit"]) && count($_SESSION['aPeopleCart']) > 0) {
 
 	// Loop through the session array
 	$iCount = 0;
-	while ($element = each($_SESSION['aPeopleCart'])) {
-		AddToGroup($_SESSION['aPeopleCart'][$element['key']],$iGroupID,$iGroupRole);
+	foreach ($_SESSION['aPeopleCart'] as $per2grp) {
+		AddToGroup($per2grp,$iGroupID,$iGroupRole);
 		$iCount += 1;
 	}
 

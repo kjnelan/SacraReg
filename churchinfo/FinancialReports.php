@@ -52,7 +52,7 @@ if ($sReportType == "") {
 	echo "<option value='Pledge Family Summary'>" . gettext("Pledge FamilySummary") ."</option>";
 	echo "<option value='Pledge Reminders'>" . gettext("Pledge Reminders") ."</option>";
 	echo "<option value='Voting Members'>" . gettext("Voting Members") ."</option>";
-	echo "<option value='Giving Report'>" . gettext("Giving Report (Tax Statements)") ."</option>";
+	echo "<option value='Giving Report' selected>" . gettext("Giving Report (Tax Statements)") ."</option>";
 	echo "<option value='Zero Givers'>" . gettext("Zero Givers") ."</option>";
 	echo "<option value='Individual Deposit Report'>" . gettext("Individual Deposit Report") ."</option>";
 	echo "<option value='Advanced Deposit Report'>" . gettext("Advanced Deposit Report") ."</option>";

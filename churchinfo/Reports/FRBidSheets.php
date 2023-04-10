@@ -21,7 +21,7 @@ $iCurrentFundraiser = $_GET["CurrentFundraiser"];
 
 class PDF_FRBidSheetsReport extends ChurchInfoReport {
 	// Constructor
-	function PDF_FRBidSheetsReport() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 		$this->leftX = 10;
 		$this->SetFont("Times",'',10);

@@ -110,7 +110,7 @@ class PDF_Label extends ChurchInfoReport
     }
 
 	// Constructor
-	function PDF_Label ($format, $posX=1, $posY=1, $unit='mm')
+	function __construct ($format, $posX=1, $posY=1, $unit='mm')
 	{
 		if (is_array($format)) {
 			// Custom format

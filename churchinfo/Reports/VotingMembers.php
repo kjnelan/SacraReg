@@ -26,7 +26,7 @@ $output = FilterInput($_POST["output"]);
 class PDF_VotingMembers extends ChurchInfoReport {
 
 	// Constructor
-	function PDF_VotingMembers() {
+    function __construct () {
 		parent::__construct("P", "mm", $this->paperFormat);
 
 		$this->SetFont("Times",'',10);
