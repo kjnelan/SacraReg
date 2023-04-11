@@ -21,7 +21,7 @@ require '../Include/ReportFunctions.php';
 require '../Include/ReportConfig.php';
 
 // Check for Create Directory user permission.
-if (!$bCreateDirectory) {
+if ($_SESSION['bCreateDirectory'] != 1) {
     Redirect('Menu.php');
     exit;
 }

@@ -117,7 +117,7 @@ if (strncmp($ver_version, "1.3.0", 6) == 0) {
             . $_SESSION['sChurchInfoPHPVersion'] . '.<br>'
             .    '<BR>Please <a href="CheckVersion.php">click here</a> to continue.';
     
-        $_SESSION['sChurchInfoPHPVersion'] = '1.3.0';
+        $_SESSION['sChurchInfoPHPVersion'] = '1.3.1';
     }
     
     require 'Include/Footer.php';

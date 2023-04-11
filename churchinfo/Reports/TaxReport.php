@@ -416,6 +416,8 @@ if (($output == "pdf") or ($output == "email")) {
 			$currentFamilyID = $fam_ID;
 		}
 		// Format Data
+		if (! isset ($plg_CheckNo))
+		    $plg_CheckNo = "";
 		if (strlen($plg_CheckNo) > 8)
 			$plg_CheckNo = "...".substr($plg_CheckNo,-8,8);
 		else

@@ -368,7 +368,7 @@ if ($bExportCSV)
 } 
 
 // Only show create directory link if user is allowed to create directories
-if ($bCreateDirectory)
+if ($_SESSION['bCreateDirectory'] == 1)
 {
 ?>
 <div align="center"><form method="get" action="DirectoryReports.php">

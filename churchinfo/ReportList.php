@@ -35,7 +35,7 @@ require 'Include/Header.php';
 </p>
 
 
-<?php if ($bCreateDirectory) { ?>
+<?php if ($_SESSION['bCreateDirectory'] == 1) { ?>
 	<p>
 	<a class="MediumText" href="DirectoryReports.php"><?php echo gettext('Members Directory'); ?></a>
 	<br>
