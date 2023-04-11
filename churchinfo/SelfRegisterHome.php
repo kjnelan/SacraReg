@@ -16,6 +16,7 @@ include "Include/UtilityFunctions.php";
 
 $bEnableElectronicDonation = ($sElectronicTransactionProcessor == "Vanco");
 
+$bNoBanner = false;
 if (array_key_exists ("NoBanner", $_GET))
 	$bNoBanner = intval ($_GET["NoBanner"]);
 else if (array_key_exists ("NoBanner", $_SESSION)) {

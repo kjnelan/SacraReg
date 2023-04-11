@@ -11,10 +11,11 @@
  *
  ******************************************************************************/
 
-include "Include/Captcha-1.1.1/PhraseBuilderInterface.php";
-include "Include/Captcha-1.1.1/PhraseBuilder.php";
-include "Include/Captcha-1.1.1/CaptchaBuilderInterface.php";
-include "Include/Captcha-1.1.1/CaptchaBuilder.php";
+include "Include/Gregwar/Captcha/PhraseBuilderInterface.php";
+include "Include/Gregwar/Captcha/PhraseBuilder.php";
+include "Include/Gregwar/Captcha/CaptchaBuilderInterface.php";
+include "Include/Gregwar/Captcha/CaptchaBuilder.php";
+use Gregwar\Captcha\CaptchaBuilder;
 
 include "Include/UtilityFunctions.php";
 include "Include/Config.php";
@@ -22,6 +23,7 @@ include "Include/Config.php";
 require "SelfRegisterEmail.php";
 
 $noBannerArg = "";
+$bNoBanner = false;
 if (array_key_exists ("NoBanner", $_SESSION)) {
 	$bNoBanner = true;
 	$noBannerArg = "?NoBanner=1";

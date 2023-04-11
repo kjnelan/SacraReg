@@ -1,5 +1,10 @@
 <?php 
-require 'Include/PHPMailer-5.2.14/PHPMailerAutoload.php';
+require 'Include/PHPMailer-6.8.0/src/Exception.php';
+require 'Include/PHPMailer-6.8.0/src/SMTP.php';
+require 'Include/PHPMailer-6.8.0/src/PHPMailer.php';
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\PHPMailer;
 
 // read the report settings to pick up sChurchName
 $rsConfig = mysqli_query($cnChurchInfo, "SELECT cfg_name, IFNULL(cfg_value, cfg_default) AS value FROM config_cfg WHERE cfg_section='ChurchInfoReport'");
@@ -17,7 +22,6 @@ function getGUID(){
     if (function_exists('com_create_guid')){
         return com_create_guid();
     }else{
-        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
         $charid = strtoupper(secure_random_string(32));
         $hyphen = chr(45);// "-"
         $uuid = chr(123)// "{"
@@ -53,7 +57,7 @@ function SendSelfServiceAdminsEmail ($reg_id)
 	}
 	$result->free();
 
-	$bodyContents .= "<h1>$reg_firstname $reg_lastname</h1>";
+	$bodyContents = "<h1>$reg_firstname $reg_lastname</h1>";
 	if ($reg_perid > 0) {
 		$bodyContents .= ("<h2>" . gettext ("Matched to an existing person record") . "</h2>");
 	} else {

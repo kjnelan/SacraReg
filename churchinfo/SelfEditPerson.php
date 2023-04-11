@@ -54,10 +54,12 @@ if (array_key_exists ("RegID", $_SESSION)) { // Make sure we have a valid login
 		}
 		extract ($line);
 		
-		$sSQL = "SELECT * FROM family_fam WHERE fam_id=$reg_famid";
-		$result = $link->query($sSQL);
-		$line = $result->fetch_array(MYSQLI_ASSOC);
-		extract ($line); // get $fam_Name, etc.
+		if ($reg_famid != 0) {
+    		$sSQL = "SELECT * FROM family_fam WHERE fam_id=$reg_famid";
+    		$result = $link->query($sSQL);
+    		$line = $result->fetch_array(MYSQLI_ASSOC);
+    		extract ($line); // get $fam_Name, etc.
+		}
 		
 	} else { // creating a person
 		$per_FirstName = "";
@@ -93,7 +95,7 @@ if (isset($_POST["Cancel"])) {
 		$errStr .= "Please check First Name.<br>\n";
 	}
 	if ($per_LastName == "") {
-		$errStr .= "Please check First Name.<br>\n";
+		$errStr .= "Please check Last Name.<br>\n";
 	}
 	if ($per_BirthYear == "") {
 		$errStr .= "Please check birth year.<br>\n";
