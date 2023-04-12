@@ -274,6 +274,8 @@ if ($output == "pdf") {
 		}
 			
 		// Format Data
+		if (is_null($plg_CheckNo))
+		    $plg_CheckNo = "";
 		if (strlen($plg_CheckNo) > 8)
 			$plg_CheckNo = "...".substr($plg_CheckNo,-8,8);
 		if (strlen($fundName) > 20)
