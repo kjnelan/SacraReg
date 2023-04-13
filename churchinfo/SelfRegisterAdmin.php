@@ -143,8 +143,8 @@ while ($aRow = mysqli_fetch_array($rsSelfRegistrations)) {
 		echo "	});\n";
 		echo "});\n";
 		echo "</script>";
-		echo "<input style='width:350px;' type=\"text\" id=\"PersonName$reg_id\" name=\"PersonName$reg_id\" value='$sPersonName' />\n";
-		echo "<input type=\"hidden\" name=\"PersonID$reg_id\" id=\"PersonID$reg_id\" value='$iPerson'>\n";
+		echo "<input style='width:350px;' type=\"text\" id=\"PersonName$reg_id\" name=\"PersonName$reg_id\"/>\n";
+		echo "<input type=\"hidden\" name=\"PersonID$reg_id\" id=\"PersonID$reg_id\">\n";
 		echo "<button onclick=\"ManualMatch($reg_id);\">".gettext("Set Match")."</button>";
 	}
 ?>

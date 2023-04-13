@@ -29,10 +29,10 @@ class PDF_FRBidSheetsReport extends ChurchInfoReport {
 		$this->SetAutoPageBreak(true, 25);
 	}
 	
-	function AddPage ($orientation='', $format='') {
+	function AddPage ($orientation='', $size='', $rotation=0) {
 		global $fr_title, $fr_description;
 
-		parent::AddPage($orientation, $format);
+		parent::AddPage($orientation, $size, $rotation);
 		
 //    	$this->SetFont("Times",'B',16);
 //    	$this->Write (8, $fr_title."\n");

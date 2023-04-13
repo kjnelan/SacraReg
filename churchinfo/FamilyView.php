@@ -386,7 +386,9 @@ elseif ($next_link_text != "") {
 					extract($Row);
 					if (($aSecurityType[$fam_custom_FieldSec] == 'bAll') or ($_SESSION[$aSecurityType[$fam_custom_FieldSec]]))
 					{
-						$currentData = trim($aFamCustomData[$fam_custom_Field]);
+					    $currentData = "";
+					    if (! is_null($aFamCustomData[$fam_custom_Field]))
+						  $currentData = trim($aFamCustomData[$fam_custom_Field]);
 						if ($type_ID == 11) $fam_custom_Special = $sPhoneCountry;
 						echo "<tr><td class=\"TinyLabelColumn\">" . $fam_custom_Name . "</td>";
 						echo "<td class=\"TinyTextColumn\">" . displayCustomField($type_ID, $currentData, $fam_custom_Special) . "</td></tr>";

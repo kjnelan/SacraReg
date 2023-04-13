@@ -800,6 +800,8 @@ while ($aRow = mysqli_fetch_array($rsRecords))
     }
     if (($bDirFamilyEmail || $bDirPersonalEmail) && strlen($sEmail))
         $OutStr .= "   " . gettext("Email") . ": " . $sEmail . "\n";
+    if (is_null($per_WorkEmail))
+        $per_WorkEmail="";
     if ($bDirPersonalWorkEmail && strlen($per_WorkEmail))
         $OutStr .= "   " . gettext("Work/Other Email") . ": " . $per_WorkEmail .= "\n";
             

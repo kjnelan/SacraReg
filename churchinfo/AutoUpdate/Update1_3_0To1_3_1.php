@@ -13,20 +13,16 @@ RunQuery($sSQL, FALSE); // False means do not stop on error
 
 // push the queries that incorporate a fiscal year forward
 $sSQL = "UPDATE `queryparameteroptions_qpo` SET `qpo_Display` = '2024/2025', qpo_Value = '29' WHERE `queryparameteroptions_qpo`.`qpo_Display` = '2015/2016' ";
-if (!RunQuery($sSQL, FALSE))
-    break;
+RunQuery($sSQL, FALSE);
     
 $sSQL = "UPDATE `queryparameteroptions_qpo` SET `qpo_Display` = '2023/2024', qpo_Value = '28' WHERE `queryparameteroptions_qpo`.`qpo_Display` = '2014/2015' ";
-if (!RunQuery($sSQL, FALSE))
-    break;
-    
+RunQuery($sSQL, FALSE);
+
 $sSQL = "UPDATE `queryparameteroptions_qpo` SET `qpo_Display` = '2022/2023', qpo_Value = '27' WHERE `queryparameteroptions_qpo`.`qpo_Display` = '2013/2014' ";
-if (!RunQuery($sSQL, FALSE))
-    break;
-    
+RunQuery($sSQL, FALSE);
+
 $sSQL = "UPDATE `queryparameteroptions_qpo` SET `qpo_Display` = '2021/2022', qpo_Value = '26' WHERE `queryparameteroptions_qpo`.`qpo_Display` = '2012/2013' ";
-if (!RunQuery($sSQL, FALSE))
-    break;                
+RunQuery($sSQL, FALSE);
 
 $sError = MySQLError ();
 $sSQL_Last = $sSQL;

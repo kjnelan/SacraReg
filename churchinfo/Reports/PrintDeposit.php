@@ -280,6 +280,8 @@ if ($output == "pdf") {
 			$plg_CheckNo = "...".substr($plg_CheckNo,-8,8);
 		if (strlen($fundName) > 20)
 			$fundName = substr($fundName,0,20) . "...";
+		if (is_null($plg_comment))
+		    $plg_comment="";
 		if (strlen($plg_comment) > 40)
 			$plg_comment = substr($plg_comment,0,38) . "...";
 		if (strlen($FamilyName) > 25)

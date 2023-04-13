@@ -35,10 +35,20 @@ if (isset($sGZIPname)) $hasGZIP = true;
 if (isset($sZIPname)) $hasZIP = true;
 if (isset($sPGPname)) $hasPGP = true;
 
-$iArchiveType = FilterInput ($_POST["archiveType"]);
-$bEncryptBackup = FilterInput ($_POST["encryptBackup"], 'int');
-$sPassword1 = FilterInput ($_POST["pw1"]);
-$sPassword2 = FilterInput ($_POST["pw2"]);
+$iArchiveType = 0;
+$bEncryptBackup = 0;
+$sPassword1 = "";
+$sPassword2 = "";
+$sPasswordError = "";
+
+if (array_key_exists ("archiveType", $_POST))
+    $iArchiveType = FilterInput ($_POST["archiveType"]);
+if (array_key_exists ("encryptBackup", $_POST))
+    $bEncryptBackup = FilterInput ($_POST["encryptBackup"], 'int');
+if (array_key_exists ("pw1", $_POST))
+    $sPassword1 = FilterInput ($_POST["pw1"]);
+if (array_key_exists ("pw2", $_POST))
+    $sPassword2 = FilterInput ($_POST["pw2"]);
 $bNoErrors = true;
 
 if (isset($_POST["doBackup"]))
