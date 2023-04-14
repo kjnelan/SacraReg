@@ -43,6 +43,7 @@ if (!$tablecheck) {
 }
 
 // Initialize the session
+ini_set('session.cookie_httponly', '1'); // fix bug#249- prevent cross-site scripting attacks
 session_start();
 
 // Avoid consecutive slashes when $sRootPath = '/'
