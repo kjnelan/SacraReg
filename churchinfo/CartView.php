@@ -96,6 +96,15 @@ function ExportCartToCSV()
 
 }
 
+function FixHTAccess ()
+{
+    $rf = fopen("tmp_attach/.htaccess", "w");
+    fprintf ($rf, "<filesmatch \".(htaccess|htpasswd|ini|php|fla|psd|log|sh|pl|py|html|jsp|asp|shtml|htm|cgi)$\">\n");
+    fprintf ($rf, "Order allow,deny\n");
+    fprintf ($rf, "Deny from all\n");
+    fprintf ($rf, "</filesmatch>\n");
+    fclose ($rf);
+}
 // Include the function library
 
 require "Include/Config.php";
@@ -450,7 +459,8 @@ if ($_SESSION['bCreateDirectory'] == 1)
 	        		$attachName = $_FILES['Attach']['name'];
 	        		$hasAttach = 1;
                 	move_uploaded_file ($_FILES['Attach']['tmp_name'], "tmp_attach/".$attachName);
-		        }
+                	FixHTAccess();
+                }
                 
                 if (strlen($sEmailSubject.$sEmailMessage)) {
 
@@ -502,6 +512,7 @@ if ($_SESSION['bCreateDirectory'] == 1)
 	        	$attachName = $_FILES['Attach']['name'];
 	        	$hasAttach = 1;
                 move_uploaded_file ($_FILES['Attach']['tmp_name'], "tmp_attach/".$attachName);
+                FixHTAccess ();
 	        }
 
             if (strlen($sEmailSubject.$sEmailMessage)) {
