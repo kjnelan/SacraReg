@@ -36,6 +36,13 @@ $bEmailLog = FALSE;
 require 'Include/Config.php';
 require 'Include/Functions.php';
 
+require 'Include/PHPMailer-6.8.0/src/Exception.php';
+require 'Include/PHPMailer-6.8.0/src/SMTP.php';
+require 'Include/PHPMailer-6.8.0/src/PHPMailer.php';
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\PHPMailer;
+
 $iUserID = $_SESSION['iUserID']; // Read into local variable for faster access
 $sGreTable = 'giving_rpt_email_gre_'.$iUserID;
 $sLogTable = 'email_job_log_'.$iUserID;
@@ -108,7 +115,6 @@ function SendEmail($sSubject, $sMessage)
     global $sFromEmailAddress;
     global $sFromName;
     global $sLangCode;
-    global $sLanguagePath;
     global $sSMTPAuth;
     global $sSMTPUser;
     global $sSMTPPass;
@@ -129,10 +135,6 @@ function SendEmail($sSubject, $sMessage)
     $tStartTime = time();
 
     $mail = new PHPMailer();
-    // Set the language for PHPMailer
-    $mail->SetLanguage($sLangCode, $sLanguagePath);
-    if($mail->IsError())
-        echo 'PHPMailer Error with SetLanguage().  Other errors (if any) may not report.<br>';
     $mail->CharSet = 'utf-8';
     $mail->From = $sFromEmailAddress;   // From email address (User Settings)
     $mail->FromName = $sFromName;       // From name (User Settings)
@@ -273,49 +275,6 @@ function SendEmail($sSubject, $sMessage)
 #    Redirect('Menu.php?abortemail=true');
 #}
 
-// *****
-// Force PHPMailer to the include path (this script only)
-$sPHPMailerPath = dirname(__FILE__).DIRECTORY_SEPARATOR.'Include'
-.DIRECTORY_SEPARATOR.'phpmailer'.DIRECTORY_SEPARATOR;
-$sIncludePath = '.'.PATH_SEPARATOR.$sPHPMailerPath;
-ini_set('include_path',$sIncludePath);
-// The include_path will automatically be restored upon completion of this script
-// *****
-
-$bHavePHPMailerClass = FALSE;
-$bHaveSMTPClass = FALSE;
-$bHavePHPMailerLanguage = FALSE;
-
-$sLangCode = substr($sLanguage, 0, 2); // Strip the language code from the beginning of the language_country code
-
-$sPHPMailerClass = $sPHPMailerPath.'class.phpmailer.php';
-if (file_exists($sPHPMailerClass) && is_readable($sPHPMailerClass)) {
-    require_once ($sPHPMailerClass);
-    $bHavePHPMailerClass = TRUE;
-    $sFoundPHPMailerClass = $sPHPMailerClass;
-}
-
-$sSMTPClass = $sPHPMailerPath.'class.smtp.php';
-if (file_exists($sSMTPClass) && is_readable($sSMTPClass)) {
-    require_once ($sSMTPClass);
-    $bHaveSMTPClass = TRUE;
-    $sFoundSMTPClass = $sSMTPClass;
-}
-
-$sTestLanguageFile = $sPHPMailerPath.'language'.DIRECTORY_SEPARATOR
-.'phpmailer.lang-'.$sLangCode.'.php';
-if (!strcmp($sLangCode, "en")) {
-    $bHavePHPMailerLanguage = TRUE;
-    $sFoundLanguageFile = "Not needed for English";
-} elseif (file_exists($sTestLanguageFile) && is_readable($sTestLanguageFile)) {
-    $sLanguagePath = $sPHPMailerPath.'language'.DIRECTORY_SEPARATOR;
-    $bHavePHPMailerLanguage = TRUE;
-    $sFoundLanguageFile = $sTestLanguageFile;
-}
-
-// This value is checked after the header is printed
-$bPHPMAILER_Installed = $bHavePHPMailerClass && $bHaveSMTPClass && $bHavePHPMailerLanguage;
-
 // if the table doesn't exist..but the log file does, show that.
 // if the table exists..with no entries, we've just finished, so show the log file
 $bLogTable_exists = True;
@@ -352,8 +311,12 @@ if (array_key_exists ("EmailMessage", $_POST)) {
     $_SESSION['EmailMessage'] = stripslashes($_POST["EmailMessage"]);
 }
 
-$sEmailSubject = $_SESSION['EmailSubject'];
-$sEmailMessage = $_SESSION['EmailMessage'];
+$sEmailSubject = "";
+$sEmailMessage = "";
+if (array_key_exists ('EmailSubject', $_SESSION))
+    $sEmailSubject = $_SESSION['EmailSubject'];
+if (array_key_exists ('EmailMessage', $_SESSION))
+    $sEmailMessage = $_SESSION['EmailMessage'];
 if (($sEmailSubject == "") or ($sEmailMessage == "")) {
     // If no subject or message body, we just keep trying to get one in start state
     $sEmailTaxState = 'start';
@@ -387,25 +350,6 @@ if ($bMetaRefresh) {
 // Set the page title and include HTML header
 $sPageTitle = gettext('Email Send Giving');
 require 'Include/Header.php';
-
-if(!$bPHPMAILER_Installed) {
-    echo    '<br>' . gettext('ERROR: PHPMailer is not properly installed on this server.')
-    .       '<br>' . gettext('PHPMailer is required in order to send emails from this server.');
-    echo '<br><br>include_path = ' . ini_get('include_path');
-    if ($bHavePHPMailerClass)
-        echo '<br><br>Found: ' . $sFoundPHPMailerClass;
-    else
-        echo '<br><br>Unable to find file: class.phpmailer.php';
-    if ($bHaveSMTPClass)
-        echo '<br>Found: ' . $sFoundSMTPClass;
-    else
-        echo '<br>Unable to find file: class.smtp.php';
-    if ($bHavePHPMailerLanguage)
-        echo '<br>Found: ' . $sFoundLanguageFile;
-    else
-        echo "<br>Unable to find file: phpmailer.lang-$sLangCode.php";
-    exit;
-}
 
 $tTimeStamp = date('m/d H:i:s');
 

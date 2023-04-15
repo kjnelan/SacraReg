@@ -98,6 +98,10 @@ $numRows = mysqli_num_rows($rsOpps);
     {
         $aRow = mysqli_fetch_array($rsOpps);
         extract($aRow);
+        if (is_null ($type_id))
+            $type_id = 0;
+        if (is_null ($type_name))
+            $type_name = "";
         echo '&nbsp;&nbsp;&nbsp;<a href="EventAttendance.php?Action=List&Event='.
             $type_id.'&Type='.gettext($type_name).'" title="List All '.
             gettext($type_name).' Events"><strong>'.gettext($type_name).

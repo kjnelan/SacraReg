@@ -213,7 +213,7 @@ require "Include/Header.php";
 $tog = 0;
 
 //Loop through all donated items
-if ($rsDonatedItems->num_rows != 0) {
+if ($iFundRaiserID > 0 && $rsDonatedItems->num_rows != 0) {
 	while ($aRow = mysqli_fetch_array($rsDonatedItems))
 	{
 		extract($aRow);
