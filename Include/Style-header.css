@@ -1,0 +1,42 @@
+.custom-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #ccc;
+}
+
+.header-logo img {
+    height: 80px;
+}
+
+.header-info {
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+.parish-name {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.parish-address, .parish-phone, .parish-email {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0;
+    color: #555;
+}
+
+.parish-address {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.parish-phone, .parish-email {
+    margin-top: 5px;
+    font-style: italic;
+}
