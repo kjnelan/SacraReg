@@ -1,64 +1,86 @@
 # SacraReg
 
-**SacraReg** is an open-source church management system, forked from [ChurchInfo](https://github.com/ChurchInfo/ChurchInfo), reimagined to focus on **sacramental recordkeeping** alongside traditional church membership management.
-
-This system is designed for churches that wish to track the liturgical and sacramental life of their congregations with care, clarity, and theological integrity.
+[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+![Built With PHP](https://img.shields.io/badge/built%20with-PHP-green.svg)
+![MySQL Powered](https://img.shields.io/badge/database-MySQL-orange.svg)
+[![Forked from ChurchInfo](https://img.shields.io/badge/forked%20from-ChurchInfo-blueviolet)](https://github.com/ChurchInfo/ChurchInfo)
 
 ---
 
-## ✝️ Purpose
+**SacraReg** is an open-source church management system reimagined to focus on **sacramental recordkeeping** alongside traditional membership and contribution tracking.
 
-SacraReg goes beyond membership and contributions. It is being actively developed to support:
+This project is maintained by **Kenn Nelan**, developed under the **Sacred Wandering Project**.
 
-- A **sacramental registry**, including:
+---
+
+## ✝️ Project Vision
+
+SacraReg builds on the legacy of [ChurchInfo](https://github.com/ChurchInfo/ChurchInfo), expanding it to reflect the **liturgical and sacramental life** of the Church, including:
+
+- Full sacramental registry support:
   - Baptism
   - Confirmation
-  - First Communion
-  - Confession
+  - Eucharist (First Communion)
+  - Reconciliation
   - Marriage
   - Holy Orders
   - Anointing of the Sick
-- Clergy and celebrant tracking
-- Godparent and sponsor relationships
+- Clergy and celebrant recordkeeping
+- Sponsor and godparent relationships
 - Liturgical roles and ministry participation
-- Parochial records and canonical forms
-- Flexible data models for Anglican, Catholic, Orthodox, and other sacramental traditions
+- Canonical documentation and pastoral care tracking
 
 ---
 
-## ⚙️ Project Status
+## 🛠️ Status
 
-This is an **in-progress fork**. All development is currently live on the `main` branch and tested in a non-production environment.
+This is a live development fork. Changes are being deployed and tested directly in a development environment.
 
-- Interface updates and schema changes are underway
-- Legacy ChurchInfo components are being evaluated and refactored
-- Future modular support for sacramental workflows is planned
-
----
-
-## 🗺️ Roadmap (In Progress)
-
-- [ ] Add new tables for sacraments and relationships
-- [ ] Modularize UI for sacrament entry and reporting
-- [ ] Support multi-parish or multi-location churches
-- [ ] Improve modern browser and mobile compatibility
-- [ ] Integrate liturgical calendar logic
+Current development focus:
+- Refactoring interface for clarity and modern use
+- Adding sacramental tables and workflows
+- Defining new data relationships (e.g., clergy, godparents)
+- Improving UX and navigation
 
 ---
 
-## 📦 Installation
+## 🧭 Planned Features
 
-⚠️ *Installation instructions are in development.*  
-Currently assumed to be run on a LAMP stack with PHP/MySQL and hosted manually.
+- [ ] New schema for sacramental records
+- [ ] Modern UI modules for entry/view
+- [ ] Parochial reporting and printable canonical forms
+- [ ] Mobile-friendly layout
+- [ ] Optional modules for multi-site churches or diocesan reporting
 
 ---
 
-## 🙏 Acknowledgments
+## 📦 Requirements (in progress)
 
-SacraReg is a fork of the excellent [ChurchInfo](https://github.com/ChurchInfo/ChurchInfo) project. We are deeply grateful for the foundation provided by its contributors.
+Typical LAMP stack:
+
+- PHP 7.4+
+- MySQL / MariaDB
+- Apache or Nginx
+- Local SMTP and cron support for full functionality
+
+Installation instructions and setup scripts will be documented as development stabilizes.
+
+---
+
+## 🙏 Credits
+
+SacraReg would not exist without the foundational work of the [ChurchInfo](https://github.com/ChurchInfo/ChurchInfo) project and its contributors.
+
+Fork maintained by:
+
+**Kenn Nelan**  
+Sacred Wandering Project  
+[https://github.com/kjnelan](https://github.com/kjnelan)
 
 ---
 
 ## 📜 License
 
-GPL v2 — SacraReg remains fully open-source and free to use under the GNU General Public License.
+SacraReg is released under the **GNU General Public License v2**.
+
+> You are free to use, modify, and redistribute this software under the same license terms. Contributions welcome.
